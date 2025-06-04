@@ -1,6 +1,8 @@
 package net.luko.bombs.client;
 
 import net.luko.bombs.Bombs;
+import net.luko.bombs.client.model.DynamiteModel;
+import net.luko.bombs.client.renderer.ThrownBombRenderer;
 import net.luko.bombs.entity.ModEntities;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -13,12 +15,18 @@ import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 public class ClientModEvents {
 
     @SubscribeEvent
-    public static void onClientSetup(FMLClientSetupEvent event) {
+    public static void onClientSetup(FMLClientSetupEvent event)
+    {
 
     }
 
     @SubscribeEvent
-    public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(ModEntities.THROWN_BOMB.get(), ThrownItemRenderer::new);
+    public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event){
+        event.registerEntityRenderer(ModEntities.THROWN_BOMB.get(), ThrownBombRenderer::new);
+    }
+
+    @SubscribeEvent
+    public static void onRegisterLayers(EntityRenderersEvent.RegisterLayerDefinitions event){
+        event.registerLayerDefinition(DynamiteModel.LAYER_LOCATION, DynamiteModel::createBodyLayer);
     }
 }

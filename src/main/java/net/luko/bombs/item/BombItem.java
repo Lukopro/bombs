@@ -11,8 +11,11 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 public class BombItem extends Item {
-    public BombItem(Properties properties){
+    private float explosionPower;
+
+    public BombItem(Properties properties, float explosionPower){
         super(properties);
+        this.explosionPower = explosionPower;
     }
 
     @Override
@@ -20,7 +23,7 @@ public class BombItem extends Item {
         ItemStack stack = player.getItemInHand(hand);
 
         if(!level.isClientSide()){
-            ThrownBombEntity bombEntity = new ThrownBombEntity(ModEntities.THROWN_BOMB.get(), level, player);
+            ThrownBombEntity bombEntity = new ThrownBombEntity(ModEntities.THROWN_BOMB.get(), level, player, explosionPower);
             bombEntity.setItem(stack);
             bombEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5F, 1.0F);
             level.addFreshEntity(bombEntity);

@@ -1,5 +1,9 @@
 {
-  "item.bombs.bomb": "Bomb",
+  "item.bombs.basic_dynamite": "Basic Dynamite",
+  "item.bombs.strong_dynamite": "Strong Dynamite",
+  "item.bombs.redstone_dynamite": "Redstone Dynamite",
+  "item.bombs.choral_dynamite": "Choral Dynamite",
+  "item.bombs.crystal_dynamite": "Crystal Dynamite",
 
   "creativetab:bombs_tab": "Bombs Tab"
 }

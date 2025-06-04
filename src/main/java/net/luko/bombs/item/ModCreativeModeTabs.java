@@ -15,12 +15,16 @@ public class ModCreativeModeTabs {
 
     public static final RegistryObject<CreativeModeTab> BOMBS_TAB = CREATIVE_MODE_TABS.register("bombs_tab",
             () -> CreativeModeTab.builder()
-                    .icon(() -> new ItemStack(ModItems.BOMB.get()))
+                    .icon(() -> new ItemStack(ModItems.BASIC_DYNAMITE.get()))
                     .title(Component.translatable("creativetab.bombs_tab"))
                     .displayItems((pParameters, pOutput) -> {
                         /* Add items to Bombs creative mode tab */
 
-                        pOutput.accept(ModItems.BOMB.get());
+                        pOutput.accept(ModItems.BASIC_DYNAMITE.get());
+                        pOutput.accept(ModItems.STRONG_DYNAMITE.get());
+                        pOutput.accept(ModItems.REDSTONE_DYNAMITE.get());
+                        pOutput.accept(ModItems.CHORAL_DYNAMITE.get());
+                        pOutput.accept(ModItems.CRYSTAL_DYNAMITE.get());
 
                     })
                     .build());

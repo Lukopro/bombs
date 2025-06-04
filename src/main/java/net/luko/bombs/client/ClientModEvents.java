@@ -14,7 +14,7 @@ public class ClientModEvents {
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
-        // You can leave this empty if not needed
+
     }
 
     @SubscribeEvent

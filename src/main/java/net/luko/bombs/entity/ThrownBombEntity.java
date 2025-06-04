@@ -11,17 +11,27 @@ import net.minecraft.world.phys.EntityHitResult;
 
 
 public class ThrownBombEntity extends ThrowableItemProjectile {
-    public ThrownBombEntity(EntityType<? extends ThrownBombEntity> type, Level level){
+    private float explosionPower;
+    private static final float DEFAULT_POWER = 1.0F;
+
+    public ThrownBombEntity(EntityType<? extends ThrownBombEntity> type, Level level) {
         super(type, level);
+        this.explosionPower = DEFAULT_POWER;
     }
 
-    public ThrownBombEntity(EntityType<? extends ThrownBombEntity> type, Level level, LivingEntity thrower){
+    public ThrownBombEntity(EntityType<? extends ThrownBombEntity> type, Level level, float explosionPower){
+        super(type, level);
+        this.explosionPower = explosionPower;
+    }
+
+    public ThrownBombEntity(EntityType<? extends ThrownBombEntity> type, Level level, LivingEntity thrower, float explosionPower){
         super(type, thrower, level);
+        this.explosionPower = explosionPower;
     }
 
     @Override
     protected Item getDefaultItem(){
-        return ModItems.BOMB.get();
+        return ModItems.BASIC_DYNAMITE.get();
     }
 
     @Override
@@ -40,7 +50,7 @@ public class ThrownBombEntity extends ThrowableItemProjectile {
     }
 
     private void explode(){
-        level().explode(this, this.getX(), this.getY(), this.getZ(), 1.0F, Level.ExplosionInteraction.TNT);
+        level().explode(this, this.getX(), this.getY(), this.getZ(), explosionPower, Level.ExplosionInteraction.TNT);
         discard();
     }
 }

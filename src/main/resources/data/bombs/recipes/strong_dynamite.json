@@ -3,13 +3,13 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "bombs:basic_dynamite"
+      "item": "bombs:dynamite"
     },
     {
       "item": "minecraft:gunpowder"
     },
     {
-      "item": "minecraft:paper"
+      "item": "minecraft:iron_ingot"
     }
   ],
   "result": {

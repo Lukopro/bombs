@@ -8,7 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.phys.Vec3;
 
 public class BombItem extends Item {
     private float explosionPower;
@@ -24,6 +24,14 @@ public class BombItem extends Item {
 
         if(!level.isClientSide()){
             ThrownBombEntity bombEntity = new ThrownBombEntity(ModEntities.THROWN_BOMB.get(), level, player, explosionPower);
+
+            Vec3 forward = player.getLookAngle();
+            bombEntity.setPos(
+                player.getX() + forward.x * 0.5,
+                player.getY() + player.getEyeHeight(),
+                player.getZ() + forward.z * 0.5
+            );
+
             bombEntity.setItem(stack);
             bombEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5F, 1.0F);
             level.addFreshEntity(bombEntity);

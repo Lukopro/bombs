@@ -3,17 +3,17 @@
   "category": "misc",
   "ingredients": [
     {
-      "tag": "bombs:below_redstone_dynamite"
+      "tag": "bombs:below_blaze_dynamite"
     },
     {
-      "item": "minecraft:redstone"
+      "item": "minecraft:blaze_powder"
     },
     {
-      "item": "minecraft:iron_ingot"
+      "item": "minecraft:quartz"
     }
   ],
   "result": {
     "count": 1,
-    "item": "bombs:redstone_dynamite"
+    "item": "bombs:blaze_dynamite"
   }
 }

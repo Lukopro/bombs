@@ -1,9 +1,9 @@
 {
   "replace": false,
   "values": [
-    "bombs:basic_dynamite",
+    "bombs:dynamite",
     "bombs:strong_dynamite",
-    "bombs:redstone_dynamite",
-    "bombs:choral_dynamite"
+    "bombs:blaze_dynamite",
+    "bombs:dragon_dynamite"
   ]
 }

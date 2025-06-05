@@ -22,7 +22,6 @@ public class DynamiteModel<T extends ThrownBombEntity> extends EntityModel<T> {
         private final ModelPart bb_main;
 
         public DynamiteModel(ModelPart root) {
-            Bombs.LOGGER.warn("DynamiteModel initialized");
             this.bb_main = root.getChild("bb_main");
         }
 
@@ -30,7 +29,13 @@ public class DynamiteModel<T extends ThrownBombEntity> extends EntityModel<T> {
             MeshDefinition meshdefinition = new MeshDefinition();
             PartDefinition partdefinition = meshdefinition.getRoot();
 
-            PartDefinition bb_main = partdefinition.addOrReplaceChild("bb_main", CubeListBuilder.create().texOffs(0, 0).addBox(-2.0F, -12.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
+            PartDefinition bb_main = partdefinition.addOrReplaceChild(
+                    "bb_main",
+                    CubeListBuilder.create()
+                        .texOffs(0, 0)
+                        .addBox(-2.0F, -12.0F, -2.0F, 4.0F, 12.0F, 4.0F,
+                    new CubeDeformation(0.0F)),
+                    PartPose.offset(0.0F, 6.0F, 0.0F));
 
             PartDefinition cube_r1 = bb_main.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(16, -4).addBox(0.0F, -5.0F, -1.5F, 0.0F, 5.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -12.0F, 0.0F, 0.0F, -0.7854F, 0.0F));
 

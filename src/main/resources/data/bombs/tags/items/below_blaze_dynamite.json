@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "bombs:basic_dynamite",
+    "bombs:dynamite",
     "bombs:strong_dynamite"
   ]
 }

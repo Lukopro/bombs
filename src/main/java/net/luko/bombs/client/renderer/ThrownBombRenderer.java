@@ -37,7 +37,7 @@ public class ThrownBombRenderer extends EntityRenderer<ThrownBombEntity> {
         poseStack.translate(0.0F, 0.0F, 0.0F);
 
         float spin = (entity.tickCount + partialTicks) * 20;
-        float YRotOffset = 80.0F + 20.0F * (float)Math.random();
+        float YRotOffset = 90.0F - (ThrownBombEntity.RANDOM_TILT_MAX / 2) + entity.getRandomTilt();
         poseStack.mulPose(Axis.YP.rotationDegrees(YRotOffset + entity.getYRot()));
 
         poseStack.mulPose(Axis.ZP.rotationDegrees(spin));

@@ -27,9 +27,9 @@ public class BombItem extends Item {
 
             Vec3 forward = player.getLookAngle();
             bombEntity.setPos(
-                player.getX() + forward.x * 0.5,
+                player.getX() + forward.x * 0.6,
                 player.getY() + player.getEyeHeight(),
-                player.getZ() + forward.z * 0.5
+                player.getZ() + forward.z * 0.6
             );
 
             bombEntity.setItem(stack);

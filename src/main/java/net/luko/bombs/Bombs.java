@@ -1,13 +1,17 @@
 package net.luko.bombs;
 
+import net.luko.bombs.config.BombsConfig;
 import net.luko.bombs.entity.ModEntities;
 import net.luko.bombs.item.ModCreativeModeTabs;
 import net.luko.bombs.item.ModItems;
+import net.luko.bombs.util.BombConfigSync;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
@@ -22,6 +26,7 @@ public class Bombs
     {
         IEventBus modEventBus = context.getModEventBus();
 
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, BombsConfig.COMMON_CONFIG);
         ModItems.register(modEventBus);
         ModEntities.register(modEventBus);
         ModCreativeModeTabs.register(modEventBus);
@@ -32,7 +37,7 @@ public class Bombs
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
-
+        event.enqueueWork(BombConfigSync::syncBombExplosionPowers);
     }
 
     private void addCreative(BuildCreativeModeTabContentsEvent event)

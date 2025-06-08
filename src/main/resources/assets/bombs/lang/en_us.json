@@ -5,5 +5,7 @@
   "item.bombs.dragon_dynamite": "Dragon Dynamite",
   "item.bombs.crystal_dynamite": "Crystal Dynamite",
 
+  "block.bombs.demolition_table": "Demolition Table",
+
   "creativetab.bombs_tab": "Bombs Tab"
 }

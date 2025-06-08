@@ -4,6 +4,9 @@ import net.luko.bombs.Bombs;
 import net.luko.bombs.client.model.DynamiteModel;
 import net.luko.bombs.client.renderer.ThrownBombRenderer;
 import net.luko.bombs.entity.ModEntities;
+import net.luko.bombs.screen.DemolitionTableScreen;
+import net.luko.bombs.screen.ModMenuTypes;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -16,7 +19,7 @@ public class ClientModEvents {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event)
     {
-
+        MenuScreens.register(ModMenuTypes.DEMOLITION_TABLE_MENU.get(), DemolitionTableScreen::new);
     }
 
     @SubscribeEvent

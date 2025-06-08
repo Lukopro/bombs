@@ -1,0 +1,16 @@
+{
+  "type": "bombs:demolition",
+  "input_bomb": {
+    "item": "bombs:dynamite"
+  },
+  "input_upgrade": {
+    "item": "minecraft:blaze_powder"
+  },
+  "input_casing": {
+    "item": "minecraft:quartz"
+  },
+  "result": {
+    "item": "bombs:blaze_dynamite",
+    "count": 1
+  }
+}

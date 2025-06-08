@@ -1,9 +1,14 @@
 package net.luko.bombs;
 
+import net.luko.bombs.block.ModBlocks;
+import net.luko.bombs.block.entity.ModBlockEntities;
 import net.luko.bombs.config.BombsConfig;
 import net.luko.bombs.entity.ModEntities;
 import net.luko.bombs.item.ModCreativeModeTabs;
 import net.luko.bombs.item.ModItems;
+import net.luko.bombs.recipe.ModRecipeSerializers;
+import net.luko.bombs.recipe.ModRecipeTypes;
+import net.luko.bombs.screen.ModMenuTypes;
 import net.luko.bombs.util.BombConfigSync;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -30,6 +35,11 @@ public class Bombs
         ModItems.register(modEventBus);
         ModEntities.register(modEventBus);
         ModCreativeModeTabs.register(modEventBus);
+        ModBlocks.register(modEventBus);
+        ModBlockEntities.register(modEventBus);
+        ModMenuTypes.register(modEventBus);
+        ModRecipeTypes.register(modEventBus);
+        ModRecipeSerializers.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::addCreative);

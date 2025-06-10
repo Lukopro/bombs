@@ -1,16 +1,16 @@
 {
   "type": "bombs:demolition_upgrade",
   "input_bomb": {
-    "tag": "bombs:below_blaze_dynamite"
+    "item": "bombs:dynamite"
   },
   "input_upgrade": {
-    "item": "minecraft:blaze_powder"
+    "item": "minecraft:gunpowder"
   },
   "input_casing": {
-    "item": "minecraft:quartz"
+    "item": "minecraft:iron_ingot"
   },
   "result": {
-    "item": "bombs:blaze_dynamite",
+    "item": "bombs:strong_dynamite",
     "count": 1
   }
 }

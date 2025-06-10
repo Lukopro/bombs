@@ -1,14 +1,13 @@
 package net.luko.bombs.block.entity;
 
-import com.google.common.base.Optional;
-import com.mojang.serialization.Decoder;
-import net.luko.bombs.recipe.DemolitionTableRecipe;
+import net.luko.bombs.Bombs;
 import net.luko.bombs.recipe.ModRecipeTypes;
 import net.luko.bombs.screen.DemolitionTableMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
@@ -16,6 +15,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -31,8 +32,8 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
     private final ItemStackHandler itemHandler = new ItemStackHandler(4);
 
     private static final int BOMB_SLOT = 0;
-    private static final int CASING_SLOT = 1;
-    private static final int UPGRADE_SLOT = 2;
+    private static final int UPGRADE_SLOT = 1;
+    private static final int CASING_SLOT = 2;
     private static final int OUTPUT_SLOT = 3;
 
     private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
@@ -89,12 +90,30 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
     public void tick(Level level1, BlockPos pos, BlockState state1){
         if (level.isClientSide()) return;
 
+        SimpleContainer container = getContainerFromHandler();
+
+        if(hasCasing()){
+            tryApplyRecipe(ModRecipeTypes.DEMOLITION_UPGRADE_TYPE.get(), container);
+        } else {
+            tryApplyRecipe(ModRecipeTypes.DEMOLITION_MODIFIER_TYPE.get(), container);
+        }
+
+    }
+
+    private SimpleContainer getContainerFromHandler(){
         SimpleContainer container = new SimpleContainer(itemHandler.getSlots());
         for(int i = 0; i < itemHandler.getSlots(); i++){
             container.setItem(i, itemHandler.getStackInSlot(i));
         }
+        return container;
+    }
 
-        level.getRecipeManager().getRecipeFor(ModRecipeTypes.DEMOLITION_TYPE.get(), container, level)
+    private boolean hasCasing(){
+        return !itemHandler.getStackInSlot(CASING_SLOT).isEmpty();
+    }
+
+    private void tryApplyRecipe(RecipeType<?> type, SimpleContainer container){
+        level.getRecipeManager().getRecipeFor((RecipeType<Recipe<Container>>) type, container, level)
                 .ifPresentOrElse(recipe -> {
                     ItemStack result = recipe.assemble(container, level.registryAccess());
 
@@ -110,5 +129,4 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
                     itemHandler.setStackInSlot(OUTPUT_SLOT, ItemStack.EMPTY);
                 });
     }
-
 }

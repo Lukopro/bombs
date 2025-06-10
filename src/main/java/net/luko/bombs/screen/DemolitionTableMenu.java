@@ -32,10 +32,10 @@ public class DemolitionTableMenu extends AbstractContainerMenu {
         addPlayerInventory(inventory);
 
         this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(iItemHandler -> {
-            this.addSlot(new SlotItemHandler(iItemHandler, 0, 20, 30));
-            this.addSlot(new SlotItemHandler(iItemHandler, 1, 40, 30));
-            this.addSlot(new SlotItemHandler(iItemHandler, 2, 60, 30));
-            this.addSlot(new SlotItemHandler(iItemHandler, 3, 80, 30){
+            this.addSlot(new SlotItemHandler(iItemHandler, 0, 26, 39));
+            this.addSlot(new SlotItemHandler(iItemHandler, 1, 52, 39));
+            this.addSlot(new SlotItemHandler(iItemHandler, 2, 78, 39));
+            this.addSlot(new SlotItemHandler(iItemHandler, 3, 134, 39){
                 @Override
                 public boolean mayPlace(ItemStack stack){
                     // Disallow placing items into output slot.

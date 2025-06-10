@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 public class Bombs
 {
     public static final String MODID = "bombs";
+    public static final Logger LOGGER = LoggerFactory.getLogger("Bombs");
 
     public Bombs(FMLJavaModLoadingContext context)
     {

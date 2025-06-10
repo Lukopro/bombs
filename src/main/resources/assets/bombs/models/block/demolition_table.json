@@ -1,6 +1,12 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube",
   "textures": {
-    "all": "bombs:block/demolition_table"
+    "down": "bombs:block/demolition_table_bottom",
+    "east": "bombs:block/demolition_table_side",
+    "north": "bombs:block/demolition_table_front",
+    "particle": "bombs:block/demolition_table_front",
+    "south": "bombs:block/demolition_table_side",
+    "up": "bombs:block/demolition_table_top",
+    "west": "bombs:block/demolition_table_front"
   }
 }

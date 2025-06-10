@@ -10,14 +10,14 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
-public class DemolitionTableRecipe implements Recipe<Container> {
+public class DemolitionUpgradeRecipe implements Recipe<Container> {
     private final ResourceLocation id;
     private final Ingredient inputBomb;
     private final Ingredient inputUpgrade;
     private final Ingredient inputCasing;
     private final ItemStack result;
 
-    public DemolitionTableRecipe(ResourceLocation id, Ingredient inputBomb, Ingredient inputUpgrade, Ingredient inputCasing, ItemStack result) {
+    public DemolitionUpgradeRecipe(ResourceLocation id, Ingredient inputBomb, Ingredient inputUpgrade, Ingredient inputCasing, ItemStack result) {
         this.id = id;
         this.inputBomb = inputBomb;
         this.inputUpgrade = inputUpgrade;
@@ -69,11 +69,11 @@ public class DemolitionTableRecipe implements Recipe<Container> {
 
     @Override
     public RecipeSerializer<?> getSerializer(){
-        return ModRecipeSerializers.DEMOLITION_SERIALIZER.get();
+        return ModRecipeSerializers.DEMOLITION_UPGRADE_SERIALIZER.get();
     }
 
     @Override
     public RecipeType<?> getType(){
-        return ModRecipeTypes.DEMOLITION_TYPE.get();
+        return ModRecipeTypes.DEMOLITION_UPGRADE_TYPE.get();
     }
 }

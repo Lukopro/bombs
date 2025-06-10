@@ -1,0 +1,16 @@
+{
+  "type": "bombs:demolition_upgrade",
+  "input_bomb": {
+    "tag": "bombs:below_dragon_dynamite"
+  },
+  "input_upgrade": {
+    "item": "minecraft:dragon_breath"
+  },
+  "input_casing": {
+    "item": "minecraft:obsidian"
+  },
+  "result": {
+    "item": "bombs:dragon_dynamite",
+    "count": 1
+  }
+}

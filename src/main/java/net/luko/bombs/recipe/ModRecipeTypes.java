@@ -11,10 +11,17 @@ public class ModRecipeTypes {
     public static final DeferredRegister<RecipeType<?>> RECIPE_TYPES =
             DeferredRegister.create(ForgeRegistries.RECIPE_TYPES, Bombs.MODID);
 
-    public static final RegistryObject<RecipeType<DemolitionTableRecipe>> DEMOLITION_TYPE =
-            RECIPE_TYPES.register("demolition", () -> new RecipeType<>() {
+    public static final RegistryObject<RecipeType<DemolitionUpgradeRecipe>> DEMOLITION_UPGRADE_TYPE =
+            RECIPE_TYPES.register("demolition_upgrade", () -> new RecipeType<>() {
                 public String toString() {
-                    return Bombs.MODID + ":demolition";
+                    return Bombs.MODID + ":demolition_upgrade";
+                }
+            });
+
+    public static final RegistryObject<RecipeType<DemolitionModifierRecipe>> DEMOLITION_MODIFIER_TYPE =
+            RECIPE_TYPES.register("demolition_modifier", () -> new RecipeType<>() {
+                public String toString() {
+                    return Bombs.MODID + ":demolition_modifier";
                 }
             });
 

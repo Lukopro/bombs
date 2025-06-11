@@ -2,6 +2,7 @@ package net.luko.bombs.item;
 
 import net.luko.bombs.entity.ModEntities;
 import net.luko.bombs.entity.ThrownBombEntity;
+import net.luko.bombs.util.BombModifierUtil;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -43,7 +44,7 @@ public class BombItem extends Item {
             bombEntity.setItem(stack);
 
             // Bomb is launched from the player.
-            bombEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5F, 1.0F);
+            bombEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, getVelocity(stack), 1.0F);
 
             // Bomb is spawned server-side
             level.addFreshEntity(bombEntity);
@@ -55,5 +56,14 @@ public class BombItem extends Item {
         }
 
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+    }
+
+
+
+    private float getVelocity(ItemStack stack){
+        if(BombModifierUtil.hasModifier(stack, "light")){
+            return 2.5F;
+        }
+        return 1.5F;
     }
 }

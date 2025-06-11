@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:block/cube",
   "textures": {
-    "down": "bombs:block/demolition_table_bottom",
+    "down": "minecraft:block/warped_planks",
     "east": "bombs:block/demolition_table_side",
     "north": "bombs:block/demolition_table_front",
     "particle": "bombs:block/demolition_table_front",

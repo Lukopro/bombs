@@ -1,10 +1,12 @@
 package net.luko.bombs.entity;
 
 import net.luko.bombs.item.ModItems;
+import net.luko.bombs.util.BombModifierUtil;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -74,7 +76,23 @@ public class ThrownBombEntity extends ThrowableItemProjectile {
     }
 
     private void explode(){
-        level().explode(this, this.getX(), this.getY(), this.getZ(), explosionPower, Level.ExplosionInteraction.TNT);
+        level().explode(this, this.getX(), this.getY(), this.getZ(), explosionPower, hasFlame(getItem()), getExplosionInteraction(getItem()));
         discard();
+    }
+
+
+
+    private boolean hasFlame(ItemStack stack){
+        if(BombModifierUtil.hasModifier(stack, "flame")){
+            return true;
+        }
+        return false;
+    }
+
+    private Level.ExplosionInteraction getExplosionInteraction(ItemStack stack){
+        if(BombModifierUtil.hasModifier(stack, "contained")){
+            return Level.ExplosionInteraction.NONE;
+        }
+        return Level.ExplosionInteraction.TNT;
     }
 }

@@ -7,5 +7,8 @@
 
   "block.bombs.demolition_table": "Demolition Table",
 
+  "recipe.bombs.demolition_upgrade": "Bomb Upgrade Recipe",
+  "recipe.bombs.demolition_modifier": "Bomb Modifier Recipe",
+
   "creativetab.bombs_tab": "Bombs Tab"
 }

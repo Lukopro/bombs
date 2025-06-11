@@ -92,10 +92,10 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
 
         SimpleContainer container = getContainerFromHandler();
 
-        if(hasCasing()){
-            tryApplyRecipe(ModRecipeTypes.DEMOLITION_UPGRADE_TYPE.get(), container);
-        } else {
+        if(itemHandler.getStackInSlot(CASING_SLOT).isEmpty()){
             tryApplyRecipe(ModRecipeTypes.DEMOLITION_MODIFIER_TYPE.get(), container);
+        } else {
+            tryApplyRecipe(ModRecipeTypes.DEMOLITION_UPGRADE_TYPE.get(), container);
         }
 
     }
@@ -106,10 +106,6 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
             container.setItem(i, itemHandler.getStackInSlot(i));
         }
         return container;
-    }
-
-    private boolean hasCasing(){
-        return !itemHandler.getStackInSlot(CASING_SLOT).isEmpty();
     }
 
     private void tryApplyRecipe(RecipeType<?> type, SimpleContainer container){

@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 public class DemolitionModifierCategory implements IRecipeCategory<DemolitionModifierRecipe> {
     public static final ResourceLocation UID = new ResourceLocation(Bombs.MODID, "demolition_modifier");
     public static final ResourceLocation TEXTURE = new ResourceLocation(Bombs.MODID,
-            "textures/gui/demolition_table_gui.png");
+            "textures/gui/demolition_table_gui_modifier.png");
 
     public static final RecipeType<DemolitionModifierRecipe> DEMOLITION_MODIFIER_TYPE =
             new RecipeType<>(UID, DemolitionModifierRecipe.class);
@@ -41,7 +41,7 @@ public class DemolitionModifierCategory implements IRecipeCategory<DemolitionMod
 
     @Override
     public Component getTitle() {
-        return Component.translatable("blocks.bombs.demolition_table");
+        return Component.translatable("recipe.bombs.demolition_modifier");
     }
 
     @Override

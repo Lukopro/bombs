@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 public class DemolitionUpgradeCategory implements IRecipeCategory<DemolitionUpgradeRecipe> {
     public static final ResourceLocation UID = new ResourceLocation(Bombs.MODID, "demolition_upgrade");
     public static final ResourceLocation TEXTURE = new ResourceLocation(Bombs.MODID,
-            "textures/gui/demolition_table_gui.png");
+            "textures/gui/demolition_table_gui_upgrade.png");
 
     public static final RecipeType<DemolitionUpgradeRecipe> DEMOLITION_UPGRADE_TYPE =
             new RecipeType<>(UID, DemolitionUpgradeRecipe.class);
@@ -40,7 +40,7 @@ public class DemolitionUpgradeCategory implements IRecipeCategory<DemolitionUpgr
 
     @Override
     public Component getTitle() {
-        return Component.translatable("block.bombs.demolition_table");
+        return Component.translatable("recipe.bombs.demolition_upgrade");
     }
 
     @Override

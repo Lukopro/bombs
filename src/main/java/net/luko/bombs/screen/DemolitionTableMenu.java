@@ -18,6 +18,12 @@ public class DemolitionTableMenu extends AbstractContainerMenu {
     public final DemolitionTableBlockEntity blockEntity;
     private final Level level;
 
+    public static final int DEMOLITION_TABLE_SLOT_0_X = 26;
+    public static final int DEMOLITION_TABLE_SLOT_1_X = 52;
+    public static final int DEMOLITION_TABLE_SLOT_2_X = 78;
+    public static final int DEMOLITION_TABLE_SLOT_3_X = 134;
+    public static final int DEMOLITION_TABLE_SLOTS_Y = 39;
+
     public DemolitionTableMenu(int containerId, Inventory inventory, FriendlyByteBuf extraData){
         this(containerId, inventory, inventory.player.level().getBlockEntity(extraData.readBlockPos()));
     }
@@ -32,10 +38,10 @@ public class DemolitionTableMenu extends AbstractContainerMenu {
         addPlayerInventory(inventory);
 
         this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(iItemHandler -> {
-            this.addSlot(new SlotItemHandler(iItemHandler, 0, 26, 39));
-            this.addSlot(new SlotItemHandler(iItemHandler, 1, 52, 39));
-            this.addSlot(new SlotItemHandler(iItemHandler, 2, 78, 39));
-            this.addSlot(new SlotItemHandler(iItemHandler, 3, 134, 39){
+            this.addSlot(new SlotItemHandler(iItemHandler, 0, DEMOLITION_TABLE_SLOT_0_X, DEMOLITION_TABLE_SLOTS_Y));
+            this.addSlot(new SlotItemHandler(iItemHandler, 1, DEMOLITION_TABLE_SLOT_1_X, DEMOLITION_TABLE_SLOTS_Y));
+            this.addSlot(new SlotItemHandler(iItemHandler, 2, DEMOLITION_TABLE_SLOT_2_X, DEMOLITION_TABLE_SLOTS_Y));
+            this.addSlot(new SlotItemHandler(iItemHandler, 3, DEMOLITION_TABLE_SLOT_3_X, DEMOLITION_TABLE_SLOTS_Y){
                 @Override
                 public boolean mayPlace(ItemStack stack){
                     // Disallow placing items into output slot.

@@ -36,6 +36,8 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
     private static final int CASING_SLOT = 2;
     private static final int OUTPUT_SLOT = 3;
 
+    private int lastInputHash = -1;
+
     private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
 
     public DemolitionTableBlockEntity(BlockPos pos, BlockState state){
@@ -91,13 +93,17 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
         if (level.isClientSide()) return;
 
         SimpleContainer container = getContainerFromHandler();
+        int currentHash = getInputHash(container);
 
-        if(itemHandler.getStackInSlot(CASING_SLOT).isEmpty()){
-            tryApplyRecipe(ModRecipeTypes.DEMOLITION_MODIFIER_TYPE.get(), container);
-        } else {
-            tryApplyRecipe(ModRecipeTypes.DEMOLITION_UPGRADE_TYPE.get(), container);
+        if(currentHash != lastInputHash){
+            lastInputHash = currentHash;
+
+            if(itemHandler.getStackInSlot(CASING_SLOT).isEmpty()){
+                tryApplyRecipe(ModRecipeTypes.DEMOLITION_MODIFIER_TYPE.get(), container);
+            } else {
+                tryApplyRecipe(ModRecipeTypes.DEMOLITION_UPGRADE_TYPE.get(), container);
+            }
         }
-
     }
 
     private SimpleContainer getContainerFromHandler(){
@@ -112,17 +118,18 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
         level.getRecipeManager().getRecipeFor((RecipeType<Recipe<Container>>) type, container, level)
                 .ifPresentOrElse(recipe -> {
                     ItemStack result = recipe.assemble(container, level.registryAccess());
-
-                    if (!itemHandler.getStackInSlot(OUTPUT_SLOT).isEmpty() &&
-                            !ItemStack.isSameItemSameTags(itemHandler.getStackInSlot(OUTPUT_SLOT), result)) {
-                        // Don't overwrite a non-matching item in output.
-                        return;
-                    }
-
                     itemHandler.setStackInSlot(OUTPUT_SLOT, result);
                 }, () -> {
                     // No valid recipe, clear output
                     itemHandler.setStackInSlot(OUTPUT_SLOT, ItemStack.EMPTY);
                 });
+    }
+
+    private int getInputHash(SimpleContainer container){
+        int hash = 1;
+        for(int i = 0; i < container.getContainerSize(); i++){
+            hash = 31 * hash + container.getItem(i).hashCode();
+        }
+        return hash;
     }
 }

@@ -10,5 +10,9 @@
   "recipe.bombs.demolition_upgrade": "Bomb Upgrade Recipe",
   "recipe.bombs.demolition_modifier": "Bomb Modifier Recipe",
 
+  "modifier.bombs.flame": "Flame",
+  "modifier.bombs.light": "Light",
+  "modifier.bombs.contained": "Contained",
+
   "creativetab.bombs_tab": "Bombs Tab"
 }

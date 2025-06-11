@@ -3,13 +3,21 @@ package net.luko.bombs.item;
 import net.luko.bombs.entity.ModEntities;
 import net.luko.bombs.entity.ThrownBombEntity;
 import net.luko.bombs.util.BombModifierUtil;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class BombItem extends Item {
     // Each instance of BombItem has a hard coded explosionPower.
@@ -58,7 +66,24 @@ public class BombItem extends Item {
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }
 
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag){
+        super.appendHoverText(stack, level, tooltip, flag);
 
+        if(stack.hasTag() && stack.getTag().contains("Modifiers")){
+            ListTag modifiers = stack.getTag().getList("Modifiers", Tag.TAG_STRING);
+
+            tooltip.add(Component.literal("Modifiers:"));
+
+            for(int i = 0; i < modifiers.size(); i++){
+                String mod = modifiers.getString(i);
+                tooltip.add(Component.literal("- ").append(Component.translatable("modifier.bombs." + mod)).withStyle(ChatFormatting.YELLOW));
+            }
+
+        } else {
+            tooltip.add(Component.literal("No modifiers"));
+        }
+    }
 
     private float getVelocity(ItemStack stack){
         if(BombModifierUtil.hasModifier(stack, "light")){

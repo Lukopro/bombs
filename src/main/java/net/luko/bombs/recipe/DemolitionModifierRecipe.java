@@ -6,6 +6,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
@@ -53,6 +54,7 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
         bomb.setCount(1);
 
         CompoundTag tag = bomb.getOrCreateTag();
+
         ListTag modifiers = tag.getList("Modifiers", CompoundTag.TAG_STRING);
         modifiers.add(StringTag.valueOf(modifierName));
         tag.put("Modifiers", modifiers);

@@ -2,14 +2,29 @@ package net.luko.bombs.entity;
 
 import net.luko.bombs.item.ModItems;
 import net.luko.bombs.util.BombModifierUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 
 public class ThrownBombEntity extends ThrowableItemProjectile {
@@ -63,36 +78,41 @@ public class ThrownBombEntity extends ThrowableItemProjectile {
     @Override
     protected void onHitEntity(EntityHitResult result){
         if(!level().isClientSide()){
-            explode();
+            createExplosion();
         }
     }
 
     @Override
     protected void onHitBlock(BlockHitResult result){
         if(!level().isClientSide()){
-            explode();
+            createExplosion();
         }
         super.onHitBlock(result);
     }
 
-    private void explode(){
-        level().explode(this, this.getX(), this.getY(), this.getZ(), explosionPower, hasFlame(getItem()), getExplosionInteraction(getItem()));
+    private void createExplosion(){
+        CustomExplosion explosion = new CustomExplosion(
+                level(),
+                this,
+                null,
+                new ExplosionDamageCalculator(),
+                this.getX(),
+                this.getY(),
+                this.getZ(),
+                explosionPower,
+                BombModifierUtil.hasModifier(getItem(), "flame"),
+                getBlockInteraction(getItem()),
+                getItem()
+                );
+        explosion.explode();
+        explosion.finalizeExplosion(true);
         discard();
     }
 
-
-
-    private boolean hasFlame(ItemStack stack){
-        if(BombModifierUtil.hasModifier(stack, "flame")){
-            return true;
-        }
-        return false;
-    }
-
-    private Level.ExplosionInteraction getExplosionInteraction(ItemStack stack){
+    private Explosion.BlockInteraction getBlockInteraction(ItemStack stack){
         if(BombModifierUtil.hasModifier(stack, "contained")){
-            return Level.ExplosionInteraction.NONE;
+            return Explosion.BlockInteraction.KEEP;
         }
-        return Level.ExplosionInteraction.TNT;
+        return Explosion.BlockInteraction.DESTROY;
     }
 }

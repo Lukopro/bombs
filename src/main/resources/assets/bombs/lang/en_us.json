@@ -13,6 +13,7 @@
   "modifier.bombs.flame": "Flame",
   "modifier.bombs.light": "Light",
   "modifier.bombs.contained": "Contained",
+  "modifier.bombs.pacified": "Pacified",
 
   "creativetab.bombs_tab": "Bombs Tab"
 }

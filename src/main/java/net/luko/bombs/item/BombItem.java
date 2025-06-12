@@ -15,14 +15,23 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class BombItem extends Item {
     // Each instance of BombItem has a hard coded explosionPower.
     private float explosionPower;
-
+    private static final Map<String, ChatFormatting> modifierMap = Map.of(
+        "flame", ChatFormatting.RED,
+        "light", ChatFormatting.WHITE,
+        "contained", ChatFormatting.GREEN,
+        "pacified", ChatFormatting.GREEN
+    );
     public BombItem(Properties properties, float explosionPower){
         super(properties);
         this.explosionPower = explosionPower;
@@ -73,11 +82,12 @@ public class BombItem extends Item {
         if(stack.hasTag() && stack.getTag().contains("Modifiers")){
             ListTag modifiers = stack.getTag().getList("Modifiers", Tag.TAG_STRING);
 
-            tooltip.add(Component.literal("Modifiers:"));
+            tooltip.add(Component.empty());
+            tooltip.add(Component.literal("Modifiers:").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.GRAY));
 
             for(int i = 0; i < modifiers.size(); i++){
                 String mod = modifiers.getString(i);
-                tooltip.add(Component.literal("- ").append(Component.translatable("modifier.bombs." + mod)).withStyle(ChatFormatting.YELLOW));
+                tooltip.add(Component.literal("- ").append(Component.translatable("modifier.bombs." + mod)).withStyle(modifierMap.get(mod)));
             }
 
         } else {

@@ -1,0 +1,6 @@
+{
+  "type": "bombs:demolition_modifier",
+  "input_bomb": { "tag": "bombs:bomb" },
+  "input_modifier": { "item": "minecraft:leather" },
+  "modifier": "pacified"
+}

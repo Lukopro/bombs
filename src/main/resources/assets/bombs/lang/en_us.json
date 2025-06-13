@@ -18,6 +18,17 @@
   "modifier.bombs.lethal": "Lethal",
   "modifier.bombs.dampened": "Dampened",
   "modifier.bombs.shockwave": "Shockwave",
+  "modifier.bombs.gentle": "Gentle",
+
+  "modifier.bombs.flame.info": "Adds fire to explosions.",
+  "modifier.bombs.light.info": "Flies farther.",
+  "modifier.bombs.contained.info": "Doesn't break blocks.",
+  "modifier.bombs.shatter.info": "Breaks more resistant blocks.",
+  "modifier.bombs.pacified.info": "Doesn't deal mob damage.",
+  "modifier.bombs.lethal.info": "Deals 2x mob damage.",
+  "modifier.bombs.dampened.info": "Doesn't deal knockback.",
+  "modifier.bombs.shockwave.info": "Deal's double knockback.",
+  "modifier.bombs.gentle.info": "Doesn't destroy drops.",
 
   "creativetab.bombs_tab": "Bombs Tab"
 }

@@ -31,6 +31,8 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.ProtectionEnchantment;
 import net.minecraft.world.level.*;
@@ -214,11 +216,16 @@ public class CustomExplosion extends Explosion {
                         double d10 = (1.0D - d12) * d14;
 
                         // Modifier adaptation
-                        if(!BombModifierUtil.hasModifier(this.stack, "pacified")) {
-                            float damageAmount = (float) ((int) ((d10 * d10 + d10) / 2.0D * 7.0D * (double) f2 + 1.0D));
-                            if(BombModifierUtil.hasModifier(this.stack, "lethal")){
-                                damageAmount *= 2.0F;
+                        float damageAmount = (float) ((int) ((d10 * d10 + d10) / 2.0D * 7.0D * (double) f2 + 1.0D));
+                        if (BombModifierUtil.hasModifier(this.stack, "lethal")) {
+                            damageAmount *= 2.0F;
+                        }
+
+                        if((entity instanceof ItemEntity || entity instanceof AbstractMinecart || entity instanceof Boat)){
+                            if(!BombModifierUtil.hasModifier(this.stack, "gentle")){
+                                entity.hurt(this.getDamageSource(), damageAmount);
                             }
+                        } else if(!BombModifierUtil.hasModifier(this.stack, "pacified")) {
                             entity.hurt(this.getDamageSource(), damageAmount);
                         }
 

@@ -4,6 +4,8 @@ import net.luko.bombs.entity.ModEntities;
 import net.luko.bombs.entity.ThrownBombEntity;
 import net.luko.bombs.util.BombModifierUtil;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -37,7 +39,8 @@ public class BombItem extends Item {
             "dampened", ChatFormatting.GREEN,
             "shatter", ChatFormatting.DARK_GREEN,
             "lethal", ChatFormatting.DARK_GREEN,
-            "shockwave", ChatFormatting.DARK_GREEN
+            "shockwave", ChatFormatting.DARK_GREEN,
+            "gentle", ChatFormatting.DARK_AQUA
     );
     public BombItem(Properties properties, float explosionPower){
         super(properties);
@@ -95,6 +98,15 @@ public class BombItem extends Item {
             for(int i = 0; i < modifiers.size(); i++){
                 String mod = modifiers.getString(i);
                 tooltip.add(Component.literal("- ").append(Component.translatable("modifier.bombs." + mod)).withStyle(modifierMap.get(mod)));
+                if(Screen.hasShiftDown()){
+                    tooltip.add(Component.translatable("modifier.bombs." + mod + ".info").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY));
+                    tooltip.add(Component.empty());
+                }
+            }
+
+            if(!Screen.hasShiftDown()){
+                tooltip.add(Component.empty());
+                tooltip.add(Component.literal("SHIFT for descriptions"));
             }
 
         } else {

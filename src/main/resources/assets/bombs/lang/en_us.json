@@ -13,7 +13,11 @@
   "modifier.bombs.flame": "Flame",
   "modifier.bombs.light": "Light",
   "modifier.bombs.contained": "Contained",
+  "modifier.bombs.unleashed": "Unleashed",
   "modifier.bombs.pacified": "Pacified",
+  "modifier.bombs.lethal": "Lethal",
+  "modifier.bombs.dampened": "Dampened",
+  "modifier.bombs.shockwave": "Shockwave",
 
   "creativetab.bombs_tab": "Bombs Tab"
 }

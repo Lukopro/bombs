@@ -10,12 +10,16 @@ import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nullable;
 
+import net.luko.bombs.Bombs;
 import net.luko.bombs.util.BombModifierUtil;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -211,7 +215,11 @@ public class CustomExplosion extends Explosion {
 
                         // Modifier adaptation
                         if(!BombModifierUtil.hasModifier(this.stack, "pacified")) {
-                            entity.hurt(this.getDamageSource(), (float) ((int) ((d10 * d10 + d10) / 2.0D * 7.0D * (double) f2 + 1.0D)));
+                            float damageAmount = (float) ((int) ((d10 * d10 + d10) / 2.0D * 7.0D * (double) f2 + 1.0D));
+                            if(BombModifierUtil.hasModifier(this.stack, "lethal")){
+                                damageAmount *= 2.0F;
+                            }
+                            entity.hurt(this.getDamageSource(), damageAmount);
                         }
 
                         double d11;
@@ -229,6 +237,9 @@ public class CustomExplosion extends Explosion {
 
                         // Modifier adaptation
                         if(!BombModifierUtil.hasModifier(this.stack, "dampened")) {
+                            if (BombModifierUtil.hasModifier(this.stack, "shockwave")) {
+                                vec31 = vec31.scale(2.0);
+                            }
                             entity.setDeltaMovement(entity.getDeltaMovement().add(vec31));
                         }
 
@@ -243,23 +254,38 @@ public class CustomExplosion extends Explosion {
             }
         }
 
+        for (Map.Entry<Player, Vec3> entry : this.hitPlayers_.entrySet()){
+            Player player = entry.getKey();
+            Vec3 velocity = entry.getValue();
+            if(player instanceof ServerPlayer serverPlayer) {
+                serverPlayer.connection.send(new ClientboundSetEntityMotionPacket(player));
+            }
+        }
     }
 
     /**
      * Does the second part of the explosion (sound, particles, drop spawn)
      */
+    @Override
     public void finalizeExplosion(boolean pSpawnParticles) {
-        if (this.level_.isClientSide) {
-            this.level_.playLocalSound(this.x_, this.y_, this.z_, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 4.0F, (1.0F + (this.level_.random.nextFloat() - this.level_.random.nextFloat()) * 0.2F) * 0.7F, false);
-        }
+        // Replaced the sound emitter to be server-side.
+        // Random pitch between 0.63F and 0.77F
+        float pitch = (1.0F + (this.level_.random.nextFloat() - this.level_.random.nextFloat()) * 0.2F) * 0.7F;
+        this.level_.playSound(
+                null,
+                this.x_, this.y_, this.z_,
+                SoundEvents.GENERIC_EXPLODE,
+                SoundSource.BLOCKS,
+                this.radius_,
+                pitch
+        );
 
         boolean flag = this.interactsWithBlocks();
-        if (pSpawnParticles) {
-            if (!(this.radius_ < 2.0F) && flag) {
-                this.level_.addParticle(ParticleTypes.EXPLOSION_EMITTER, this.x_, this.y_, this.z_, 1.0D, 0.0D, 0.0D);
-            } else {
-                this.level_.addParticle(ParticleTypes.EXPLOSION, this.x_, this.y_, this.z_, 1.0D, 0.0D, 0.0D);
-            }
+
+        // Restructured particle spawning
+        if (this.level_ instanceof ServerLevel) {
+            ServerLevel serverLevel = (ServerLevel) this.level_;
+            spawnParticles(serverLevel);
         }
 
         if (flag) {
@@ -308,6 +334,14 @@ public class CustomExplosion extends Explosion {
             }
         }
 
+    }
+
+    private void spawnParticles(ServerLevel serverLevel){
+        int particleCount = (int)(this.radius_ * 4.0F);
+
+        double spread = this.radius_ * 0.3;
+
+        serverLevel.sendParticles(ParticleTypes.EXPLOSION, x_, y_, z_, particleCount, spread, spread, spread, 0.1);
     }
 
     public boolean interactsWithBlocks() {
@@ -393,11 +427,5 @@ public class CustomExplosion extends Explosion {
     @Nullable
     public Entity getExploder() {
         return this.source_;
-    }
-
-    public static enum BlockInteraction {
-        KEEP,
-        DESTROY,
-        DESTROY_WITH_DECAY;
     }
 }

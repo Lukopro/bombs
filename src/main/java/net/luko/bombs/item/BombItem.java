@@ -30,7 +30,11 @@ public class BombItem extends Item {
         "flame", ChatFormatting.RED,
         "light", ChatFormatting.WHITE,
         "contained", ChatFormatting.GREEN,
-        "pacified", ChatFormatting.GREEN
+        "pacified", ChatFormatting.GREEN,
+            "dampened", ChatFormatting.GREEN,
+            "unleashed", ChatFormatting.DARK_GREEN,
+            "lethal", ChatFormatting.DARK_GREEN,
+            "shockwave", ChatFormatting.DARK_GREEN
     );
     public BombItem(Properties properties, float explosionPower){
         super(properties);

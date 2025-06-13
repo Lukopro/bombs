@@ -67,7 +67,7 @@ public class CustomExplosion extends Explosion {
     private final Map<Player, Vec3> hitPlayers_ = Maps.newHashMap();
     private final Vec3 position_;
     private final ItemStack stack;
-
+    /* Saved for later!
     public CustomExplosion(Level pLevel, @Nullable Entity pSource, double pToBlowX, double pToBlowY, double pToBlowZ, float pRadius, List<BlockPos> pPositions, ItemStack stack) {
         this(pLevel, pSource, pToBlowX, pToBlowY, pToBlowZ, pRadius, false, Explosion.BlockInteraction.DESTROY_WITH_DECAY, pPositions, stack);
     }
@@ -80,7 +80,7 @@ public class CustomExplosion extends Explosion {
     public CustomExplosion(Level pLevel, @Nullable Entity pSource, double pToBlowX, double pToBlowY, double pToBlowZ, float pRadius, boolean pFire, Explosion.BlockInteraction pBlockInteraction, ItemStack stack) {
         this(pLevel, pSource, (DamageSource)null, (ExplosionDamageCalculator)null, pToBlowX, pToBlowY, pToBlowZ, pRadius, pFire, pBlockInteraction, stack);
     }
-
+    */
     public CustomExplosion(Level pLevel, @Nullable Entity pSource, @Nullable DamageSource pDamageSource, @Nullable ExplosionDamageCalculator pDamageCalculator, double pToBlowX, double pToBlowY, double pToBlowZ, float pRadius, boolean pFire, Explosion.BlockInteraction pBlockInteraction, ItemStack stack) {
         super(pLevel, pSource, pDamageSource, pDamageCalculator, pToBlowX, pToBlowY, pToBlowZ, pRadius, pFire, pBlockInteraction);
         this.level_ = pLevel;
@@ -100,7 +100,7 @@ public class CustomExplosion extends Explosion {
     private ExplosionDamageCalculator makeDamageCalculator(@Nullable Entity pEntity) {
         return (ExplosionDamageCalculator)(pEntity == null ? EXPLOSION_DAMAGE_CALCULATOR_ : new EntityBasedExplosionDamageCalculator(pEntity));
     }
-
+    /* Saved for later!
     public static float getSeenPercent(Vec3 pExplosionVector, Entity pEntity) {
         AABB aabb = pEntity.getBoundingBox();
         double d0 = 1.0D / ((aabb.maxX - aabb.minX) * 2.0D + 1.0D);
@@ -344,10 +344,6 @@ public class CustomExplosion extends Explosion {
         serverLevel.sendParticles(ParticleTypes.EXPLOSION, x_, y_, z_, particleCount, spread, spread, spread, 0.1);
     }
 
-    public boolean interactsWithBlocks() {
-        return this.blockInteraction_ != Explosion.BlockInteraction.KEEP;
-    }
-
     private static void addBlockDrops(ObjectArrayList<Pair<ItemStack, BlockPos>> pDropPositionArray, ItemStack pStack, BlockPos pPos) {
         int i = pDropPositionArray.size();
 
@@ -364,6 +360,10 @@ public class CustomExplosion extends Explosion {
         }
 
         pDropPositionArray.add(Pair.of(pStack, pPos));
+    }
+    /* Saved for later!
+    public boolean interactsWithBlocks() {
+        return this.blockInteraction_ != Explosion.BlockInteraction.KEEP;
     }
 
     public DamageSource getDamageSource() {
@@ -406,7 +406,7 @@ public class CustomExplosion extends Explosion {
 
     /**
      * Returns either the entity that placed the explosive block, the entity that caused the explosion or null.
-     */
+     *
     @Nullable
     public Entity getDirectSourceEntity() {
         return this.source_;
@@ -428,4 +428,5 @@ public class CustomExplosion extends Explosion {
     public Entity getExploder() {
         return this.source_;
     }
+    */
 }

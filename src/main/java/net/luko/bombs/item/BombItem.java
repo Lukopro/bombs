@@ -4,6 +4,7 @@ import net.luko.bombs.entity.ModEntities;
 import net.luko.bombs.entity.ThrownBombEntity;
 import net.luko.bombs.util.BombModifierUtil;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -13,15 +14,17 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class BombItem extends Item {
     // Each instance of BombItem has a hard coded explosionPower.
@@ -32,7 +35,7 @@ public class BombItem extends Item {
         "contained", ChatFormatting.GREEN,
         "pacified", ChatFormatting.GREEN,
             "dampened", ChatFormatting.GREEN,
-            "unleashed", ChatFormatting.DARK_GREEN,
+            "shatter", ChatFormatting.DARK_GREEN,
             "lethal", ChatFormatting.DARK_GREEN,
             "shockwave", ChatFormatting.DARK_GREEN
     );

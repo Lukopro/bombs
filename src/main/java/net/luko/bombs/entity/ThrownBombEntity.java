@@ -3,16 +3,22 @@ package net.luko.bombs.entity;
 import net.luko.bombs.Bombs;
 import net.luko.bombs.item.ModItems;
 import net.luko.bombs.util.BombModifierUtil;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+
+import java.util.Optional;
 
 
 public class ThrownBombEntity extends ThrowableItemProjectile {
@@ -65,16 +71,13 @@ public class ThrownBombEntity extends ThrowableItemProjectile {
 
     @Override
     protected void onHitEntity(EntityHitResult result){
-        //if(!level().isClientSide()){
-            explode();
-        //}
+        explode();
+        super.onHitEntity(result);
     }
 
     @Override
     protected void onHitBlock(BlockHitResult result){
-        //if(!level().isClientSide()){
-            explode();
-        //}
+        explode();
         super.onHitBlock(result);
     }
 
@@ -83,7 +86,7 @@ public class ThrownBombEntity extends ThrowableItemProjectile {
                 level(),
                 this,
                 null,
-                new ExplosionDamageCalculator(),
+                new ModifierExplosionDamageCalculator(new ExplosionDamageCalculator(), getItem()),
                 this.getX(),
                 this.getY(),
                 this.getZ(),
@@ -103,5 +106,29 @@ public class ThrownBombEntity extends ThrowableItemProjectile {
             return Explosion.BlockInteraction.KEEP;
         }
         return Explosion.BlockInteraction.DESTROY;
+    }
+
+    private class ModifierExplosionDamageCalculator extends ExplosionDamageCalculator{
+        private final ExplosionDamageCalculator vanilla;
+        private final ItemStack stack;
+
+        public ModifierExplosionDamageCalculator(ExplosionDamageCalculator vanilla, ItemStack stack){
+            this.vanilla = vanilla;
+            this.stack = stack;
+        }
+
+        @Override
+        public Optional<Float> getBlockExplosionResistance(Explosion explosion, BlockGetter reader, BlockPos pos, BlockState state, FluidState fluid) {
+            float blockResistanceFactor = 1.0F;
+            if(BombModifierUtil.hasModifier(this.stack, "shatter")){
+                blockResistanceFactor *= 0.1F;
+            }
+            return state.isAir() && fluid.isEmpty()
+                    ? Optional.empty()
+                    : Optional.of(Math.max(
+                            state.getExplosionResistance(reader, pos, explosion) * blockResistanceFactor,
+                            fluid.getExplosionResistance(reader, pos, explosion)
+                            ));
+        }
     }
 }

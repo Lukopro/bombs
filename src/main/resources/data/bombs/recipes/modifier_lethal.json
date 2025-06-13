@@ -1,6 +1,6 @@
 {
   "type": "bombs:demolition_modifier",
   "input_bomb": { "tag": "bombs:bomb" },
-  "input_modifier": { "item": "minecraft:glass" },
+  "input_modifier": { "item": "minecraft:flint" },
   "modifier": "lethal"
 }

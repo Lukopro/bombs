@@ -48,7 +48,11 @@ public class DemolitionUpgradeRecipe implements Recipe<Container> {
 
     @Override
     public ItemStack assemble(Container container, RegistryAccess registryAccess){
-        return result.copy();
+        ItemStack resultBomb = result.copy();
+        if(container.getItem(0).hasTag()){
+            resultBomb.setTag(container.getItem(0).getTag().copy());
+        }
+        return resultBomb;
     }
 
     @Override

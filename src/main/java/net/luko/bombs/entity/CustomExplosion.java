@@ -22,6 +22,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
@@ -38,6 +39,7 @@ import net.minecraft.world.item.enchantment.ProtectionEnchantment;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -102,7 +104,7 @@ public class CustomExplosion extends Explosion {
     private ExplosionDamageCalculator makeDamageCalculator(@Nullable Entity pEntity) {
         return (ExplosionDamageCalculator)(pEntity == null ? EXPLOSION_DAMAGE_CALCULATOR_ : new EntityBasedExplosionDamageCalculator(pEntity));
     }
-    /* Saved for later!
+
     public static float getSeenPercent(Vec3 pExplosionVector, Entity pEntity) {
         AABB aabb = pEntity.getBoundingBox();
         double d0 = 1.0D / ((aabb.maxX - aabb.minX) * 2.0D + 1.0D);
@@ -165,6 +167,11 @@ public class CustomExplosion extends Explosion {
                             BlockPos blockpos = BlockPos.containing(d4, d6, d8);
                             BlockState blockstate = this.level_.getBlockState(blockpos);
                             FluidState fluidstate = this.level_.getFluidState(blockpos);
+
+                            if (BombModifierUtil.hasModifier(this.stack, "evaporate") && fluidstate.is(FluidTags.WATER)) {
+                                blockstate = Blocks.AIR.defaultBlockState();
+                            }
+
                             if (!this.level_.isInWorldBounds(blockpos)) {
                                 break;
                             }

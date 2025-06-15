@@ -119,16 +119,17 @@ public class ThrownBombEntity extends ThrowableItemProjectile {
 
         @Override
         public Optional<Float> getBlockExplosionResistance(Explosion explosion, BlockGetter reader, BlockPos pos, BlockState state, FluidState fluid) {
-            float blockResistanceFactor = 1.0F;
+            float blockResistance = state.getExplosionResistance(reader, pos, explosion);
+            float fluidResistance = fluid.getExplosionResistance(reader, pos, explosion);
+
             if(BombModifierUtil.hasModifier(this.stack, "shatter")){
-                blockResistanceFactor *= 0.1F;
+                blockResistance *= 0.4F;
             }
-            return state.isAir() && fluid.isEmpty()
-                    ? Optional.empty()
-                    : Optional.of(Math.max(
-                            state.getExplosionResistance(reader, pos, explosion) * blockResistanceFactor,
-                            fluid.getExplosionResistance(reader, pos, explosion)
-                            ));
+
+            if(BombModifierUtil.hasModifier(this.stack, "evaporate")){
+                fluidResistance *= 0.0F;
+            }
+            return Optional.of(Math.max(blockResistance, fluidResistance));
         }
     }
 }

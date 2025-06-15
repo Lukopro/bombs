@@ -4,26 +4,20 @@ import net.luko.bombs.entity.ModEntities;
 import net.luko.bombs.entity.ThrownBombEntity;
 import net.luko.bombs.util.BombModifierUtil;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -31,16 +25,17 @@ import java.util.*;
 public class BombItem extends Item {
     // Each instance of BombItem has a hard coded explosionPower.
     private float explosionPower;
-    private static final Map<String, ChatFormatting> modifierMap = Map.of(
-        "flame", ChatFormatting.RED,
-        "light", ChatFormatting.WHITE,
-        "contained", ChatFormatting.GREEN,
-        "pacified", ChatFormatting.GREEN,
-            "dampened", ChatFormatting.GREEN,
-            "shatter", ChatFormatting.DARK_GREEN,
-            "lethal", ChatFormatting.DARK_GREEN,
-            "shockwave", ChatFormatting.DARK_GREEN,
-            "gentle", ChatFormatting.DARK_AQUA
+    private static final Map<String, Style> modifierMap = Map.of(
+        "flame", Style.EMPTY.withColor(TextColor.fromRgb(0xff5e00)),
+        "light", Style.EMPTY.withColor(TextColor.fromRgb(0xffffe0)),
+        "contained", Style.EMPTY.withColor(TextColor.fromRgb(0x369c7d)),
+        "pacified", Style.EMPTY.withColor(TextColor.fromRgb(0x369c7d)),
+            "dampened", Style.EMPTY.withColor(TextColor.fromRgb(0x369c7d)),
+            "shatter", Style.EMPTY.withColor(TextColor.fromRgb(0x5f9c36)),
+            "lethal", Style.EMPTY.withColor(TextColor.fromRgb(0x5f9c36)),
+            "shockwave", Style.EMPTY.withColor(TextColor.fromRgb(0x5f9c36)),
+            "gentle", Style.EMPTY.withColor(TextColor.fromRgb(0x369c7d)),
+            "evaporate", Style.EMPTY.withColor(TextColor.fromRgb(0x9aa9b5))
     );
     public BombItem(Properties properties, float explosionPower){
         super(properties);

@@ -25,17 +25,17 @@ import java.util.*;
 public class BombItem extends Item {
     // Each instance of BombItem has a hard coded explosionPower.
     private float explosionPower;
-    private static final Map<String, Style> modifierMap = Map.of(
-        "flame", Style.EMPTY.withColor(TextColor.fromRgb(0xff5e00)),
-        "light", Style.EMPTY.withColor(TextColor.fromRgb(0xffffe0)),
-        "contained", Style.EMPTY.withColor(TextColor.fromRgb(0x369c7d)),
-        "pacified", Style.EMPTY.withColor(TextColor.fromRgb(0x369c7d)),
-            "dampened", Style.EMPTY.withColor(TextColor.fromRgb(0x369c7d)),
-            "shatter", Style.EMPTY.withColor(TextColor.fromRgb(0x5f9c36)),
-            "lethal", Style.EMPTY.withColor(TextColor.fromRgb(0x5f9c36)),
-            "shockwave", Style.EMPTY.withColor(TextColor.fromRgb(0x5f9c36)),
-            "gentle", Style.EMPTY.withColor(TextColor.fromRgb(0x369c7d)),
-            "evaporate", Style.EMPTY.withColor(TextColor.fromRgb(0x9aa9b5))
+    private static final Map<String, Style> modifierColorMap = Map.ofEntries(
+            Map.entry("flame", Style.EMPTY.withColor(TextColor.fromRgb(0xff5e00))),
+            Map.entry("light", Style.EMPTY.withColor(TextColor.fromRgb(0xffffe0))),
+            Map.entry("contained", Style.EMPTY.withColor(TextColor.fromRgb(0x369c7d))),
+            Map.entry("pacified", Style.EMPTY.withColor(TextColor.fromRgb(0x369c7d))),
+            Map.entry("dampened", Style.EMPTY.withColor(TextColor.fromRgb(0x369c7d))),
+            Map.entry("shatter", Style.EMPTY.withColor(TextColor.fromRgb(0x5f9c36))),
+            Map.entry("lethal", Style.EMPTY.withColor(TextColor.fromRgb(0x5f9c36))),
+            Map.entry("shockwave", Style.EMPTY.withColor(TextColor.fromRgb(0x5f9c36))),
+            Map.entry("gentle", Style.EMPTY.withColor(TextColor.fromRgb(0x369c7d))),
+            Map.entry("evaporate", Style.EMPTY.withColor(TextColor.fromRgb(0x9aa9b5)))
     );
     public BombItem(Properties properties, float explosionPower){
         super(properties);
@@ -92,9 +92,14 @@ public class BombItem extends Item {
 
             for(int i = 0; i < modifiers.size(); i++){
                 String mod = modifiers.getString(i);
-                tooltip.add(Component.literal("- ").append(Component.translatable("modifier.bombs." + mod)).withStyle(modifierMap.get(mod)));
+                tooltip.add(Component.literal("- ")
+                                .append(Component.translatable("modifier.bombs." + mod))
+                                .withStyle(modifierColorMap.get(mod)));
+
                 if(Screen.hasShiftDown()){
-                    tooltip.add(Component.translatable("modifier.bombs." + mod + ".info").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY));
+                    tooltip.add(Component.translatable("modifier.bombs." + mod + ".info")
+                            .withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY));
+
                     tooltip.add(Component.empty());
                 }
             }

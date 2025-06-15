@@ -1,0 +1,7 @@
+- Gold -> +0.25 radius
+- Texture overlay per modifiers
+- Optimize
+- New bomb types
+- Safeguard from outdated/nonexistent modifier NBT tags
+- Upgraded tiers keep NBT
+- Gooder textures

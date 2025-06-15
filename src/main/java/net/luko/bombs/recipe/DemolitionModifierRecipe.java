@@ -14,6 +14,8 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
+import java.util.*;
+
 public class DemolitionModifierRecipe implements Recipe<Container> {
     private final ResourceLocation id;
     private final Ingredient inputBomb;
@@ -55,11 +57,52 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
 
         CompoundTag tag = bomb.getOrCreateTag();
 
-        ListTag modifiers = tag.getList("Modifiers", CompoundTag.TAG_STRING);
-        modifiers.add(StringTag.valueOf(modifierName));
-        tag.put("Modifiers", modifiers);
+        ListTag oldModifiers = tag.getList("Modifiers", CompoundTag.TAG_STRING);
+        oldModifiers.add(StringTag.valueOf(modifierName));
+
+        ListTag newModifiers = sortModifiers(oldModifiers);
+
+        tag.put("Modifiers", newModifiers);
 
         return bomb;
+    }
+
+    private ListTag sortModifiers(ListTag modifiersTag){
+
+        // Extract String tags to a String ArrayList
+        ArrayList<String> modifiersArray = new ArrayList<>();
+        for(int i = 0; i < modifiersTag.size(); i++){
+            modifiersArray.add(modifiersTag.getString(i));
+        }
+
+        // Sort modifiersArray using a preset order
+        Map<String, Integer> orderMap = Map.ofEntries(
+                Map.entry("flame", 1),
+                Map.entry("light", 2),
+                Map.entry("contained", 3),
+                Map.entry("pacified", 4),
+                Map.entry("dampened", 5),
+                Map.entry("shatter", 6),
+                Map.entry("lethal", 7),
+                Map.entry("shockwave", 8),
+                Map.entry("evaporate", 9),
+                Map.entry("gentle", 10)
+        );
+
+        Collections.sort(modifiersArray, (a, b) -> {
+            int indexA = orderMap.getOrDefault(a, Integer.MAX_VALUE);
+            int indexB = orderMap.getOrDefault(b, Integer.MAX_VALUE);
+            return Integer.compare(indexA, indexB);
+        });
+
+
+        // Rebuild ListTag
+        ListTag sortedModifiersTag = new ListTag();
+        for(String s : modifiersArray){
+            sortedModifiersTag.add(StringTag.valueOf(s));
+        }
+
+        return sortedModifiersTag;
     }
 
     @Override

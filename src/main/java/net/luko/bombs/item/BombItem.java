@@ -88,7 +88,7 @@ public class BombItem extends Item {
             ListTag modifiers = stack.getTag().getList("Modifiers", Tag.TAG_STRING);
 
             tooltip.add(Component.empty());
-            tooltip.add(Component.literal("Modifiers:").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.GRAY));
+            tooltip.add(Component.literal("Modifiers:").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(0xdddddd))).withStyle(ChatFormatting.BOLD));
 
             for(int i = 0; i < modifiers.size(); i++){
                 String mod = modifiers.getString(i);

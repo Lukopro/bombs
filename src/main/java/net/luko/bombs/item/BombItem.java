@@ -112,7 +112,7 @@ public class BombItem extends Item {
             return Component.translatable(baseName);
         }
 
-        MutableComponent tierName = Component.translatable("tier.bombs." + tier);
+        MutableComponent tierName = Component.translatable("tier.bombs." + tier).append(Component.literal(" "));
 
         return tierName.append(Component.translatable(baseName));
     }

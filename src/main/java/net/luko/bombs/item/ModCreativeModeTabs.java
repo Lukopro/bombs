@@ -22,10 +22,6 @@ public class ModCreativeModeTabs {
                         /* Add items to Bombs creative mode tab */
 
                         pOutput.accept(ModItems.DYNAMITE.get());
-                        pOutput.accept(ModItems.STRONG_DYNAMITE.get());
-                        pOutput.accept(ModItems.BLAZE_DYNAMITE.get());
-                        pOutput.accept(ModItems.DRAGON_DYNAMITE.get());
-                        pOutput.accept(ModItems.CRYSTAL_DYNAMITE.get());
                         pOutput.accept(ModBlocks.DEMOLITION_TABLE.get());
 
                     })

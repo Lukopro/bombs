@@ -17,8 +17,8 @@ public class DemolitionUpgradeRecipeSerializer implements RecipeSerializer<Demol
         Ingredient inputBomb = Ingredient.fromJson(GsonHelper.getAsJsonObject(json, "input_bomb"));
         Ingredient inputUpgrade = Ingredient.fromJson(GsonHelper.getAsJsonObject(json, "input_upgrade"));
         Ingredient inputCasing = Ingredient.fromJson(GsonHelper.getAsJsonObject(json, "input_casing"));
-        ItemStack result = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "result"));
-        return new DemolitionUpgradeRecipe(id, inputBomb, inputUpgrade, inputCasing, result);
+        int tier = GsonHelper.getAsInt(json, "tier");
+        return new DemolitionUpgradeRecipe(id, inputBomb, inputUpgrade, inputCasing, tier);
     }
 
     @Override
@@ -26,14 +26,14 @@ public class DemolitionUpgradeRecipeSerializer implements RecipeSerializer<Demol
         Ingredient inputBomb = Ingredient.fromNetwork(buf);
         Ingredient inputUpgrade = Ingredient.fromNetwork(buf);
         Ingredient inputCasing = Ingredient.fromNetwork(buf);
-        ItemStack result = buf.readItem();
-        return new DemolitionUpgradeRecipe(id, inputBomb, inputUpgrade, inputCasing, result);
+        int tier = buf.readInt();
+        return new DemolitionUpgradeRecipe(id, inputBomb, inputUpgrade, inputCasing, tier);
     }
 
     public void toNetwork(FriendlyByteBuf buf, DemolitionUpgradeRecipe recipe){
         recipe.getInputBomb().toNetwork(buf);
         recipe.getInputUpgrade().toNetwork(buf);
         recipe.getInputCasing().toNetwork(buf);
-        buf.writeItem(recipe.getResultItem());
+        buf.writeInt(recipe.getTier());
     }
 }

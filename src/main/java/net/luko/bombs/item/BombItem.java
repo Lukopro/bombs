@@ -8,6 +8,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.InteractionHand;
@@ -23,8 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class BombItem extends Item {
-    // Each instance of BombItem has a hard coded explosionPower.
-    private float explosionPower;
+
     private static final Map<String, Style> modifierColorMap = Map.ofEntries(
             Map.entry("flame", Style.EMPTY.withColor(TextColor.fromRgb(0xff5e00))),
             Map.entry("light", Style.EMPTY.withColor(TextColor.fromRgb(0xffffe0))),
@@ -39,14 +39,31 @@ public class BombItem extends Item {
             Map.entry("golden", Style.EMPTY.withColor(TextColor.fromRgb(0xffe017)))
     );
 
-    public BombItem(Properties properties, float explosionPower){
-        super(properties);
-        this.explosionPower = explosionPower;
+    private static Map<Integer, Float> explosionPowerMap = new HashMap<>();
+    static{
+        explosionPowerMap.put(1, 1.5F);
+        explosionPowerMap.put(2, 2.5F);
+        explosionPowerMap.put(3, 4.0F);
+        explosionPowerMap.put(4, 5.5F);
+        explosionPowerMap.put(5, 7.0F);
     }
 
-    public void setExplosionPower(float power){
-        this.explosionPower = power;
+    public BombItem(Properties properties){
+        super(properties);
     }
+
+    private float calculateExplosionPower(ItemStack stack){
+        int tier = 1;
+        if (stack.hasTag() && stack.getTag().contains("Tier")){
+            tier = stack.getTag().getInt("Tier");
+        }
+        return explosionPowerMap.getOrDefault(tier, 1.5F);
+    }
+
+    public static void setExplosionPowerMapTier(int tier, float power){
+        explosionPowerMap.put(tier, power);
+    }
+
     // When bomb is in hand and is right clicked, use() is called.
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand){
@@ -54,7 +71,7 @@ public class BombItem extends Item {
 
         // Server bomb logic
         if(!level.isClientSide()){
-            ThrownBombEntity bombEntity = new ThrownBombEntity(ModEntities.THROWN_BOMB.get(), level, player, explosionPower);
+            ThrownBombEntity bombEntity = new ThrownBombEntity(ModEntities.THROWN_BOMB.get(), level, player, calculateExplosionPower(stack));
 
             // Spawns bomb slightly in front of player.
             Vec3 forward = player.getLookAngle();
@@ -83,10 +100,33 @@ public class BombItem extends Item {
     }
 
     @Override
+    public Component getName(ItemStack stack){
+        int tier = 1;
+        if(stack.hasTag() && stack.getTag().contains("Tier")){
+            tier = stack.getTag().getInt("Tier");
+        }
+
+        String baseName = this.getDescriptionId(stack);
+
+        if(tier == 1){
+            return Component.translatable(baseName);
+        }
+
+        MutableComponent tierName = Component.translatable("tier.bombs." + tier);
+
+        return tierName.append(Component.translatable(baseName));
+    }
+
+    @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag){
         super.appendHoverText(stack, level, tooltip, flag);
 
-        if(stack.hasTag() && stack.getTag().contains("Modifiers")){
+        if(!stack.hasTag()){
+            tooltip.add(Component.literal("No modifiers"));
+            return;
+        }
+
+        if(stack.getTag().contains("Modifiers")){
             ListTag modifiers = stack.getTag().getList("Modifiers", Tag.TAG_STRING);
 
             tooltip.add(Component.empty());

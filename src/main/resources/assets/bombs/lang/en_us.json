@@ -34,5 +34,10 @@
   "modifier.bombs.evaporate.info": "Removes water.",
   "modifier.bombs.golden.info": "Explodes harder.",
 
+  "tier.bombs.2": "Strong",
+  "tier.bombs.3": "Blaze",
+  "tier.bombs.4": "Dragon",
+  "tier.bombs.5": "Crystal",
+
   "creativetab.bombs_tab": "Bombs Tab"
 }

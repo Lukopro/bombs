@@ -18,13 +18,13 @@ import java.util.Map;
 public class ThrownBombRenderer extends EntityRenderer<ThrownBombEntity> {
     private final DynamiteModel<ThrownBombEntity> model;
 
-    private static final Map<Item, ResourceLocation> TEXTURES = Map.of(
+    /*private static final Map<Item, ResourceLocation> TEXTURES = Map.of(
         ModItems.DYNAMITE.get(), new ResourceLocation(Bombs.MODID, "textures/entity/dynamite.png"),
         ModItems.STRONG_DYNAMITE.get(), new ResourceLocation(Bombs.MODID, "textures/entity/strong_dynamite.png"),
         ModItems.BLAZE_DYNAMITE.get(), new ResourceLocation(Bombs.MODID, "textures/entity/blaze_dynamite.png"),
         ModItems.DRAGON_DYNAMITE.get(), new ResourceLocation(Bombs.MODID, "textures/entity/dragon_dynamite.png"),
         ModItems.CRYSTAL_DYNAMITE.get(), new ResourceLocation(Bombs.MODID, "textures/entity/crystal_dynamite.png")
-    );
+    );*/
     public ThrownBombRenderer(EntityRendererProvider.Context context){
         super(context);
         this.model = new DynamiteModel<>(context.bakeLayer(DynamiteModel.LAYER_LOCATION));
@@ -56,7 +56,7 @@ public class ThrownBombRenderer extends EntityRenderer<ThrownBombEntity> {
 
     @Override
     public ResourceLocation getTextureLocation(ThrownBombEntity entity){
-        return TEXTURES.getOrDefault(entity.getItem().getItem(),
-            new ResourceLocation(Bombs.MODID, "textures/entity/dynamite.png"));
+        return new ResourceLocation(Bombs.MODID, "textures/entity/dynamite.png");
+                //TEXTURES.getOrDefault(entity.getItem().getItem(),new ResourceLocation(Bombs.MODID, "textures/entity/dynamite.png"));
     }
 }

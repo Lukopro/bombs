@@ -1,7 +1,7 @@
 {
   "type": "bombs:demolition_upgrade",
   "input_bomb": {
-    "item": "bombs:dynamite"
+    "tag": "bombs:bomb"
   },
   "input_upgrade": {
     "item": "minecraft:gunpowder"
@@ -9,8 +9,5 @@
   "input_casing": {
     "item": "minecraft:iron_ingot"
   },
-  "result": {
-    "item": "bombs:strong_dynamite",
-    "count": 1
-  }
+  "tier": 2
 }

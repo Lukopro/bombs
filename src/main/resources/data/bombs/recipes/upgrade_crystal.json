@@ -1,7 +1,7 @@
 {
   "type": "bombs:demolition_upgrade",
   "input_bomb": {
-    "tag": "bombs:below_crystal_dynamite"
+    "tag": "bombs:bomb"
   },
   "input_upgrade": {
     "item": "minecraft:nether_star"
@@ -9,8 +9,5 @@
   "input_casing": {
     "item": "minecraft:netherite_scrap"
   },
-  "result": {
-    "item": "bombs:crystal_dynamite",
-    "count": 1
-  }
+  "tier": 5
 }

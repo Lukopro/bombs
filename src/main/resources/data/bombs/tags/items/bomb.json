@@ -1,10 +1,6 @@
 {
   "replace": false,
   "values": [
-    "bombs:dynamite",
-    "bombs:strong_dynamite",
-    "bombs:blaze_dynamite",
-    "bombs:dragon_dynamite",
-    "bombs:crystal_dynamite"
+    "bombs:dynamite"
   ]
 }

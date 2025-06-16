@@ -6,7 +6,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
@@ -60,14 +59,14 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
         ListTag oldModifiers = tag.getList("Modifiers", CompoundTag.TAG_STRING);
         oldModifiers.add(StringTag.valueOf(modifierName));
 
-        ListTag newModifiers = sortModifiers(oldModifiers);
+        ListTag newModifiers = sortedModifiers(oldModifiers);
 
         tag.put("Modifiers", newModifiers);
 
         return bomb;
     }
 
-    private ListTag sortModifiers(ListTag modifiersTag){
+    private ListTag sortedModifiers(ListTag modifiersTag){
 
         // Extract String tags to a String ArrayList
         ArrayList<String> modifiersArray = new ArrayList<>();
@@ -119,9 +118,12 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
 
         if(!result.isEmpty()){
             CompoundTag tag = result.getOrCreateTag();
-            ListTag modifiers = tag.getList("Modifiers", CompoundTag.TAG_STRING);
-            modifiers.add(StringTag.valueOf(modifierName));
-            tag.put("Modifiers", modifiers);
+
+            ListTag oldModifiers = tag.getList("Modifiers", CompoundTag.TAG_STRING);
+            oldModifiers.add(StringTag.valueOf(modifierName));
+
+            ListTag newModifiers = sortedModifiers(oldModifiers);
+            tag.put("Modifiers", newModifiers);
         }
 
         return result;

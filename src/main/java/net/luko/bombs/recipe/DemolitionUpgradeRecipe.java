@@ -1,7 +1,10 @@
 package net.luko.bombs.recipe;
 
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
@@ -10,33 +13,36 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class DemolitionUpgradeRecipe implements Recipe<Container> {
     private final ResourceLocation id;
     private final Ingredient inputBomb;
     private final Ingredient inputUpgrade;
     private final Ingredient inputCasing;
-    private final ItemStack result;
+    private final int tier;
 
-    public DemolitionUpgradeRecipe(ResourceLocation id, Ingredient inputBomb, Ingredient inputUpgrade, Ingredient inputCasing, ItemStack result) {
+    public DemolitionUpgradeRecipe(ResourceLocation id, Ingredient inputBomb, Ingredient inputUpgrade, Ingredient inputCasing, int tier) {
         this.id = id;
         this.inputBomb = inputBomb;
         this.inputUpgrade = inputUpgrade;
         this.inputCasing = inputCasing;
-        this.result = result;
+        this.tier = tier;
     }
 
     public Ingredient getInputBomb(){
-        return inputBomb;
+        return this.inputBomb;
     }
 
     public Ingredient getInputUpgrade(){
-        return inputUpgrade;
+        return this.inputUpgrade;
     }
 
     public Ingredient getInputCasing(){
-        return inputCasing;
+        return this.inputCasing;
+    }
+
+    public int getTier(){
+        return this.tier;
     }
 
     @Override
@@ -48,11 +54,17 @@ public class DemolitionUpgradeRecipe implements Recipe<Container> {
 
     @Override
     public ItemStack assemble(Container container, RegistryAccess registryAccess){
-        ItemStack resultBomb = result.copy();
-        if(container.getItem(0).hasTag()){
-            resultBomb.setTag(container.getItem(0).getTag().copy());
-        }
-        return resultBomb;
+        ItemStack bomb = container.getItem(0).copy();
+
+        if (bomb.isEmpty()) return ItemStack.EMPTY;
+
+        bomb.setCount(1);
+
+        CompoundTag tag = bomb.getOrCreateTag();
+
+        tag.putInt("Tier", tier);
+
+        return bomb;
     }
 
     @Override
@@ -60,11 +72,17 @@ public class DemolitionUpgradeRecipe implements Recipe<Container> {
         return true;
     }
 
-    public ItemStack getResultItem(){
-        return result;
-    }
     @Override
     public ItemStack getResultItem(RegistryAccess registryAccess){
+        ItemStack result = inputBomb.getItems().length > 0
+                ? inputBomb.getItems()[0].copy()
+                : ItemStack.EMPTY;
+
+        if(!result.isEmpty()){
+            CompoundTag tag = result.getOrCreateTag();
+            tag.putInt("Tier", tier);
+        }
+
         return result;
     }
 

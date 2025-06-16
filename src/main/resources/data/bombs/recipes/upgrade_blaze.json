@@ -1,7 +1,7 @@
 {
   "type": "bombs:demolition_upgrade",
   "input_bomb": {
-    "tag": "bombs:below_blaze_dynamite"
+    "tag": "bombs:bomb"
   },
   "input_upgrade": {
     "item": "minecraft:blaze_powder"
@@ -9,8 +9,5 @@
   "input_casing": {
     "item": "minecraft:quartz"
   },
-  "result": {
-    "item": "bombs:blaze_dynamite",
-    "count": 1
-  }
+  "tier": 3
 }

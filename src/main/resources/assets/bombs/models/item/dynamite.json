@@ -2,5 +2,13 @@
   "parent": "item/generated",
   "textures": {
     "layer0": "bombs:item/dynamite"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "bombs:modifier": 1.0
+      },
+      "model": "bombs:item/dynamite_modified"
+    }
+  ]
 }

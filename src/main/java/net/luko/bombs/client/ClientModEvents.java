@@ -20,6 +20,7 @@ public class ClientModEvents {
     public static void onClientSetup(FMLClientSetupEvent event)
     {
         MenuScreens.register(ModMenuTypes.DEMOLITION_TABLE_MENU.get(), DemolitionTableScreen::new);
+        event.enqueueWork(BombsClient::init);
     }
 
     @SubscribeEvent

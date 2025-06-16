@@ -3,11 +3,13 @@ package net.luko.bombs.block;
 import net.luko.bombs.Bombs;
 import net.luko.bombs.block.custom.DemolitionTableBlock;
 import net.luko.bombs.item.ModItems;
+import net.minecraft.client.resources.model.Material;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraftforge.client.model.obj.ObjMaterialLibrary;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -20,7 +22,11 @@ public class ModBlocks {
             DeferredRegister.create(ForgeRegistries.BLOCKS, Bombs.MODID);
 
     public static final RegistryObject<Block> DEMOLITION_TABLE = registerBlock("demolition_table",
-            () -> new DemolitionTableBlock(BlockBehaviour.Properties.copy(Blocks.ENCHANTING_TABLE)));
+            () -> new DemolitionTableBlock(BlockBehaviour.Properties
+                    .of()
+                    .strength(3.0F, 6.0F)
+                    .sound(SoundType.COPPER)
+            ));
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block){
         RegistryObject<T> toReturn = BLOCKS.register(name, block);

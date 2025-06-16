@@ -20,6 +20,7 @@
   "modifier.bombs.shockwave": "Shockwave",
   "modifier.bombs.gentle": "Gentle",
   "modifier.bombs.evaporate": "Evaporate",
+  "modifier.bombs.golden": "Golden",
 
   "modifier.bombs.flame.info": "Adds fire to explosions.",
   "modifier.bombs.light.info": "Flies farther.",
@@ -31,6 +32,7 @@
   "modifier.bombs.shockwave.info": "Deal's double knockback.",
   "modifier.bombs.gentle.info": "Doesn't destroy drops.",
   "modifier.bombs.evaporate.info": "Removes water.",
+  "modifier.bombs.golden.info": "Explodes harder.",
 
   "creativetab.bombs_tab": "Bombs Tab"
 }

@@ -35,7 +35,8 @@ public class BombItem extends Item {
             Map.entry("lethal", Style.EMPTY.withColor(TextColor.fromRgb(0x5f9c36))),
             Map.entry("shockwave", Style.EMPTY.withColor(TextColor.fromRgb(0x5f9c36))),
             Map.entry("gentle", Style.EMPTY.withColor(TextColor.fromRgb(0x369c7d))),
-            Map.entry("evaporate", Style.EMPTY.withColor(TextColor.fromRgb(0x9aa9b5)))
+            Map.entry("evaporate", Style.EMPTY.withColor(TextColor.fromRgb(0x9aa9b5))),
+            Map.entry("golden", Style.EMPTY.withColor(TextColor.fromRgb(0xffe017)))
     );
     public BombItem(Properties properties, float explosionPower){
         super(properties);

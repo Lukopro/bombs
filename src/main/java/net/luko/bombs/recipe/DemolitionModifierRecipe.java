@@ -77,6 +77,7 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
 
         // Sort modifiersArray using a preset order
         Map<String, Integer> orderMap = Map.ofEntries(
+                Map.entry("golden", 0),
                 Map.entry("flame", 1),
                 Map.entry("light", 2),
                 Map.entry("contained", 3),

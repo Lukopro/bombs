@@ -22,6 +22,12 @@ public class ModCreativeModeTabs {
                         /* Add items to Bombs creative mode tab */
 
                         pOutput.accept(ModItems.DYNAMITE.get());
+                        for(int i = 2; i <= 5; i++){
+                            ItemStack tempStack = new ItemStack(ModItems.DYNAMITE.get());
+                            tempStack.getOrCreateTag().putInt("Tier", i);
+                            pOutput.accept(tempStack);
+                        }
+
                         pOutput.accept(ModBlocks.DEMOLITION_TABLE.get());
 
                     })

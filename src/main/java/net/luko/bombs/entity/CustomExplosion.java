@@ -104,7 +104,7 @@ public class CustomExplosion extends Explosion {
     private ExplosionDamageCalculator makeDamageCalculator(@Nullable Entity pEntity) {
         return (ExplosionDamageCalculator)(pEntity == null ? EXPLOSION_DAMAGE_CALCULATOR_ : new EntityBasedExplosionDamageCalculator(pEntity));
     }
-
+    /*
     public static float getSeenPercent(Vec3 pExplosionVector, Entity pEntity) {
         AABB aabb = pEntity.getBoundingBox();
         double d0 = 1.0D / ((aabb.maxX - aabb.minX) * 2.0D + 1.0D);

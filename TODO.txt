@@ -3,5 +3,4 @@
 - Optimize
 - New bomb types
 - Safeguard from outdated/nonexistent modifier NBT tags
-- Upgraded tiers keep NBT
 - Gooder textures

@@ -2,5 +2,4 @@
 - Texture overlay per modifiers
 - Optimize
 - New bomb types
-- Safeguard from outdated/nonexistent modifier NBT tags
 - Gooder textures

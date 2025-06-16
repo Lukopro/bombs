@@ -92,6 +92,11 @@ public class BombItem extends Item {
 
             for(int i = 0; i < modifiers.size(); i++){
                 String mod = modifiers.getString(i);
+
+                if(!modifierColorMap.containsKey(mod)){
+                    continue;
+                }
+
                 tooltip.add(Component.literal("- ")
                                 .append(Component.translatable("modifier.bombs." + mod))
                                 .withStyle(modifierColorMap.get(mod)));

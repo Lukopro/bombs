@@ -1,9 +1,7 @@
-- Texture overlay per modifiers
 - Optimize
 - New bomb types
 - Gooder textures
 - Hopper support
-- All NBT, one item per bomb type
 - Charge-up by default, instant throw as modifier
 - Modifier for firework stars & potions
 - TNT -> Dynamite -> modify -> TNT (custom) -> throw it, cluster bombs

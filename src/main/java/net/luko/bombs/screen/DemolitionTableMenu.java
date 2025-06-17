@@ -2,6 +2,7 @@ package net.luko.bombs.screen;
 
 import net.luko.bombs.block.ModBlocks;
 import net.luko.bombs.block.entity.DemolitionTableBlockEntity;
+import net.luko.bombs.item.BombItem;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -38,7 +39,15 @@ public class DemolitionTableMenu extends AbstractContainerMenu {
         addPlayerInventory(inventory);
 
         this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(iItemHandler -> {
-            this.addSlot(new SlotItemHandler(iItemHandler, 0, DEMOLITION_TABLE_SLOT_0_X, DEMOLITION_TABLE_SLOTS_Y));
+            this.addSlot(new SlotItemHandler(iItemHandler, 0, DEMOLITION_TABLE_SLOT_0_X, DEMOLITION_TABLE_SLOTS_Y){
+                @Override
+                public boolean mayPlace(ItemStack stack){
+                    if(stack.getItem() instanceof BombItem){
+                        return true;
+                    }
+                    return false;
+                }
+            });
             this.addSlot(new SlotItemHandler(iItemHandler, 1, DEMOLITION_TABLE_SLOT_1_X, DEMOLITION_TABLE_SLOTS_Y));
             this.addSlot(new SlotItemHandler(iItemHandler, 2, DEMOLITION_TABLE_SLOT_2_X, DEMOLITION_TABLE_SLOTS_Y));
             this.addSlot(new SlotItemHandler(iItemHandler, 3, DEMOLITION_TABLE_SLOT_3_X, DEMOLITION_TABLE_SLOTS_Y){

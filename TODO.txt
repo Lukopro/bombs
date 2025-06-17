@@ -1,5 +1,5 @@
 - Optimize
-- New bomb types
+- New bomb types: Grenades (shrapnel = seperate modifier), claymores, firework, c4,
 - Gooder textures
 - Charge-up by default, instant throw as modifier
 - Modifier for firework stars & potions

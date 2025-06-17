@@ -56,7 +56,7 @@ public class ThrownBombRenderer extends EntityRenderer<ThrownBombEntity> {
 
     @Override
     public ResourceLocation getTextureLocation(ThrownBombEntity entity){
-        return new ResourceLocation(Bombs.MODID, "textures/entity/dynamite.png");
+        return ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/entity/dynamite.png");
                 //TEXTURES.getOrDefault(entity.getItem().getItem(),new ResourceLocation(Bombs.MODID, "textures/entity/dynamite.png"));
     }
 }

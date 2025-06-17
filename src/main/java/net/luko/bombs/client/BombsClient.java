@@ -15,7 +15,7 @@ public class BombsClient {
 
 
         ItemProperties.register(ModItems.DYNAMITE.get(),
-                new ResourceLocation(Bombs.MODID, "index"),
+                ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "index"),
                 (pStack, pLevel, pEntity, pSeed) -> {
                     float index = 1.0F;
                     if(pStack.hasTag() && pStack.getTag().contains("Tier", Tag.TAG_INT)){

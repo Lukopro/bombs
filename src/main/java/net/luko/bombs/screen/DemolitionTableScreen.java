@@ -13,19 +13,19 @@ import net.minecraft.world.entity.player.Inventory;
 public class DemolitionTableScreen extends AbstractContainerScreen<DemolitionTableMenu> {
     // Gui texture when the BlockEntity is empty
     private static final ResourceLocation EMPTY_TEXTURE =
-            new ResourceLocation(Bombs.MODID, "textures/gui/demolition_table_gui_empty.png");
+            ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/gui/demolition_table_gui_empty.png");
 
     // Gui texture when the BlockEntity has just a bomb
     private static final ResourceLocation BOMB_TEXTURE =
-            new ResourceLocation(Bombs.MODID, "textures/gui/demolition_table_gui_bomb.png");
+            ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/gui/demolition_table_gui_bomb.png");
 
     // Gui texture when the BlockEntity has a bomb, upgrade, no casing
     private static final ResourceLocation MODIFIER_TEXTURE =
-            new ResourceLocation(Bombs.MODID, "textures/gui/demolition_table_gui_modifier.png");
+            ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/gui/demolition_table_gui_modifier.png");
 
     // Gui texture when the BlockEntity has just a bomb, upgrade, and casing
     private static final ResourceLocation UPGRADE_TEXTURE =
-            new ResourceLocation(Bombs.MODID, "textures/gui/demolition_table_gui_upgrade.png");
+            ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/gui/demolition_table_gui_upgrade.png");
 
     public DemolitionTableScreen(DemolitionTableMenu menu, Inventory inventory, Component title){
         super(menu, inventory, title);

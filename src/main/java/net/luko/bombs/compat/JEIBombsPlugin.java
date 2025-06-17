@@ -20,7 +20,7 @@ import java.util.List;
 public class JEIBombsPlugin implements IModPlugin {
     @Override
     public ResourceLocation getPluginUid() {
-        return new ResourceLocation(Bombs.MODID, "jei_plugin");
+        return ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "jei_plugin");
     }
 
     @Override

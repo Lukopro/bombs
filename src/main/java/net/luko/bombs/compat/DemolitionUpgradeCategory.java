@@ -18,8 +18,8 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 public class DemolitionUpgradeCategory implements IRecipeCategory<DemolitionUpgradeRecipe> {
-    public static final ResourceLocation UID = new ResourceLocation(Bombs.MODID, "demolition_upgrade");
-    public static final ResourceLocation TEXTURE = new ResourceLocation(Bombs.MODID,
+    public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "demolition_upgrade");
+    public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Bombs.MODID,
             "textures/gui/demolition_table_gui_upgrade.png");
 
     public static final RecipeType<DemolitionUpgradeRecipe> DEMOLITION_UPGRADE_TYPE =

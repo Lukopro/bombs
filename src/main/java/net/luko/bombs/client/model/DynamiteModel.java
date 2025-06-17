@@ -18,7 +18,7 @@ public class DynamiteModel<T extends ThrownBombEntity> extends EntityModel<T> {
 
         // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
         public static final ModelLayerLocation LAYER_LOCATION =
-                new ModelLayerLocation(new ResourceLocation(Bombs.MODID, "dynamite"), "main");
+                new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "dynamite"), "main");
         private final ModelPart bb_main;
 
         public DynamiteModel(ModelPart root) {

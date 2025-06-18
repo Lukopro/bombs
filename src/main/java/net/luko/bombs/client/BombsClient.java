@@ -12,8 +12,6 @@ public class BombsClient {
     }
 
     private static void registerItemProperties(){
-
-
         ItemProperties.register(ModItems.DYNAMITE.get(),
                 ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "index"),
                 (pStack, pLevel, pEntity, pSeed) -> {

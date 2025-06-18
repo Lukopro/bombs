@@ -43,17 +43,11 @@ public class Bombs
         ModRecipeSerializers.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
-        modEventBus.addListener(this::addCreative);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
         event.enqueueWork(BombConfigSync::syncBombExplosionPowers);
-    }
-
-    private void addCreative(BuildCreativeModeTabContentsEvent event)
-    {
-
     }
 
     @SubscribeEvent

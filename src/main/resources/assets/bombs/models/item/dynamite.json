@@ -1,0 +1,19 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "bombs:item/dynamite"
+  },
+  "overrides": [
+    { "predicate": { "bombs:index": 1.0 }, "model": "bombs:item/dynamite" },
+    { "predicate": { "bombs:index": 2.0 }, "model": "bombs:item/strong_dynamite" },
+    { "predicate": { "bombs:index": 3.0 }, "model": "bombs:item/blaze_dynamite" },
+    { "predicate": { "bombs:index": 4.0 }, "model": "bombs:item/dragon_dynamite" },
+    { "predicate": { "bombs:index": 5.0 }, "model": "bombs:item/crystal_dynamite" },
+
+    { "predicate": { "bombs:index": 6.0 }, "model": "bombs:item/dynamite_modified" },
+    { "predicate": { "bombs:index": 7.0 }, "model": "bombs:item/strong_dynamite_modified" },
+    { "predicate": { "bombs:index": 8.0 }, "model": "bombs:item/blaze_dynamite_modified" },
+    { "predicate": { "bombs:index": 9.0 }, "model": "bombs:item/dragon_dynamite_modified" },
+    { "predicate": { "bombs:index": 10.0 }, "model": "bombs:item/crystal_dynamite_modified" }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "type": "bombs:demolition_upgrade",
+  "input_bomb": {
+    "tag": "bombs:bomb"
+  },
+  "input_upgrade": {
+    "item": "minecraft:thisdoesntexist"
+  },
+  "input_casing": {
+    "item": "minecraft:alsodoesntexist"
+  },
+  "tier": 6
+}

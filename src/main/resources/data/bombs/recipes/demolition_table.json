@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ccc",
+    "DiD",
+    "D D"
+  ],
+  "key": {
+    "c": {
+      "item": "minecraft:copper_ingot"
+    },
+    "D": {
+      "item": "minecraft:deepslate"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "result": {
+    "item": "bombs:demolition_table",
+    "count": 1
+  }
+}

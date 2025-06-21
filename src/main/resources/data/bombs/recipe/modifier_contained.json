@@ -1,5 +1,6 @@
 {
   "type": "bombs:demolition_modifier",
+  "id": "bombs:modifier_contained",
   "input_bomb": { "tag": "bombs:bomb" },
   "input_modifier": { "tag": "bombs:wool" },
   "modifier": "contained"

@@ -1,5 +1,6 @@
 {
   "type": "bombs:demolition_modifier",
+  "id": "bombs:modifier_gentle",
   "input_bomb": { "tag": "bombs:bomb" },
   "input_modifier": { "item": "minecraft:lapis_lazuli" },
   "modifier": "gentle"

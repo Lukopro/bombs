@@ -1,5 +1,6 @@
 {
   "type": "bombs:demolition_upgrade",
+  "id": "bombs:upgrade_strong",
   "input_bomb": {
     "tag": "bombs:bomb"
   },

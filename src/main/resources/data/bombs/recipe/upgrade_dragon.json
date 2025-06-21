@@ -1,13 +1,14 @@
 {
   "type": "bombs:demolition_upgrade",
+  "id": "bombs:upgrade_dragon",
   "input_bomb": {
     "tag": "bombs:bomb"
   },
   "input_upgrade": {
-    "item": "minecraft:blaze_powder"
+    "item": "minecraft:dragon_breath"
   },
   "input_casing": {
-    "item": "minecraft:quartz"
+    "item": "minecraft:obsidian"
   },
-  "tier": 3
+  "tier": 4
 }

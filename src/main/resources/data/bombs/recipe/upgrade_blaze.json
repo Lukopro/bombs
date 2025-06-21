@@ -1,13 +1,14 @@
 {
   "type": "bombs:demolition_upgrade",
+  "id": "bombs:upgrade_blaze",
   "input_bomb": {
     "tag": "bombs:bomb"
   },
   "input_upgrade": {
-    "item": "minecraft:thisdoesntexist"
+    "item": "minecraft:blaze_powder"
   },
   "input_casing": {
-    "item": "minecraft:alsodoesntexist"
+    "item": "minecraft:quartz"
   },
-  "tier": 6
+  "tier": 3
 }

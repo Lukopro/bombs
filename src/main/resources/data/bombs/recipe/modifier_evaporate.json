@@ -1,5 +1,6 @@
 {
   "type": "bombs:demolition_modifier",
+  "id": "bombs:modifier_evaporate",
   "input_bomb": { "tag": "bombs:bomb" },
   "input_modifier": { "item": "minecraft:coal" },
   "modifier": "evaporate"

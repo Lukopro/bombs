@@ -1,13 +1,14 @@
 {
   "type": "bombs:demolition_upgrade",
+  "id": "bombs:upgrade_crystal",
   "input_bomb": {
     "tag": "bombs:bomb"
   },
   "input_upgrade": {
-    "item": "minecraft:dragon_breath"
+    "item": "minecraft:nether_star"
   },
   "input_casing": {
-    "item": "minecraft:obsidian"
+    "item": "minecraft:netherite_scrap"
   },
-  "tier": 4
+  "tier": 5
 }

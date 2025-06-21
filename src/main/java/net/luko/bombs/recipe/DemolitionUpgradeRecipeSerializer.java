@@ -8,6 +8,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 public class DemolitionUpgradeRecipeSerializer implements RecipeSerializer<DemolitionUpgradeRecipe> {
     @Override
     public MapCodec<DemolitionUpgradeRecipe> codec() {
+        System.out.println("Upgrade recipe serializer CODEC retrieved!");
         return DemolitionUpgradeRecipe.CODEC;
     }
 

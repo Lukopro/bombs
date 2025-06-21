@@ -38,7 +38,7 @@ public record DemolitionModifierRecipe(Ingredient inputBomb, Ingredient inputMod
 
         bomb.setCount(1);
 
-        List<String> oldModifiers = bomb.getOrDefault(ModDataComponents.MODIFIERS.get(), List.of());
+        List<String> oldModifiers = new ArrayList<>(bomb.getOrDefault(ModDataComponents.MODIFIERS.get(), List.of()));
         oldModifiers.add(modifierName);
 
         List<String> newModifiers = sortedModifiers(oldModifiers);
@@ -87,7 +87,7 @@ public record DemolitionModifierRecipe(Ingredient inputBomb, Ingredient inputMod
                 : ItemStack.EMPTY;
 
         if(!result.isEmpty()){
-            List<String> oldModifiers = result.getOrDefault(ModDataComponents.MODIFIERS.get(), List.of());
+            List<String> oldModifiers = new ArrayList<>(result.getOrDefault(ModDataComponents.MODIFIERS.get(), List.of()));
             oldModifiers.add(modifierName);
 
             List<String> newModifiers = sortedModifiers(oldModifiers);

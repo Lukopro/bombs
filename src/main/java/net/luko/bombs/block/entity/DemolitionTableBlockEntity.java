@@ -105,8 +105,10 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
             lastInputHash = currentHash;
 
             if(itemHandler.getStackInSlot(CASING_SLOT).isEmpty()){
+                System.out.println("Casing slot empty!");
                 tryApplyRecipe(ModRecipeTypes.DEMOLITION_MODIFIER_TYPE.get(), getModifierRecipeInput());
             } else {
+                System.out.println("Casing slot occupied!");
                 tryApplyRecipe(ModRecipeTypes.DEMOLITION_UPGRADE_TYPE.get(), getUpgradeRecipeInput());
             }
         }
@@ -122,9 +124,11 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
 
     private <T extends Recipe<I>, I extends RecipeInput> void tryApplyRecipe(RecipeType<T> type, I input){
         level.getRecipeManager().getRecipeFor(type, input, level).ifPresentOrElse(tRecipeHolder -> {
+            System.out.println("Recipe present!");
             ItemStack result = tRecipeHolder.value().assemble(input, level.registryAccess());
             itemHandler.setStackInSlot(OUTPUT_SLOT, result);
         }, () -> {
+            System.out.println("Recipe vacant!");
             itemHandler.setStackInSlot(OUTPUT_SLOT, ItemStack.EMPTY);
         });
     }

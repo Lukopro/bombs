@@ -17,7 +17,7 @@
     }
   },
   "result": {
-    "item": "bombs:demolition_table",
+    "id": "bombs:demolition_table",
     "count": 1
   }
 }

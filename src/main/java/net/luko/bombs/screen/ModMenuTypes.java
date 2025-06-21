@@ -15,11 +15,7 @@ public class ModMenuTypes {
             DeferredRegister.create(ForgeRegistries.MENU_TYPES, Bombs.MODID);
 
     public static final RegistryObject<MenuType<DemolitionTableMenu>> DEMOLITION_TABLE_MENU =
-            registerMenuType("demolition_table_menu", DemolitionTableMenu::new);
-
-    private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> registerMenuType(String name, IContainerFactory factory){
-        return MENUS.register(name, () -> IForgeMenuType.create(factory));
-    }
+            MENUS.register("demolition_table_menu", () -> IForgeMenuType.create(DemolitionTableMenu::new));
 
     public static void register(IEventBus eventBus){
         MENUS.register(eventBus);

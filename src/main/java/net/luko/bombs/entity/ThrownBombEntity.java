@@ -21,6 +21,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
+import net.minecraftforge.network.NetworkHooks;
 
 import java.util.Optional;
 
@@ -62,7 +63,7 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
         float randomForwardTilt = RANDOM_FORWARD_TILT_MAX * (float)Math.random();
         float throwerXRot = thrower.getXRot();
 
-        this.initialForwardTilt = (ThrownBombEntity.RANDOM_FORWARD_TILT_MAX / 2) + randomForwardTilt - throwerXRot;
+        this.initialForwardTilt = (ThrownBombEntity.RANDOM_FORWARD_TILT_MAX / 2) + randomForwardTilt + throwerXRot - 20.0F;
 
         this.randomSpinSpeed = RANDOM_SPIN_SPEED_MIN + (RANDOM_SPIN_SPEED_MAX - RANDOM_SPIN_SPEED_MIN) * (float)Math.random();
     }
@@ -130,6 +131,7 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
         buf.writeFloat(this.initialForwardTilt);
         buf.writeFloat(this.randomSpinSpeed);
         buf.writeItem(this.getItem());
+        System.out.println("Spawn data written.");
     }
 
     @Override
@@ -139,11 +141,13 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
         this.initialForwardTilt = buf.readFloat();
         this.randomSpinSpeed = buf.readFloat();
         this.setItem(buf.readItem());
+        System.out.println("Spawn data read.");
     }
 
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket(){
-        return new ClientboundAddEntityPacket(this);
+        System.out.println("Spawn data AddEntityPacket received.");
+        return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     private class ModifierExplosionDamageCalculator extends ExplosionDamageCalculator{

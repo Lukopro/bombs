@@ -131,7 +131,6 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
         buf.writeFloat(this.initialForwardTilt);
         buf.writeFloat(this.randomSpinSpeed);
         buf.writeItem(this.getItem());
-        System.out.println("Spawn data written.");
     }
 
     @Override
@@ -141,12 +140,10 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
         this.initialForwardTilt = buf.readFloat();
         this.randomSpinSpeed = buf.readFloat();
         this.setItem(buf.readItem());
-        System.out.println("Spawn data read.");
     }
 
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket(){
-        System.out.println("Spawn data AddEntityPacket received.");
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 

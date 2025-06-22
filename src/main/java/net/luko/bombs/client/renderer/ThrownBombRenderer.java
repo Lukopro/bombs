@@ -46,7 +46,7 @@ public class ThrownBombRenderer extends EntityRenderer<ThrownBombEntity> {
         float YRotOffset = 90.0F - (ThrownBombEntity.RANDOM_SIDE_TILT_MAX / 2) + entity.getRandomSideTilt();
         poseStack.mulPose(Axis.YP.rotationDegrees(YRotOffset + entity.getYRot()));
 
-        poseStack.mulPose(Axis.ZP.rotationDegrees(spin - (ThrownBombEntity.RANDOM_FORWARD_TILT_MAX / 2) + entity.getRandomForwardTilt()));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(spin + entity.getInitialForwardTilt()));
 
         model.renderToBuffer(
                 poseStack,

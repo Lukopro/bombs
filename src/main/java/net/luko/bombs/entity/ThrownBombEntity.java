@@ -1,9 +1,11 @@
 package net.luko.bombs.entity;
 
-import net.luko.bombs.Bombs;
 import net.luko.bombs.item.ModItems;
 import net.luko.bombs.util.BombModifierUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.NbtAccounter;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
@@ -17,14 +19,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
 
 import java.util.Optional;
 
 
-public class ThrownBombEntity extends ThrowableItemProjectile {
+public class ThrownBombEntity extends ThrowableItemProjectile implements IEntityWithComplexSpawn {
     private float explosionPower;
     private float randomSideTilt;
-    private float randomForwardTilt;
+    private float initialForwardTilt;
     private float randomSpinSpeed;
 
     public static final float DEFAULT_POWER = 1.5F;
@@ -39,7 +42,7 @@ public class ThrownBombEntity extends ThrowableItemProjectile {
         this.explosionPower = DEFAULT_POWER;
 
         this.randomSideTilt = RANDOM_SIDE_TILT_MAX * (float)Math.random();
-        this.randomForwardTilt = RANDOM_FORWARD_TILT_MAX * (float)Math.random();
+        this.initialForwardTilt = RANDOM_FORWARD_TILT_MAX * (float)Math.random();
         this.randomSpinSpeed = RANDOM_SPIN_SPEED_MIN + (RANDOM_SPIN_SPEED_MAX - RANDOM_SPIN_SPEED_MIN) * (float)Math.random();
     }
 
@@ -52,7 +55,10 @@ public class ThrownBombEntity extends ThrowableItemProjectile {
         }
 
         this.randomSideTilt = RANDOM_SIDE_TILT_MAX * (float)Math.random();
-        this.randomForwardTilt = RANDOM_FORWARD_TILT_MAX * (float)Math.random();
+        float randomForwardTilt = RANDOM_FORWARD_TILT_MAX * (float)Math.random();
+        float throwerXRot = thrower.getXRot();
+
+        this.initialForwardTilt = (ThrownBombEntity.RANDOM_FORWARD_TILT_MAX / 2) + randomForwardTilt + throwerXRot - 20.0F;
         this.randomSpinSpeed = RANDOM_SPIN_SPEED_MIN + (RANDOM_SPIN_SPEED_MAX - RANDOM_SPIN_SPEED_MIN) * (float)Math.random();
     }
 
@@ -65,8 +71,8 @@ public class ThrownBombEntity extends ThrowableItemProjectile {
         return this.randomSideTilt;
     }
 
-    public float getRandomForwardTilt(){
-        return this.randomForwardTilt;
+    public float getInitialForwardTilt(){
+        return this.initialForwardTilt;
     }
 
     public float getRandomSpinSpeed(){
@@ -110,6 +116,24 @@ public class ThrownBombEntity extends ThrowableItemProjectile {
             return Explosion.BlockInteraction.KEEP;
         }
         return Explosion.BlockInteraction.DESTROY;
+    }
+
+    @Override
+    public void writeSpawnData(RegistryFriendlyByteBuf buf) {
+        buf.writeFloat(this.explosionPower);
+        buf.writeFloat(this.randomSideTilt);
+        buf.writeFloat(this.initialForwardTilt);
+        buf.writeFloat(this.randomSpinSpeed);
+        buf.writeWithCodec(NbtOps.INSTANCE, ItemStack.OPTIONAL_CODEC, this.getItem());
+    }
+
+    @Override
+    public void readSpawnData(RegistryFriendlyByteBuf buf) {
+        this.explosionPower = buf.readFloat();
+        this.randomSideTilt = buf.readFloat();
+        this.initialForwardTilt = buf.readFloat();
+        this.randomSpinSpeed = buf.readFloat();
+        this.setItem(buf.readWithCodec(NbtOps.INSTANCE, ItemStack.OPTIONAL_CODEC, NbtAccounter.unlimitedHeap()));
     }
 
     private class ModifierExplosionDamageCalculator extends ExplosionDamageCalculator{

@@ -3,7 +3,6 @@ package net.luko.bombs.client.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.luko.bombs.Bombs;
-import net.luko.bombs.item.ModItems;
 import net.luko.bombs.client.model.DynamiteModel;
 import net.luko.bombs.entity.ThrownBombEntity;
 import net.luko.bombs.util.BombTextureUtil;
@@ -12,7 +11,6 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
 
 import java.util.Map;
 
@@ -46,7 +44,7 @@ public class ThrownBombRenderer extends EntityRenderer<ThrownBombEntity> {
         float YRotOffset = 90.0F - (ThrownBombEntity.RANDOM_SIDE_TILT_MAX / 2) + entity.getRandomSideTilt();
         poseStack.mulPose(Axis.YP.rotationDegrees(YRotOffset + entity.getYRot()));
 
-        poseStack.mulPose(Axis.ZP.rotationDegrees(spin - (ThrownBombEntity.RANDOM_FORWARD_TILT_MAX / 2) + entity.getRandomForwardTilt()));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(spin + entity.getInitialForwardTilt()));
 
         model.renderToBuffer(
                 poseStack,

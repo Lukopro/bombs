@@ -10,7 +10,6 @@ import net.luko.bombs.recipe.ModRecipeSerializers;
 import net.luko.bombs.recipe.ModRecipeTypes;
 import net.luko.bombs.screen.ModMenuTypes;
 import net.luko.bombs.util.BombConfigSync;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

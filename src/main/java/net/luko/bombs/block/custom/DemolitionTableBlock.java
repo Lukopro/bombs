@@ -26,7 +26,6 @@ import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.awt.*;
 
 public class DemolitionTableBlock extends BaseEntityBlock {
 

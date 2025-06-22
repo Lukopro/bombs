@@ -1,6 +1,5 @@
 package net.luko.bombs.config;
 
-import net.luko.bombs.item.ModItems;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.Map;

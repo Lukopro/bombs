@@ -2,7 +2,6 @@ package net.luko.bombs.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.luko.bombs.Bombs;
-import net.luko.bombs.block.entity.DemolitionTableBlockEntity;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;

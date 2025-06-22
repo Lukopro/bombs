@@ -4,5 +4,6 @@
 - Charge-up by default, instant throw as modifier
 - Modifier for firework stars & potions
 - TNT -> Dynamite -> modify -> TNT (custom) -> throw it, cluster bombs
-- Forge, NeoForge, 1.20.1, 1.21.1
+- Forge, NeoForge, 1.20.1, 1.21.1 *
 - Villager profession
+- Dynamite launcher

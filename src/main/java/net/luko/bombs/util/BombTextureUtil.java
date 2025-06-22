@@ -3,8 +3,6 @@ package net.luko.bombs.util;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.List;
-
 public class BombTextureUtil {
     public static float getTextureIndex(ItemStack stack){
         float index = 1.0F;

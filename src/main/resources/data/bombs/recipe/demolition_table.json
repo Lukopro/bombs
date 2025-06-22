@@ -1,19 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "ccc",
-    "DiD",
-    "D D"
+    "ddd",
+    "c c",
+    "ccc"
   ],
   "key": {
     "c": {
       "item": "minecraft:copper_ingot"
     },
-    "D": {
-      "item": "minecraft:deepslate"
-    },
-    "i": {
-      "item": "minecraft:iron_ingot"
+    "d": {
+      "item": "minecraft:cobbled_deepslate"
     }
   },
   "result": {

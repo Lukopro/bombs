@@ -1,5 +1,6 @@
 package net.luko.bombs.item;
 
+import net.luko.bombs.config.BombsConfig;
 import net.luko.bombs.entity.ModEntities;
 import net.luko.bombs.entity.ThrownBombEntity;
 import net.luko.bombs.util.BombModifierUtil;
@@ -12,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,6 +21,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -73,14 +76,15 @@ public class BombItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand){
         ItemStack stack = player.getItemInHand(hand);
 
-        // Server bomb logic
-        if(!level.isClientSide()){
-            throwBomb(level, player, stack, getBaseVelocity(stack));
+        if(BombsConfig.QUICKDRAW_BY_DEFAULT.get() || BombModifierUtil.hasModifier(stack, "quickdraw")) {
+            if (!level.isClientSide()) {
+                throwBomb(level, player, stack, getBaseVelocity(stack));
+            }
+            return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
         }
 
-
-
-        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+        player.startUsingItem(hand);
+        return InteractionResultHolder.consume(stack);
     }
 
     @Override
@@ -90,7 +94,26 @@ public class BombItem extends Item {
 
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity user, int timeLeft){
+        if(level.isClientSide()) return;
 
+        int usedTicks = this.getUseDuration(stack) - timeLeft;
+        if(usedTicks <= 2) return;
+
+        float charge = getChargeFactor(usedTicks);
+        float velocity = getBaseVelocity(stack) * charge;
+
+        throwBomb(level, (Player) user, stack, velocity);
+    }
+
+    @Override
+    public UseAnim getUseAnimation(ItemStack stack){
+        return UseAnim.BOW;
+    }
+
+    private float getChargeFactor(int ticks){
+        float f = ticks / 20.0F;
+        f = (f * f + f * 2.0F) / 3.0F;
+        return Mth.clamp(f, 0.1F, 1.0F);
     }
 
     public void throwBomb(Level level, Player player, ItemStack stack, float velocity){

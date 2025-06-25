@@ -19,6 +19,8 @@ public class BombsConfig {
             6, 7.0F
     );
 
+    public static ForgeConfigSpec.BooleanValue QUICKDRAW_BY_DEFAULT;
+
     public static ForgeConfigSpec.DoubleValue DYNAMITE_BASE_POWER;
     public static ForgeConfigSpec.DoubleValue DYNAMITE_II_BASE_POWER;
     public static ForgeConfigSpec.DoubleValue DYNAMITE_III_BASE_POWER;
@@ -29,6 +31,15 @@ public class BombsConfig {
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
+
+        builder.push("Mechanics");
+
+        QUICKDRAW_BY_DEFAULT = builder
+                .comment("Bombs are thrown instantly, regardless of modifiers (default: false)")
+                .define("quickdrawByDefault",
+                        false);
+
+        builder.pop();
 
         builder.push("Dynamite Base Damage");
 

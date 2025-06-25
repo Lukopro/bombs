@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "bombs:item/dragon_dynamite_modified"
+    "layer0": "bombs:item/dynamite_mid"
   }
 }

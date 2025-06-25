@@ -19,15 +19,11 @@ public class ThrownBombRenderer extends EntityRenderer<ThrownBombEntity> {
 
     private static final Map<Float, ResourceLocation> TEXTURES = Map.of(
             1.0F, ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/entity/dynamite.png"),
-            2.0F, ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/entity/strong_dynamite.png"),
-            3.0F, ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/entity/blaze_dynamite.png"),
-            4.0F, ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/entity/dragon_dynamite.png"),
-            5.0F, ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/entity/crystal_dynamite.png"),
-            6.0F, ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/entity/dynamite_modified.png"),
-            7.0F, ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/entity/strong_dynamite_modified.png"),
-            8.0F, ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/entity/blaze_dynamite_modified.png"),
-            9.0F, ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/entity/dragon_dynamite_modified.png"),
-            10.0F, ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/entity/crystal_dynamite_modified.png")
+            2.0F, ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/entity/dynamite_mid.png"),
+            3.0F, ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/entity/dynamite_max.png"),
+            4.0F, ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/entity/soul_dynamite.png"),
+            5.0F, ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/entity/soul_dynamite_mid.png"),
+            6.0F, ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/entity/soul_dynamite_max.png")
     );
     public ThrownBombRenderer(EntityRendererProvider.Context context){
         super(context);

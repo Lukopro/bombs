@@ -15,15 +15,38 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.SlotItemHandler;
 
+import java.util.Map;
+
 public class DemolitionTableMenu extends AbstractContainerMenu {
     public final DemolitionTableBlockEntity blockEntity;
     private final Level level;
+    public static final Map<Integer, Integer> SLOT_X_POSITIONS = Map.ofEntries(
+            Map.entry(0, 19),
+            Map.entry(1, 63),
+            Map.entry(2, 63),
+            Map.entry(3, 63),
+            Map.entry(4, 99),
+            Map.entry(5, 99),
+            Map.entry(6, 99),
+            Map.entry(7, 117),
+            Map.entry(8, 117),
+            Map.entry(9, 117),
+            Map.entry(10, 161)
+    );
 
-    public static final int DEMOLITION_TABLE_SLOT_0_X = 26;
-    public static final int DEMOLITION_TABLE_SLOT_1_X = 52;
-    public static final int DEMOLITION_TABLE_SLOT_2_X = 78;
-    public static final int DEMOLITION_TABLE_SLOT_3_X = 134;
-    public static final int DEMOLITION_TABLE_SLOTS_Y = 39;
+    public static final Map<Integer, Integer> SLOT_Y_POSITIONS = Map.ofEntries(
+            Map.entry(0, 42),
+            Map.entry(1, 24),
+            Map.entry(2, 42),
+            Map.entry(3, 60),
+            Map.entry(4, 24),
+            Map.entry(5, 42),
+            Map.entry(6, 60),
+            Map.entry(7, 24),
+            Map.entry(8, 42),
+            Map.entry(9, 60),
+            Map.entry(10, 42)
+    );
 
     public DemolitionTableMenu(int containerId, Inventory inventory, FriendlyByteBuf extraData){
         this(containerId, inventory, inventory.player.level().getBlockEntity(extraData.readBlockPos()));
@@ -39,7 +62,7 @@ public class DemolitionTableMenu extends AbstractContainerMenu {
         addPlayerInventory(inventory);
 
         this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(iItemHandler -> {
-            this.addSlot(new SlotItemHandler(iItemHandler, 0, DEMOLITION_TABLE_SLOT_0_X, DEMOLITION_TABLE_SLOTS_Y){
+            this.addSlot(new SlotItemHandler(iItemHandler, 0, 19, 42){
                 @Override
                 public boolean mayPlace(ItemStack stack){
                     if(stack.getItem() instanceof BombItem){
@@ -48,12 +71,14 @@ public class DemolitionTableMenu extends AbstractContainerMenu {
                     return false;
                 }
             });
-            this.addSlot(new SlotItemHandler(iItemHandler, 1, DEMOLITION_TABLE_SLOT_1_X, DEMOLITION_TABLE_SLOTS_Y));
-            this.addSlot(new SlotItemHandler(iItemHandler, 2, DEMOLITION_TABLE_SLOT_2_X, DEMOLITION_TABLE_SLOTS_Y));
-            this.addSlot(new SlotItemHandler(iItemHandler, 3, DEMOLITION_TABLE_SLOT_3_X, DEMOLITION_TABLE_SLOTS_Y){
+
+            for(int i = 1; i < 10; i++){
+                this.addSlot(new SlotItemHandler(iItemHandler, i, SLOT_X_POSITIONS.get(i), SLOT_Y_POSITIONS.get(i)));
+            }
+
+            this.addSlot(new SlotItemHandler(iItemHandler, 10, 161, 42){
                 @Override
                 public boolean mayPlace(ItemStack stack){
-                    // Disallow placing items into output slot.
                     return false;
                 }
 
@@ -61,10 +86,7 @@ public class DemolitionTableMenu extends AbstractContainerMenu {
                 public void onTake(Player player, ItemStack stack){
                     super.onTake(player, stack);
 
-                    // Consume inputs from bomb, upgrade, and casing slots.
-                    getSlot(TE_INVENTORY_FIRST_SLOT_INDEX + 0).remove(1);
-                    getSlot(TE_INVENTORY_FIRST_SLOT_INDEX + 1).remove(1);
-                    getSlot(TE_INVENTORY_FIRST_SLOT_INDEX + 2).remove(1);
+                    ((DemolitionTableBlockEntity) entity).consumeRecipeIngredients();
                 }
             });
         });
@@ -78,7 +100,7 @@ public class DemolitionTableMenu extends AbstractContainerMenu {
     protected static final int VANILLA_SLOT_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INVENTORY_SLOT_COUNT;
     protected static final int VANILLA_FIRST_SLOT_INDEX = 0;
     protected static final int TE_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT;
-    protected static final int TE_INVENTORY_SLOT_COUNT = 4;  // must be the number of slots you have!
+    protected static final int TE_INVENTORY_SLOT_COUNT = 11;  // must be the number of slots you have!
 
     @Override
     public ItemStack quickMoveStack(Player player, int i) {
@@ -122,14 +144,14 @@ public class DemolitionTableMenu extends AbstractContainerMenu {
     private void addPlayerInventory(Inventory inventory){
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 9; j++){
-                this.addSlot(new Slot(inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+                this.addSlot(new Slot(inventory, j + i * 9 + 9, 18 + j * 18, 104 + i * 18));
             }
         }
     }
 
     private void addPlayerHotbar(Inventory inventory){
         for(int i = 0; i < 9; i++){
-            this.addSlot(new Slot(inventory, i, 8 + i * 18, 142));
+            this.addSlot(new Slot(inventory, i, 18 + i * 18, 162));
         }
     }
 }

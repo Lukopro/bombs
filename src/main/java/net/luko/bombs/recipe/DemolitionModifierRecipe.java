@@ -29,9 +29,9 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
     }
 
     @Override
-    public boolean matches(Container container, Level level){
-        ItemStack bomb = container.getItem(0);
-        ItemStack modifier = container.getItem(1);
+    public boolean matches(Container isolatedContainer, Level level){
+        ItemStack bomb = isolatedContainer.getItem(0);
+        ItemStack modifier = isolatedContainer.getItem(1);
 
         if(!inputBomb.test(bomb) || !inputModifier.test(modifier)) return false;
 
@@ -47,8 +47,8 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
     }
 
     @Override
-    public ItemStack assemble(Container container, RegistryAccess access){
-        ItemStack bomb = container.getItem(0).copy();
+    public ItemStack assemble(Container isolatedContainer, RegistryAccess access){
+        ItemStack bomb = isolatedContainer.getItem(0).copy();
 
         if (bomb.isEmpty()) return ItemStack.EMPTY;
 

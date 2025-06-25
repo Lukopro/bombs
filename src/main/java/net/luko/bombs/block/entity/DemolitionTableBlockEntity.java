@@ -1,22 +1,24 @@
 package net.luko.bombs.block.entity;
 
 import net.luko.bombs.item.BombItem;
-import net.luko.bombs.recipe.DemolitionUpgradeRecipe;
 import net.luko.bombs.recipe.ModRecipeTypes;
 import net.luko.bombs.screen.DemolitionTableMenu;
 import net.luko.bombs.util.RecipeUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
@@ -29,15 +31,31 @@ import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvider, WorldlyContainer {
-    private final ItemStackHandler itemHandler = new ItemStackHandler(4);
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
-    private static final int BOMB_SLOT = 0;
-    private static final int UPGRADE_SLOT = 1;
-    private static final int CASING_SLOT = 2;
-    private static final int OUTPUT_SLOT = 3;
+public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvider, WorldlyContainer {
+    private final ItemStackHandler itemHandler = new ItemStackHandler(11);
+
+    private static final int INPUT_SLOT = 0;
+    private static final int UPGRADE_SLOT_1 = 1;
+    private static final int UPGRADE_SLOT_2 = 2;
+    private static final int UPGRADE_SLOT_3 = 3;
+    private static final int MODIFIER_SLOT_1 = 4;
+    private static final int MODIFIER_SLOT_2 = 5;
+    private static final int MODIFIER_SLOT_3 = 6;
+    private static final int MODIFIER_SLOT_4 = 7;
+    private static final int MODIFIER_SLOT_5 = 8;
+    private static final int MODIFIER_SLOT_6 = 9;
+    private static final int OUTPUT_SLOT = 10;
 
     private int lastInputHash = -1;
+
+    private List<Integer> validRecipeSlots = new ArrayList<>();
+    private List<Integer> invalidRecipeSlots = new ArrayList<>();
 
     private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
     private final LazyOptional<IItemHandlerModifiable>[] sidedHandlers = SidedInvWrapper.create(this, Direction.values());
@@ -97,6 +115,38 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
         itemHandler.deserializeNBT(tag.getCompound("inventory"));
     }
 
+    @Override
+    protected void saveAdditional(CompoundTag tag){
+        super.saveAdditional(tag);
+        tag.put("inventory", itemHandler.serializeNBT());
+    }
+
+    @Override
+    public @NotNull CompoundTag getUpdateTag(){
+        CompoundTag tag = super.getUpdateTag();
+        tag.put("inventory", itemHandler.serializeNBT());
+        tag.putIntArray("invalidRecipeSlots", invalidRecipeSlots);
+        return tag;
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundTag tag){
+        super.handleUpdateTag(tag);
+        if (tag.contains("inventory")) itemHandler.deserializeNBT(tag.getCompound("inventory"));
+        this.invalidRecipeSlots = Arrays.stream(tag.getIntArray("invalidRecipeSlots"))
+                .boxed().collect(Collectors.toList());
+    }
+
+    @Override
+    public @Nullable Packet<ClientGamePacketListener> getUpdatePacket(){
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket packet){
+        handleUpdateTag(packet.getTag());
+    }
+
     public void tick(Level level1, BlockPos pos, BlockState state1){
         if (level.isClientSide()) return;
 
@@ -106,11 +156,15 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
         if(currentHash != lastInputHash){
             lastInputHash = currentHash;
 
-            if(itemHandler.getStackInSlot(CASING_SLOT).isEmpty()){
-                tryApplyRecipe(ModRecipeTypes.DEMOLITION_MODIFIER_TYPE.get(), container);
-            } else {
-                tryApplyRecipe(ModRecipeTypes.DEMOLITION_UPGRADE_TYPE.get(), container);
-            }
+            clearValidRecipeSlots();
+            clearInvalidRecipeSlots();
+
+            ItemStack result = fullAssemble();
+            if(validRecipeSlots.isEmpty()) result = ItemStack.EMPTY;
+
+            itemHandler.setStackInSlot(OUTPUT_SLOT, result);
+            setChanged();
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
         }
     }
 
@@ -122,38 +176,110 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
         return container;
     }
 
-    private void tryApplyRecipe(RecipeType<?> type, SimpleContainer container){
-        level.getRecipeManager().getRecipeFor((RecipeType<Recipe<Container>>) type, container, level)
-                .ifPresentOrElse(recipe -> {
-                    ItemStack result = recipe.assemble(container, level.registryAccess());
-                    itemHandler.setStackInSlot(OUTPUT_SLOT, result);
-                }, () -> {
-                    // No valid recipe, clear output
-                    itemHandler.setStackInSlot(OUTPUT_SLOT, ItemStack.EMPTY);
-                });
-    }
-
-    private void consumeRecipeIngredients(){
+    private ItemStack fullAssemble(){
         SimpleContainer container = getContainerFromHandler();
-        RecipeType<?> type = itemHandler.getStackInSlot(CASING_SLOT).isEmpty()
-                ? ModRecipeTypes.DEMOLITION_MODIFIER_TYPE.get()
-                : ModRecipeTypes.DEMOLITION_UPGRADE_TYPE.get();
 
-        level.getRecipeManager().getRecipeFor((RecipeType<Recipe<Container>>) type, container, level)
-                .ifPresent(recipe -> {
-                    itemHandler.getStackInSlot(BOMB_SLOT).shrink(1);
-                    itemHandler.getStackInSlot(UPGRADE_SLOT).shrink(1);
-                    if(recipe instanceof DemolitionUpgradeRecipe){
-                        itemHandler.getStackInSlot(CASING_SLOT).shrink(1);
-                    }
-                });
+        ItemStack result = container.getItem(INPUT_SLOT);
+
+        for(int i = UPGRADE_SLOT_1; i < MODIFIER_SLOT_1; i++){
+            if(!container.getItem(i).isEmpty()) {
+                result = getUpgradeRecipeOutput(result, container.getItem(i), i);
+            }
+        }
+
+        for(int i = MODIFIER_SLOT_1; i < OUTPUT_SLOT; i++){
+            if(!container.getItem(i).isEmpty()) {
+                result = getModifierRecipeOutput(result, container.getItem(i), i);
+            }
+        }
+
+        return result;
     }
 
+    private ItemStack getUpgradeRecipeOutput(ItemStack input, ItemStack ingredient, int slot){
+        SimpleContainer isolatedContainer = new SimpleContainer(2);
+        isolatedContainer.setItem(0, input);
+        isolatedContainer.setItem(1, ingredient);
 
+        AtomicReference<ItemStack> result = new AtomicReference<>();
+
+        level.getRecipeManager().getRecipeFor(ModRecipeTypes.DEMOLITION_UPGRADE_TYPE.get(), isolatedContainer, level)
+                .ifPresentOrElse(recipe -> {
+                    markValidSlot(slot);
+                    result.set(recipe.assemble(isolatedContainer, level.registryAccess()));
+
+                }, () -> {
+                    markInvalidSlot(slot);
+                    result.set(input);
+                });
+
+        return result.get();
+    }
+
+    private ItemStack getModifierRecipeOutput(ItemStack input, ItemStack ingredient, int slot){
+        SimpleContainer isolatedContainer = new SimpleContainer(2);
+        isolatedContainer.setItem(0, input);
+        isolatedContainer.setItem(1, ingredient);
+        AtomicReference<ItemStack> result = new AtomicReference<>();
+
+        level.getRecipeManager().getRecipeFor(ModRecipeTypes.DEMOLITION_MODIFIER_TYPE.get(), isolatedContainer, level)
+                .ifPresentOrElse(recipe -> {
+                    markValidSlot(slot);
+                    result.set(recipe.assemble(isolatedContainer, level.registryAccess()));
+                }, () -> {
+                    markInvalidSlot(slot);
+                    result.set(input);
+                });
+
+        return result.get();
+    }
+
+    private void markValidSlot(int slot){
+        validRecipeSlots.add(slot);
+        if(level != null && !level.isClientSide()) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        }
+    }
+
+    private void markInvalidSlot(int slot){
+        invalidRecipeSlots.add(slot);
+        if(level != null && !level.isClientSide()) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        }
+    }
+
+    private void clearValidRecipeSlots(){
+        validRecipeSlots.clear();
+        if(level != null && !level.isClientSide()) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        }
+    }
+
+    private void clearInvalidRecipeSlots(){
+        invalidRecipeSlots.clear();
+        if(level != null && !level.isClientSide()) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        }
+
+    }
+
+    public List<Integer> getInvalidRecipeSlots(){
+        return List.copyOf(invalidRecipeSlots);
+    }
+
+    public void consumeRecipeIngredients(){
+        itemHandler.getStackInSlot(INPUT_SLOT).shrink(1);
+        for(int slot : validRecipeSlots){
+            itemHandler.getStackInSlot(slot).shrink(1);
+        }
+
+        clearValidRecipeSlots();
+        clearInvalidRecipeSlots();
+    }
 
     private int getInputHash(SimpleContainer container){
         int hash = 1;
-        for(int i = 0; i < container.getContainerSize(); i++){
+        for(int i = 0; i < OUTPUT_SLOT; i++){
             hash = 31 * hash + container.getItem(i).hashCode();
         }
         return hash;
@@ -162,9 +288,12 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
     @Override
     public int[] getSlotsForFace(Direction side){
         return switch (side) {
-            case UP -> new int[]{BOMB_SLOT};
+            case UP -> new int[]{INPUT_SLOT};
             case DOWN -> new int[]{OUTPUT_SLOT};
-            default -> new int[]{UPGRADE_SLOT, CASING_SLOT};
+            default -> new int[]
+                    {UPGRADE_SLOT_1, UPGRADE_SLOT_2, UPGRADE_SLOT_3,
+                    MODIFIER_SLOT_1, MODIFIER_SLOT_2, MODIFIER_SLOT_3,
+                    MODIFIER_SLOT_4, MODIFIER_SLOT_5, MODIFIER_SLOT_6};
         };
     }
 
@@ -174,11 +303,11 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
             case UP -> index == 0 && stack.getItem() instanceof BombItem;
             case DOWN -> false;
             default -> {
-                if (index == 1){
+                if (index >= UPGRADE_SLOT_1 && index < MODIFIER_SLOT_1){
                     yield RecipeUtil.validUpgradeIngredient(level, stack);
                 }
-                if (index == 2){
-                    yield RecipeUtil.validCasingIngredient(level, stack);
+                if (index >= MODIFIER_SLOT_1 && index < OUTPUT_SLOT){
+                    yield RecipeUtil.validModifierIngredient(level, stack);
                 }
                 yield false;
             }

@@ -87,13 +87,17 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
 
     @Override
     protected void onHitEntity(EntityHitResult result){
-        explode();
+        if(!level().isClientSide()){
+            explode();
+        }
         super.onHitEntity(result);
     }
 
     @Override
     protected void onHitBlock(BlockHitResult result){
-        explode();
+        if(!level().isClientSide()){
+            explode();
+        }
         super.onHitBlock(result);
     }
 
@@ -110,9 +114,7 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
                 BombModifierUtil.hasModifier(getItem(), "flame"),
                 getBlockInteraction(getItem()),
                 getItem());
-        if(!level().isClientSide()) {
-            explosion.explode();
-        }
+        explosion.explode();
         explosion.finalizeExplosion(true);
         discard();
     }

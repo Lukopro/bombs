@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "bombs:item/crystal_dynamite"
+    "layer0": "bombs:item/dynamite_max"
   }
 }

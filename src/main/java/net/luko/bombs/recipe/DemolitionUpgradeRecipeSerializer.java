@@ -12,26 +12,23 @@ public class DemolitionUpgradeRecipeSerializer implements RecipeSerializer<Demol
 
     @Override
     public DemolitionUpgradeRecipe fromJson(ResourceLocation id, JsonObject json){
-        Ingredient inputBomb = Ingredient.fromJson(GsonHelper.getAsJsonObject(json, "input_bomb"));
         Ingredient inputUpgrade = Ingredient.fromJson(GsonHelper.getAsJsonObject(json, "input_upgrade"));
-        Ingredient inputCasing = Ingredient.fromJson(GsonHelper.getAsJsonObject(json, "input_casing"));
-        int tier = GsonHelper.getAsInt(json, "tier");
-        return new DemolitionUpgradeRecipe(id, inputBomb, inputUpgrade, inputCasing, tier);
+        int minTier = GsonHelper.getAsInt(json, "min_tier");
+        int maxTier = GsonHelper.getAsInt(json, "max_tier");
+        return new DemolitionUpgradeRecipe(id, inputUpgrade, minTier, maxTier);
     }
 
     @Override
     public @Nullable DemolitionUpgradeRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf){
-        Ingredient inputBomb = Ingredient.fromNetwork(buf);
         Ingredient inputUpgrade = Ingredient.fromNetwork(buf);
-        Ingredient inputCasing = Ingredient.fromNetwork(buf);
-        int tier = buf.readInt();
-        return new DemolitionUpgradeRecipe(id, inputBomb, inputUpgrade, inputCasing, tier);
+        int minTier = buf.readInt();
+        int maxTier = buf.readInt();
+        return new DemolitionUpgradeRecipe(id, inputUpgrade, minTier, maxTier);
     }
 
     public void toNetwork(FriendlyByteBuf buf, DemolitionUpgradeRecipe recipe){
-        recipe.getInputBomb().toNetwork(buf);
         recipe.getInputUpgrade().toNetwork(buf);
-        recipe.getInputCasing().toNetwork(buf);
-        buf.writeInt(recipe.getTier());
+        buf.writeInt(recipe.getMinTier());
+        buf.writeInt(recipe.getMaxTier());
     }
 }

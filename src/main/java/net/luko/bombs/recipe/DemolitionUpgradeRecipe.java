@@ -1,5 +1,7 @@
 package net.luko.bombs.recipe;
 
+import net.luko.bombs.item.BombItem;
+import net.luko.bombs.item.ModItems;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -13,45 +15,41 @@ import net.minecraft.world.level.Level;
 
 public class DemolitionUpgradeRecipe implements Recipe<Container> {
     private final ResourceLocation id;
-    private final Ingredient inputBomb;
     private final Ingredient inputUpgrade;
-    private final Ingredient inputCasing;
-    private final int tier;
+    private final int minTier;
+    private final int maxTier;
 
-    public DemolitionUpgradeRecipe(ResourceLocation id, Ingredient inputBomb, Ingredient inputUpgrade, Ingredient inputCasing, int tier) {
+    public DemolitionUpgradeRecipe(ResourceLocation id, Ingredient inputUpgrade, int minTier, int maxTier) {
         this.id = id;
-        this.inputBomb = inputBomb;
         this.inputUpgrade = inputUpgrade;
-        this.inputCasing = inputCasing;
-        this.tier = tier;
-    }
-
-    public Ingredient getInputBomb(){
-        return this.inputBomb;
+        this.minTier = minTier;
+        this.maxTier = maxTier;
     }
 
     public Ingredient getInputUpgrade(){
         return this.inputUpgrade;
     }
 
-    public Ingredient getInputCasing(){
-        return this.inputCasing;
+    public int getMinTier(){
+        return this.minTier;
     }
 
-    public int getTier(){
-        return this.tier;
-    }
-
-    @Override
-    public boolean matches(Container container, Level level) {
-        return inputBomb.test(container.getItem(0)) &&
-                inputUpgrade.test(container.getItem(1)) &&
-                inputCasing.test(container.getItem(2));
+    public int getMaxTier(){
+        return this.maxTier;
     }
 
     @Override
-    public ItemStack assemble(Container container, RegistryAccess registryAccess){
-        ItemStack bomb = container.getItem(0).copy();
+    public boolean matches(Container isolatedContainer, Level level) {
+        ItemStack bomb = isolatedContainer.getItem(0);
+        boolean alreadyHasTier = bomb.hasTag() && bomb.getTag().getInt("Tier") >= this.maxTier;
+        return (bomb.getItem() instanceof BombItem) &&
+                !alreadyHasTier &&
+                inputUpgrade.test(isolatedContainer.getItem(1));
+    }
+
+    @Override
+    public ItemStack assemble(Container isolatedContainer, RegistryAccess registryAccess){
+        ItemStack bomb = isolatedContainer.getItem(0).copy();
 
         if (bomb.isEmpty()) return ItemStack.EMPTY;
 
@@ -59,7 +57,12 @@ public class DemolitionUpgradeRecipe implements Recipe<Container> {
 
         CompoundTag tag = bomb.getOrCreateTag();
 
-        tag.putInt("Tier", tier);
+        int oldTier = tag.getInt("Tier");
+        if(oldTier == 0) oldTier = 1;
+
+        int newTier = oldTier < minTier ? minTier : oldTier + 1;
+
+        tag.putInt("Tier", newTier);
 
         return bomb;
     }
@@ -71,13 +74,11 @@ public class DemolitionUpgradeRecipe implements Recipe<Container> {
 
     @Override
     public ItemStack getResultItem(RegistryAccess registryAccess){
-        ItemStack result = inputBomb.getItems().length > 0
-                ? inputBomb.getItems()[0].copy()
-                : ItemStack.EMPTY;
+        ItemStack result = new ItemStack(ModItems.DYNAMITE.get());
 
         if(!result.isEmpty()){
             CompoundTag tag = result.getOrCreateTag();
-            tag.putInt("Tier", tier);
+            tag.putInt("Tier", minTier);
         }
 
         return result;

@@ -10,9 +10,6 @@ public class BombTextureUtil {
             index += (float) stack.getTag().getInt("Tier");
             index--;
         }
-        if(stack.hasTag() && stack.getTag().contains("Modifiers")){
-            index += 5.0F;
-        }
         return index;
     }
 }

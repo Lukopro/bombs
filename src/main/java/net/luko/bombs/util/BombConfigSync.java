@@ -5,10 +5,11 @@ import net.luko.bombs.item.BombItem;
 
 public class BombConfigSync {
     public static void syncBombExplosionPowers(){
-        BombItem.setExplosionPowerMapTier(1, BombsConfig.BASIC_DYNAMITE_BASE_POWER.get().floatValue());
-        BombItem.setExplosionPowerMapTier(2, BombsConfig.STRONG_DYNAMITE_BASE_POWER.get().floatValue());
-        BombItem.setExplosionPowerMapTier(3, BombsConfig.BLAZE_DYNAMITE_BASE_POWER.get().floatValue());
-        BombItem.setExplosionPowerMapTier(4, BombsConfig.DRAGON_DYNAMITE_BASE_POWER.get().floatValue());
-        BombItem.setExplosionPowerMapTier(5, BombsConfig.CRYSTAL_DYNAMITE_BASE_POWER.get().floatValue());
+        BombItem.setExplosionPowerMapTier(1, BombsConfig.DYNAMITE_BASE_POWER.get().floatValue());
+        BombItem.setExplosionPowerMapTier(2, BombsConfig.DYNAMITE_II_BASE_POWER.get().floatValue());
+        BombItem.setExplosionPowerMapTier(3, BombsConfig.DYNAMITE_III_BASE_POWER.get().floatValue());
+        BombItem.setExplosionPowerMapTier(4, BombsConfig.SOUL_DYNAMITE_BASE_POWER.get().floatValue());
+        BombItem.setExplosionPowerMapTier(5, BombsConfig.SOUL_DYNAMITE_II_BASE_POWER.get().floatValue());
+        BombItem.setExplosionPowerMapTier(5, BombsConfig.SOUL_DYNAMITE_III_BASE_POWER.get().floatValue());
     }
 }

@@ -41,9 +41,9 @@ public class JEIBombsPlugin implements IModPlugin {
 
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
-        registration.addRecipeClickArea(DemolitionTableScreen.class, 114, 29, 10, 10,
+        registration.addRecipeClickArea(DemolitionTableScreen.class, 68, 11, 6, 6,
                 DemolitionUpgradeCategory.DEMOLITION_UPGRADE_TYPE);
-        registration.addRecipeClickArea(DemolitionTableScreen.class, 102, 29, 10, 10,
+        registration.addRecipeClickArea(DemolitionTableScreen.class, 113, 11, 6, 6,
                 DemolitionModifierCategory.DEMOLITION_MODIFIER_TYPE);
     }
 }

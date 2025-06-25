@@ -1,0 +1,8 @@
+{
+  "type": "bombs:demolition_upgrade",
+  "input_upgrade": {
+    "item": "minecraft:nether_star"
+  },
+  "min_tier": 6,
+  "max_tier": 6
+}

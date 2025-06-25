@@ -21,6 +21,7 @@
   "modifier.bombs.gentle": "Gentle",
   "modifier.bombs.evaporate": "Evaporate",
   "modifier.bombs.golden": "Golden",
+  "modifier.bombs.quickdraw": "Quickdraw",
 
   "modifier.bombs.flame.info": "Adds fire to explosions.",
   "modifier.bombs.light.info": "Flies farther.",
@@ -33,11 +34,14 @@
   "modifier.bombs.gentle.info": "Doesn't destroy drops.",
   "modifier.bombs.evaporate.info": "Removes water.",
   "modifier.bombs.golden.info": "Explodes harder.",
+  "modifier.bombs.quickdraw.info": "Throw bomb instantly.",
 
-  "tier.bombs.2": "Strong",
-  "tier.bombs.3": "Blaze",
-  "tier.bombs.4": "Dragon",
-  "tier.bombs.5": "Crystal",
+  "tier.bombs.1": "Dynamite",
+  "tier.bombs.2": "Dynamite II",
+  "tier.bombs.3": "Dynamite III",
+  "tier.bombs.4": "Soul Dynamite",
+  "tier.bombs.5": "Soul Dynamite II",
+  "tier.bombs.6": "Soul Dynamite III",
 
   "creativetab.bombs_tab": "Bombs Tab"
 }

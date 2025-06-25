@@ -1,0 +1,8 @@
+{
+  "type": "bombs:demolition_upgrade",
+  "input_upgrade": {
+    "item": "minecraft:gunpowder"
+  },
+  "min_tier": 2,
+  "max_tier": 3
+}

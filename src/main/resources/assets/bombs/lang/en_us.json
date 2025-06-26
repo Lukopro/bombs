@@ -33,7 +33,7 @@
   "modifier.bombs.shockwave.info": "Deal's double knockback.",
   "modifier.bombs.gentle.info": "Doesn't destroy drops.",
   "modifier.bombs.evaporate.info": "Removes water.",
-  "modifier.bombs.golden.info": "Explodes harder.",
+  "modifier.bombs.golden.info": "Increases radius.",
   "modifier.bombs.quickdraw.info": "Throw bomb instantly.",
 
   "tier.bombs.1": "Dynamite",

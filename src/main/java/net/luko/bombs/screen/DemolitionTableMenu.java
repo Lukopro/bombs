@@ -4,6 +4,7 @@ import net.luko.bombs.block.ModBlocks;
 import net.luko.bombs.block.entity.DemolitionTableBlockEntity;
 import net.luko.bombs.item.BombItem;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -11,10 +12,12 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.SlotItemHandler;
 
+import java.util.List;
 import java.util.Map;
 
 public class DemolitionTableMenu extends AbstractContainerMenu {
@@ -86,7 +89,8 @@ public class DemolitionTableMenu extends AbstractContainerMenu {
                 public void onTake(Player player, ItemStack stack){
                     super.onTake(player, stack);
 
-                    ((DemolitionTableBlockEntity) entity).consumeRecipeIngredients();
+                    ((DemolitionTableBlockEntity) entity).consumeRecipeIngredients(1);
+                    ((DemolitionTableBlockEntity) entity).refreshOutput();
                 }
             });
         });
@@ -103,26 +107,43 @@ public class DemolitionTableMenu extends AbstractContainerMenu {
     protected static final int TE_INVENTORY_SLOT_COUNT = 11;  // must be the number of slots you have!
 
     @Override
-    public ItemStack quickMoveStack(Player player, int i) {
-        Slot sourceSlot = slots.get(i);
+    public ItemStack quickMoveStack(Player player, int slot) {
+        Slot sourceSlot = slots.get(slot);
         if (sourceSlot == null || !sourceSlot.hasItem()) return ItemStack.EMPTY;  //EMPTY_ITEM
         ItemStack sourceStack = sourceSlot.getItem();
         ItemStack copyOfSourceStack = sourceStack.copy();
 
+        // Handle shift-clicking the OUTPUT slot (i = 10)
+        if(slot == TE_INVENTORY_FIRST_SLOT_INDEX + 10){
+            if(blockEntity.getQuickCraftFlag()) return ItemStack.EMPTY;
+            blockEntity.markQuickCraftFlag();
+
+            int craftCount = blockEntity.smallestValidSlotItemCount();
+            ItemStack crafted = blockEntity.getItem(10);
+
+            crafted.setCount(craftCount);
+            if(!player.getInventory().add(crafted)) return ItemStack.EMPTY;
+
+            blockEntity.consumeRecipeIngredients(craftCount);
+            blockEntity.refreshOutput();
+
+            return copyOfSourceStack;
+        }
+
         // Check if the slot clicked is one of the vanilla container slots
-        if (i < VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT) {
+        if (slot < VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT) {
             // This is a vanilla container slot so merge the stack into the tile inventory
             if (!moveItemStackTo(sourceStack, TE_INVENTORY_FIRST_SLOT_INDEX, TE_INVENTORY_FIRST_SLOT_INDEX
                     + TE_INVENTORY_SLOT_COUNT, false)) {
                 return ItemStack.EMPTY;  // EMPTY_ITEM
             }
-        } else if (i < TE_INVENTORY_FIRST_SLOT_INDEX + TE_INVENTORY_SLOT_COUNT) {
+        } else if (slot < TE_INVENTORY_FIRST_SLOT_INDEX + TE_INVENTORY_SLOT_COUNT) {
             // This is a TE slot so merge the stack into the players inventory
             if (!moveItemStackTo(sourceStack, VANILLA_FIRST_SLOT_INDEX, VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT, false)) {
                 return ItemStack.EMPTY;
             }
         } else {
-            System.out.println("Invalid slotIndex:" + i);
+            System.out.println("Invalid slotIndex:" + slot);
             return ItemStack.EMPTY;
         }
         // If stack size == 0 (the entire stack was moved) set slot contents to null

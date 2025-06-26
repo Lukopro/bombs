@@ -52,7 +52,7 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
     private static final int MODIFIER_SLOT_6 = 9;
     private static final int OUTPUT_SLOT = 10;
 
-    private int lastInputHash = -1;
+    private int lastContainerHash = -1;
 
     private List<Integer> validRecipeSlots = new ArrayList<>();
     private List<Integer> invalidRecipeSlots = new ArrayList<>();
@@ -150,25 +150,29 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
     public void tick(Level level1, BlockPos pos, BlockState state1){
         if (level.isClientSide()) return;
 
-        SimpleContainer container = getContainerFromHandler();
-        int currentHash = getInputHash(container);
+        resetQuickCraftFlag();
 
-        if(currentHash != lastInputHash){
-            lastInputHash = currentHash;
-
-            clearValidRecipeSlots();
-            clearInvalidRecipeSlots();
-
-            ItemStack result = fullAssemble();
-            if(validRecipeSlots.isEmpty()) result = ItemStack.EMPTY;
-
-            itemHandler.setStackInSlot(OUTPUT_SLOT, result);
-            setChanged();
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        if(getContainerHash(getContainerFromHandler()) != lastContainerHash){
+            updateHash();
+            refreshOutput();
         }
     }
 
-    private SimpleContainer getContainerFromHandler(){
+    private boolean quickCraftFlag = false;
+
+    public void markQuickCraftFlag(){
+        quickCraftFlag = true;
+    }
+
+    public void resetQuickCraftFlag(){
+        quickCraftFlag = false;
+    }
+
+    public boolean getQuickCraftFlag() {
+        return quickCraftFlag;
+    }
+
+    public SimpleContainer getContainerFromHandler(){
         SimpleContainer container = new SimpleContainer(itemHandler.getSlots());
         for(int i = 0; i < itemHandler.getSlots(); i++){
             container.setItem(i, itemHandler.getStackInSlot(i));
@@ -176,7 +180,17 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
         return container;
     }
 
-    private ItemStack fullAssemble(){
+    public void refreshOutput(){
+        clearValidRecipeSlots();
+        clearInvalidRecipeSlots();
+
+        ItemStack result = fullAssemble();
+        if(result.equals(itemHandler.getStackInSlot(INPUT_SLOT))) result = ItemStack.EMPTY;
+
+        itemHandler.setStackInSlot(OUTPUT_SLOT, result);
+    }
+
+    public ItemStack fullAssemble(){
         SimpleContainer container = getContainerFromHandler();
 
         ItemStack result = container.getItem(INPUT_SLOT);
@@ -267,22 +281,36 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
         return List.copyOf(invalidRecipeSlots);
     }
 
-    public void consumeRecipeIngredients(){
-        itemHandler.getStackInSlot(INPUT_SLOT).shrink(1);
+    public void consumeRecipeIngredients(int amount){
+        itemHandler.getStackInSlot(INPUT_SLOT).shrink(amount);
         for(int slot : validRecipeSlots){
-            itemHandler.getStackInSlot(slot).shrink(1);
+            itemHandler.getStackInSlot(slot).shrink(amount);
         }
 
         clearValidRecipeSlots();
         clearInvalidRecipeSlots();
     }
 
-    private int getInputHash(SimpleContainer container){
+    public int smallestValidSlotItemCount(){
+        int count = itemHandler.getStackInSlot(INPUT_SLOT).getCount();
+        for(int slot : validRecipeSlots){
+            if(itemHandler.getStackInSlot(slot).getCount() < count){
+                count = itemHandler.getStackInSlot(slot).getCount();
+            }
+        }
+        return count;
+    }
+
+    private int getContainerHash(SimpleContainer container){
         int hash = 1;
         for(int i = 0; i < OUTPUT_SLOT; i++){
             hash = 31 * hash + container.getItem(i).hashCode();
         }
         return hash;
+    }
+
+    public void updateHash(){
+        lastContainerHash = getContainerHash(getContainerFromHandler());
     }
 
     @Override
@@ -350,7 +378,7 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
         }
 
         if(pSlot == OUTPUT_SLOT){
-            consumeRecipeIngredients();
+            consumeRecipeIngredients(1);
         }
         return result;
     }

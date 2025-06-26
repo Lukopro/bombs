@@ -10,6 +10,6 @@ public class BombConfigSync {
         BombItem.setExplosionPowerMapTier(3, BombsConfig.DYNAMITE_III_BASE_POWER.get().floatValue());
         BombItem.setExplosionPowerMapTier(4, BombsConfig.SOUL_DYNAMITE_BASE_POWER.get().floatValue());
         BombItem.setExplosionPowerMapTier(5, BombsConfig.SOUL_DYNAMITE_II_BASE_POWER.get().floatValue());
-        BombItem.setExplosionPowerMapTier(5, BombsConfig.SOUL_DYNAMITE_III_BASE_POWER.get().floatValue());
+        BombItem.setExplosionPowerMapTier(6, BombsConfig.SOUL_DYNAMITE_III_BASE_POWER.get().floatValue());
     }
 }

@@ -21,4 +21,3 @@
 - Throw noise
 - Weiner bomb tier 0
 - Explosion noise
-- Hit dynamite with arrows, explode

@@ -7,6 +7,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
@@ -86,7 +87,24 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
     }
 
     @Override
+    public boolean isPickable(){
+        return true;
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount){
+        System.out.println("Ouch!!!!");
+        if(source.getDirectEntity() instanceof ThrownBombEntity) return false;
+        if(!level().isClientSide()){
+            explode();
+        }
+        super.hurt(source, amount);
+        return false;
+    }
+
+    @Override
     protected void onHitEntity(EntityHitResult result){
+        if(result.getEntity() instanceof ThrownBombEntity) return;
         if(!level().isClientSide()){
             explode();
         }

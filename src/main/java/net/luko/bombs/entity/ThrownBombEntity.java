@@ -55,9 +55,7 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
         super(type, thrower, level);
 
         this.explosionPower = explosionPower;
-        if(BombModifierUtil.hasModifier(getItem(), "golden")){
-            this.explosionPower += 0.5F;
-        }
+
 
         this.randomSideTilt = RANDOM_SIDE_TILT_MAX * (float)Math.random();
 

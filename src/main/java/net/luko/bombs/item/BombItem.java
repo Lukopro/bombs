@@ -64,7 +64,11 @@ public class BombItem extends Item {
         if (stack.hasTag() && stack.getTag().contains("Tier")){
             tier = stack.getTag().getInt("Tier");
         }
-        return explosionPowerMap.getOrDefault(tier, 2.0F);
+        float power = explosionPowerMap.getOrDefault(tier, 2.0F);
+        if(BombModifierUtil.hasModifier(stack, "golden")){
+            power += 0.5F;
+        }
+        return power;
     }
 
     public static void setExplosionPowerMapTier(int tier, float power){

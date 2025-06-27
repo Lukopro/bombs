@@ -141,7 +141,7 @@ public class CustomExplosion extends Explosion {
         this.level_.gameEvent(this.source_, GameEvent.EXPLODE, new Vec3(this.x_, this.y_, this.z_));
         Set<BlockPos> set = Sets.newHashSet();
 
-        int gridSize = 16;
+        int gridSize = 4 + (int)Math.floor(Math.pow(radius_, 1.4));
 
         for(int j = 0; j < gridSize; ++j) {
             for(int k = 0; k < gridSize; ++k) {

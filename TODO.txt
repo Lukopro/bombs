@@ -1,9 +1,23 @@
 - Optimize
-- New bomb types: Grenades (shrapnel = seperate modifier), claymores, firework, c4,
-- Gooder textures
-- Charge-up by default, instant throw as modifier
+- New bomb types: Grenades, claymores, c4,
 - Modifier for firework stars & potions
 - TNT -> Dynamite -> modify -> TNT (custom) -> throw it, cluster bombs
 - Forge, NeoForge, 1.20.1, 1.21.1 *
 - Villager profession
 - Dynamite launcher
+- Flame/blue flame particles
+- Beheading modifier
+- Hover modifier
+- Dirt modifier, ice modifier
+- Mess with gravity (modifier)
+- Adjust explosion ray count based on radius
+- Mobs that have dynamite will throw them
+- Redstone modifier (powers redstone upon explosion)
+- Dispenser support
+- Super high tiers/nukes
+- Shrapnel
+- Flashbang
+- Swarm, spawn bees that explode
+- Throw noise
+- Weiner bomb tier 0
+- Explosion noise

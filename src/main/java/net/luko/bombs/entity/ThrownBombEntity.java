@@ -96,7 +96,6 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
 
     @Override
     public boolean hurt(DamageSource source, float amount){
-        System.out.println("Ouch!!!!");
         if(source.getDirectEntity() instanceof ThrownBombEntity) return false;
         if(!level().isClientSide()){
             explode();

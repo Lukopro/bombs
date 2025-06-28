@@ -17,6 +17,5 @@
 - Shrapnel
 - Flashbang
 - Swarm, spawn bees that explode
-- Throw noise
 - Weiner bomb tier 0
 - Explosion noise

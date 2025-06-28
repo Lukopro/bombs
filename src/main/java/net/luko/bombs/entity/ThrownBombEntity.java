@@ -85,6 +85,11 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
     }
 
     @Override
+    public float getGravity(){
+        return 0.03F;
+    }
+
+    @Override
     public boolean isPickable(){
         return true;
     }

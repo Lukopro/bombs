@@ -13,6 +13,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -131,11 +134,22 @@ public class BombItem extends Item {
                 player.getZ() + forward.z * 0.6
         );
 
-        // bombEntity is set to its particular type (e.g. strong, blaze).
+        // bombEntity is given an ItemStack with an NBT tag.
         bombEntity.setItem(stack);
 
         // Bomb is launched from the player.
         bombEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, velocity, 1.0F);
+
+        // Play sound
+        SoundEvent soundEvent =
+                (stack.hasTag() &&
+                stack.getTag().contains("Tier") &&
+                stack.getTag().getInt("Tier") >= 4)
+                ? SoundEvents.WITHER_SHOOT
+                : SoundEvents.FIRECHARGE_USE;
+
+        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                soundEvent, SoundSource.PLAYERS, 0.5F, 1.0F);
 
         // Bomb is spawned server-side
         level.addFreshEntity(bombEntity);

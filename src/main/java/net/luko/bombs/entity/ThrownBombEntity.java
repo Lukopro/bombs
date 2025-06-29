@@ -1,5 +1,6 @@
 package net.luko.bombs.entity;
 
+import net.luko.bombs.config.BombsConfig;
 import net.luko.bombs.item.ModItems;
 import net.luko.bombs.util.BombModifierUtil;
 import net.minecraft.core.BlockPos;
@@ -54,7 +55,7 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
         this.initialForwardTilt = RANDOM_FORWARD_TILT_MAX * (float)Math.random();
         this.randomSpinSpeed = RANDOM_SPIN_SPEED_MIN + (RANDOM_SPIN_SPEED_MAX - RANDOM_SPIN_SPEED_MIN) * (float)Math.random();
 
-        this.tickLife = 1200;
+        this.tickLife = BombsConfig.BOMB_TIMEOUT_TIME.get();
     }
 
     public ThrownBombEntity(EntityType<? extends ThrownBombEntity> type, Level level, LivingEntity thrower, float explosionPower){
@@ -70,7 +71,7 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
         this.initialForwardTilt = (ThrownBombEntity.RANDOM_FORWARD_TILT_MAX / 2) + randomForwardTilt + throwerXRot - 20.0F;
         this.randomSpinSpeed = RANDOM_SPIN_SPEED_MIN + (RANDOM_SPIN_SPEED_MAX - RANDOM_SPIN_SPEED_MIN) * (float)Math.random();
 
-        this.tickLife = 1200;
+        this.tickLife = BombsConfig.BOMB_TIMEOUT_TIME.get();
     }
 
     @Override

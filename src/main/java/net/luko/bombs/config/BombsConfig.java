@@ -29,6 +29,8 @@ public class BombsConfig {
     public static ForgeConfigSpec.DoubleValue SOUL_DYNAMITE_II_BASE_POWER;
     public static ForgeConfigSpec.DoubleValue SOUL_DYNAMITE_III_BASE_POWER;
 
+    public static ForgeConfigSpec.IntValue BOMB_TIMEOUT_TIME;
+
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
 
@@ -80,6 +82,14 @@ public class BombsConfig {
                         POWER_MIN, POWER_MAX);
 
         builder.pop();
+
+        builder.push("Performance");
+
+        BOMB_TIMEOUT_TIME = builder
+                .comment("How many ticks should a bomb exist before it despawns? (default: 1200)")
+                .defineInRange("bombTimeoutTime",
+                        1200,
+                        40, Integer.MAX_VALUE);
 
         COMMON_CONFIG = builder.build();
     }

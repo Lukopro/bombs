@@ -22,6 +22,8 @@
   "modifier.bombs.evaporate": "Evaporate",
   "modifier.bombs.golden": "Golden",
   "modifier.bombs.quickdraw": "Quickdraw",
+  "modifier.bombs.float": "Floating",
+  "modifier.bombs.sink": "Sinking",
 
   "modifier.bombs.flame.info": "Adds fire to explosions.",
   "modifier.bombs.light.info": "Flies farther.",
@@ -35,6 +37,8 @@
   "modifier.bombs.evaporate.info": "Removes water.",
   "modifier.bombs.golden.info": "Increases blast radius.",
   "modifier.bombs.quickdraw.info": "Throw bombs instantly.",
+  "modifier.bombs.float.info": "Decreases gravity.",
+  "modifier.bombs.sink.info": "Increases gravity.",
 
   "tier.bombs.1": "Dynamite",
   "tier.bombs.2": "Dynamite II",

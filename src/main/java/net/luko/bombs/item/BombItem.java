@@ -48,7 +48,9 @@ public class BombItem extends Item {
             Map.entry("gentle", Style.EMPTY.withColor(TextColor.fromRgb(0x369c98))),
             Map.entry("evaporate", Style.EMPTY.withColor(TextColor.fromRgb(0x9aa9b5))),
             Map.entry("quickdraw", Style.EMPTY.withColor(TextColor.fromRgb(0x7a5c3c))),
-            Map.entry("golden", Style.EMPTY.withColor(TextColor.fromRgb(0xffe017)))
+            Map.entry("golden", Style.EMPTY.withColor(TextColor.fromRgb(0xffe017))),
+            Map.entry("float", Style.EMPTY.withColor(TextColor.fromRgb(0xcbcf9b))),
+            Map.entry("sink", Style.EMPTY.withColor(TextColor.fromRgb(0x3d372e)))
     );
 
     private static Map<Integer, Float> explosionPowerMap = new HashMap<>();
@@ -217,18 +219,17 @@ public class BombItem extends Item {
             ListTag modifiers = stack.getTag().getList("Modifiers", Tag.TAG_STRING);
 
             tooltip.add(Component.empty());
-            tooltip.add(Component.literal("Modifiers:").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(0xdddddd))).withStyle(ChatFormatting.BOLD));
+            tooltip.add(Component.literal("Modifiers:")
+                    .withStyle(Style.EMPTY
+                            .withColor(TextColor.fromRgb(0xdddddd)))
+                    .withStyle(ChatFormatting.BOLD));
 
             for(int i = 0; i < modifiers.size(); i++){
                 String mod = modifiers.getString(i);
 
-                if(!modifierColorMap.containsKey(mod)){
-                    continue;
-                }
-
                 tooltip.add(Component.literal("- ")
                                 .append(Component.translatable("modifier.bombs." + mod))
-                                .withStyle(modifierColorMap.get(mod)));
+                                .withStyle(modifierColorMap.getOrDefault(mod, Style.EMPTY.withColor(TextColor.fromRgb(0x3d372e)))));
 
                 if(Screen.hasShiftDown()){
                     tooltip.add(Component.translatable("modifier.bombs." + mod + ".info")

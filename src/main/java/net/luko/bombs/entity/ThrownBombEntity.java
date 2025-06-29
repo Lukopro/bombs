@@ -90,7 +90,10 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
 
     @Override
     public float getGravity(){
-        return 0.03F;
+        float gravity = 0.03F;
+        if(BombModifierUtil.hasModifier(getItem(), "float")) gravity /= 3;
+        if(BombModifierUtil.hasModifier(getItem(), "sink")) gravity *= 3;
+        return gravity;
     }
 
     @Override

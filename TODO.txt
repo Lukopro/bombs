@@ -8,7 +8,6 @@
 - Beheading modifier
 - Hover modifier
 - Dirt modifier, ice modifier
-- Mess with gravity (modifier)
 - Adjust explosion ray count based on radius
 - Mobs that have dynamite will throw them
 - Redstone modifier (powers redstone upon explosion)

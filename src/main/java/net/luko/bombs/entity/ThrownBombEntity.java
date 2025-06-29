@@ -41,8 +41,12 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
     public static final float RANDOM_SPIN_SPEED_MAX = 25.0F;
 
     public ThrownBombEntity(EntityType<? extends ThrownBombEntity> type, Level level) {
+        this(type, level, DEFAULT_POWER);
+    }
+
+    public ThrownBombEntity(EntityType<? extends ThrownBombEntity> type, Level level, float explosionPower) {
         super(type, level);
-        this.explosionPower = DEFAULT_POWER;
+        this.explosionPower = explosionPower;
 
         this.randomSideTilt = RANDOM_SIDE_TILT_MAX * (float)Math.random();
 

@@ -4,12 +4,17 @@ import net.luko.bombs.block.ModBlocks;
 import net.luko.bombs.block.entity.ModBlockEntities;
 import net.luko.bombs.config.BombsConfig;
 import net.luko.bombs.entity.ModEntities;
+import net.luko.bombs.item.BombItem;
 import net.luko.bombs.item.ModCreativeModeTabs;
 import net.luko.bombs.item.ModItems;
 import net.luko.bombs.recipe.ModRecipeSerializers;
 import net.luko.bombs.recipe.ModRecipeTypes;
 import net.luko.bombs.screen.ModMenuTypes;
 import net.luko.bombs.util.BombConfigSync;
+import net.minecraft.core.BlockSource;
+import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -47,6 +52,17 @@ public class Bombs
     private void commonSetup(final FMLCommonSetupEvent event)
     {
         event.enqueueWork(BombConfigSync::syncBombExplosionPowers);
+        event.enqueueWork(() -> {
+            DispenserBlock.registerBehavior(ModItems.DYNAMITE.get(), new DefaultDispenseItemBehavior(){
+                @Override
+                protected ItemStack execute(BlockSource source, ItemStack stack){
+                    if(!(stack.getItem() instanceof BombItem bomb)) return stack;
+
+                    bomb.throwBomb(source.getLevel(), source, stack);
+                    return stack;
+                }
+            });
+        });
     }
 
     @SubscribeEvent

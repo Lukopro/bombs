@@ -7,6 +7,8 @@ import net.luko.bombs.util.BombModifierUtil;
 import net.luko.bombs.util.BombTextureUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.BlockSource;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -26,6 +28,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,7 +45,7 @@ public class BombItem extends Item {
             Map.entry("shatter", Style.EMPTY.withColor(TextColor.fromRgb(0x5f9c36))),
             Map.entry("lethal", Style.EMPTY.withColor(TextColor.fromRgb(0x5f9c36))),
             Map.entry("shockwave", Style.EMPTY.withColor(TextColor.fromRgb(0x5f9c36))),
-            Map.entry("gentle", Style.EMPTY.withColor(TextColor.fromRgb(0x369c7d))),
+            Map.entry("gentle", Style.EMPTY.withColor(TextColor.fromRgb(0x369c98))),
             Map.entry("evaporate", Style.EMPTY.withColor(TextColor.fromRgb(0x9aa9b5))),
             Map.entry("quickdraw", Style.EMPTY.withColor(TextColor.fromRgb(0x7a5c3c))),
             Map.entry("golden", Style.EMPTY.withColor(TextColor.fromRgb(0xffe017)))
@@ -138,7 +141,9 @@ public class BombItem extends Item {
         bombEntity.setItem(stack);
 
         // Bomb is launched from the player.
-        bombEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, velocity, 1.0F);
+        bombEntity.shootFromRotation(player,
+                player.getXRot(), player.getYRot(), 0.0F,
+                velocity, 1.0F);
 
         // Play sound
         SoundEvent soundEvent =
@@ -158,7 +163,39 @@ public class BombItem extends Item {
         if(!player.getAbilities().instabuild){
             stack.shrink(1);
         }
+    }
 
+    public void throwBomb(Level level, BlockSource source, ItemStack stack) {
+        Direction direction = source.getBlockState().getValue(DispenserBlock.FACING);
+
+        ThrownBombEntity bombEntity = new ThrownBombEntity(ModEntities.THROWN_BOMB.get(), level, calculateExplosionPower(stack));
+
+        bombEntity.setPos(source.x() + direction.getStepX() * 0.5,
+                          source.y() + direction.getStepY() * 0.5,
+                          source.z() + direction.getStepZ() * 0.5);
+
+        // bombEntity is given an ItemStack with an NBT tag.
+        bombEntity.setItem(stack);
+
+        // Bomb is launched from the player.
+        bombEntity.shoot(direction.getStepX(), direction.getStepY(), direction.getStepZ(),
+                getBaseVelocity(stack), 1.0F);
+
+        // Play sound
+        SoundEvent soundEvent =
+                (stack.hasTag() &&
+                        stack.getTag().contains("Tier") &&
+                        stack.getTag().getInt("Tier") >= 4)
+                        ? SoundEvents.WITHER_SHOOT
+                        : SoundEvents.FIRECHARGE_USE;
+
+        level.playSound(null, source.x(), source.y(), source.z(),
+                soundEvent, SoundSource.PLAYERS, 0.5F, 1.0F);
+
+        // Bomb is spawned server-side
+        level.addFreshEntity(bombEntity);
+
+        stack.shrink(1);
     }
 
     @Override

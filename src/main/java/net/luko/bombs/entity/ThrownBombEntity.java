@@ -40,6 +40,8 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
     public static final float RANDOM_SPIN_SPEED_MIN = 15.0F;
     public static final float RANDOM_SPIN_SPEED_MAX = 25.0F;
 
+    public final int tickLife;
+
     public ThrownBombEntity(EntityType<? extends ThrownBombEntity> type, Level level) {
         this(type, level, DEFAULT_POWER);
     }
@@ -49,10 +51,10 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
         this.explosionPower = explosionPower;
 
         this.randomSideTilt = RANDOM_SIDE_TILT_MAX * (float)Math.random();
-
         this.initialForwardTilt = RANDOM_FORWARD_TILT_MAX * (float)Math.random();
-
         this.randomSpinSpeed = RANDOM_SPIN_SPEED_MIN + (RANDOM_SPIN_SPEED_MAX - RANDOM_SPIN_SPEED_MIN) * (float)Math.random();
+
+        this.tickLife = 1200;
     }
 
     public ThrownBombEntity(EntityType<? extends ThrownBombEntity> type, Level level, LivingEntity thrower, float explosionPower){
@@ -65,10 +67,10 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
 
         float randomForwardTilt = RANDOM_FORWARD_TILT_MAX * (float)Math.random();
         float throwerXRot = thrower.getXRot();
-
         this.initialForwardTilt = (ThrownBombEntity.RANDOM_FORWARD_TILT_MAX / 2) + randomForwardTilt + throwerXRot - 20.0F;
-
         this.randomSpinSpeed = RANDOM_SPIN_SPEED_MIN + (RANDOM_SPIN_SPEED_MAX - RANDOM_SPIN_SPEED_MIN) * (float)Math.random();
+
+        this.tickLife = 1200;
     }
 
     @Override
@@ -94,6 +96,12 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
         if(BombModifierUtil.hasModifier(getItem(), "float")) gravity /= 3;
         if(BombModifierUtil.hasModifier(getItem(), "sink")) gravity *= 3;
         return gravity;
+    }
+
+    @Override
+    public void tick(){
+        super.tick();
+        if(tickCount % 40 == 0 && tickCount >= this.tickLife) discard();
     }
 
     @Override

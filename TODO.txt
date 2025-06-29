@@ -12,7 +12,6 @@
 - Adjust explosion ray count based on radius
 - Mobs that have dynamite will throw them
 - Redstone modifier (powers redstone upon explosion)
-- Dispenser support
 - Super high tiers/nukes
 - Shrapnel
 - Flashbang

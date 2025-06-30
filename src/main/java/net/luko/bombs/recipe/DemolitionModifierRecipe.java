@@ -20,12 +20,14 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
     private final Ingredient inputBomb;
     private final Ingredient inputModifier;
     private final String modifierName;
+    private final String specialTag;
 
-    public DemolitionModifierRecipe(ResourceLocation id, Ingredient inputBomb, Ingredient inputModifier, String modifierName){
+    public DemolitionModifierRecipe(ResourceLocation id, Ingredient inputBomb, Ingredient inputModifier, String modifierName, String specialTag){
         this.id = id;
         this.inputBomb = inputBomb;
         this.inputModifier = inputModifier;
         this.modifierName = modifierName;
+        this.specialTag = specialTag;
     }
 
     @Override
@@ -63,6 +65,12 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
 
         tag.put("Modifiers", newModifiers);
 
+        if(specialTag != null && specialTag.equals("Potion")){
+            tag.putString("Potion",
+                    isolatedContainer.getItem(1).copy()
+                    .getTag().getString("Potion"));
+        }
+
         return bomb;
     }
 
@@ -76,6 +84,7 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
 
         // Sort modifiersArray using a preset order
         Map<String, Integer> orderMap = Map.ofEntries(
+                Map.entry("imbued", -1),
                 Map.entry("golden", 0),
                 Map.entry("flame", 1),
                 Map.entry("light", 2),
@@ -144,6 +153,10 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
 
     public String getModifierName(){
         return modifierName;
+    }
+
+    public String getSpecialTag(){
+        return specialTag;
     }
 
     public RecipeSerializer<?> getSerializer(){

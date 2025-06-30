@@ -9,6 +9,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -23,10 +24,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.phys.Vec3;
@@ -227,9 +226,32 @@ public class BombItem extends Item {
             for(int i = 0; i < modifiers.size(); i++){
                 String mod = modifiers.getString(i);
 
-                tooltip.add(Component.literal("- ")
-                                .append(Component.translatable("modifier.bombs." + mod))
-                                .withStyle(modifierColorMap.getOrDefault(mod, Style.EMPTY.withColor(TextColor.fromRgb(0x3d372e)))));
+                MutableComponent modifierComponent = Component.literal("- ")
+                        .append(Component.translatable("modifier.bombs." + mod));
+
+                if(mod.equals("imbued") && stack.getTag().contains("Potion")){
+                    String potionId = stack.getTag().getString("Potion");
+                    if(potionId.isEmpty()) potionId = "minecraft:empty";
+
+                    ItemStack tempPotionStack = new ItemStack(Items.POTION);
+                    CompoundTag tempPotionTag = new CompoundTag();
+                    tempPotionTag.putString("Potion", potionId);
+                    tempPotionStack.setTag(tempPotionTag);
+                    int potionColor = PotionUtils.getColor(
+                            PotionUtils.getPotion(
+                                    tempPotionStack));
+
+                    String potionDescriptionId = ((PotionItem) Items.POTION).getDescriptionId(tempPotionStack);
+
+                    modifierComponent.append(Component.literal(" ("))
+                            .append(Component.translatable(potionDescriptionId))
+                            .append(Component.literal(")"))
+                            .withStyle(Style.EMPTY.withColor(potionColor));
+                } else {
+                    modifierComponent.withStyle(modifierColorMap.getOrDefault(mod, Style.EMPTY.withColor(TextColor.fromRgb(0x3d372e))));
+                }
+
+                tooltip.add(modifierComponent);
 
                 if(Screen.hasShiftDown()){
                     tooltip.add(Component.translatable("modifier.bombs." + mod + ".info")

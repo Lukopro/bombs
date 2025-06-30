@@ -15,7 +15,9 @@ public class DemolitionModifierRecipeSerializer implements RecipeSerializer<Demo
         Ingredient inputModifier = Ingredient.fromJson(GsonHelper.getAsJsonObject(json, "input_modifier"));
         String modifierName = GsonHelper.getAsString(json, "modifier");
 
-        return new DemolitionModifierRecipe(id, inputBomb, inputModifier, modifierName);
+        String specialTag = json.has("special_tag") ? GsonHelper.getAsString(json, "special_tag") : null;
+
+        return new DemolitionModifierRecipe(id, inputBomb, inputModifier, modifierName, specialTag);
     }
 
     @Override
@@ -24,7 +26,9 @@ public class DemolitionModifierRecipeSerializer implements RecipeSerializer<Demo
         Ingredient inputModifier = Ingredient.fromNetwork(buf);
         String modifierName = buf.readUtf();
 
-        return new DemolitionModifierRecipe(id, inputBomb, inputModifier, modifierName);
+        String specialTag = buf.readBoolean() ? buf.readUtf() : null;
+
+        return new DemolitionModifierRecipe(id, inputBomb, inputModifier, modifierName, specialTag);
     }
 
     @Override
@@ -32,5 +36,9 @@ public class DemolitionModifierRecipeSerializer implements RecipeSerializer<Demo
         recipe.getInputBomb().toNetwork(buf);
         recipe.getInputModifier().toNetwork(buf);
         buf.writeUtf(recipe.getModifierName());
+
+        if(recipe.getSpecialTag() != null){
+            buf.writeUtf(recipe.getSpecialTag());
+        }
     }
 }

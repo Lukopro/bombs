@@ -1,6 +1,10 @@
 - Optimize
 - New bomb types: Grenades, claymores, c4,
-- Modifier for firework stars & potions
+- Dyes / custom effects
+- Custom Potions (With CustomPotionEffects tag)
+- Visual effects for potions
+- Add splash potions to recipes
+- Add lingering potions
 - TNT -> Dynamite -> modify -> TNT (custom) -> throw it, cluster bombs
 - Forge, NeoForge, 1.20.1, 1.21.1 *
 - Villager profession

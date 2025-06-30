@@ -3,7 +3,7 @@ package net.luko.bombs.block.entity;
 import net.luko.bombs.item.BombItem;
 import net.luko.bombs.recipe.ModRecipeTypes;
 import net.luko.bombs.screen.DemolitionTableMenu;
-import net.luko.bombs.util.RecipeUtil;
+import net.luko.bombs.util.BombRecipeUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -332,10 +332,10 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
             case DOWN -> false;
             default -> {
                 if (index >= UPGRADE_SLOT_1 && index < MODIFIER_SLOT_1){
-                    yield RecipeUtil.validUpgradeIngredient(level, stack);
+                    yield BombRecipeUtil.validUpgradeIngredient(level, stack);
                 }
                 if (index >= MODIFIER_SLOT_1 && index < OUTPUT_SLOT){
-                    yield RecipeUtil.validModifierIngredient(level, stack);
+                    yield BombRecipeUtil.validModifierIngredient(level, stack);
                 }
                 yield false;
             }

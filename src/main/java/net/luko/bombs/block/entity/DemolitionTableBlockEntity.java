@@ -91,12 +91,19 @@ public class DemolitionTableBlockEntity extends BlockEntity implements IBlockEnt
     public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries){
         super.saveAdditional(tag, registries);
         tag.put("inventory", itemHandler.serializeNBT(registries));
+        tag.putIntArray("invalidRecipeSlots", invalidRecipeSlots.stream().mapToInt(Integer::intValue).toArray());
     }
 
     @Override
     public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries){
         super.loadAdditional(tag, registries);
         itemHandler.deserializeNBT(registries, tag.getCompound("inventory"));
+        if(tag.contains("invalidRecipeSlots", CompoundTag.TAG_INT_ARRAY)){
+            this.invalidRecipeSlots = Arrays.stream(tag.getIntArray("invalidRecipeSlots"))
+                    .boxed().collect(Collectors.toList());
+        } else {
+            this.invalidRecipeSlots = new ArrayList<>();
+        }
     }
 
     @Override

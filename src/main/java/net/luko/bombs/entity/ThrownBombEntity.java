@@ -41,6 +41,9 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
 
     public final int tickLife;
 
+    public float lastParticleTick;
+    public float particlesToSpawn;
+
     public ThrownBombEntity(EntityType<? extends ThrownBombEntity> type, Level level) {
         super(type, level);
         this.explosionPower = DEFAULT_POWER;
@@ -50,6 +53,9 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
         this.randomSpinSpeed = RANDOM_SPIN_SPEED_MIN + (RANDOM_SPIN_SPEED_MAX - RANDOM_SPIN_SPEED_MIN) * (float)Math.random();
 
         this.tickLife = BombsConfig.BOMB_TIMEOUT_TIME.get();
+
+        this.lastParticleTick = this.tickCount;
+        this.particlesToSpawn = 0.0F;
     }
 
     public ThrownBombEntity(EntityType<? extends ThrownBombEntity> type, Level level, float explosionPower) {
@@ -61,6 +67,9 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
         this.randomSpinSpeed = RANDOM_SPIN_SPEED_MIN + (RANDOM_SPIN_SPEED_MAX - RANDOM_SPIN_SPEED_MIN) * (float)Math.random();
 
         this.tickLife = BombsConfig.BOMB_TIMEOUT_TIME.get();
+
+        this.lastParticleTick = this.tickCount;
+        this.particlesToSpawn = 0.0F;
     }
 
     public ThrownBombEntity(EntityType<? extends ThrownBombEntity> type, Level level, LivingEntity thrower, float explosionPower){

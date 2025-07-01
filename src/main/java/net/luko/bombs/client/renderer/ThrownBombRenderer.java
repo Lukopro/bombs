@@ -49,7 +49,7 @@ public class ThrownBombRenderer extends EntityRenderer<ThrownBombEntity> {
 
         poseStack.mulPose(Axis.ZP.rotationDegrees(spin + entity.getInitialForwardTilt()));
 
-        spawnFlameParticles(entity, getFuseWorldPos(entity, partialTicks));
+        spawnFlameParticles(entity, partialTicks);
 
         model.renderToBuffer(
                 poseStack,
@@ -63,17 +63,40 @@ public class ThrownBombRenderer extends EntityRenderer<ThrownBombEntity> {
         super.render(entity, entityYaw, partialTicks, poseStack, bufferSource, packedLight);
     }
 
-    private void spawnFlameParticles(ThrownBombEntity entity, Vec3 fusePos){
-        int tier = (entity.getItem().getOrDefault(ModDataComponents.TIER.get(), 1));
+    private void spawnFlameParticles(ThrownBombEntity entity, float partialTicks){
+        int tier = entity.getItem().getOrDefault(ModDataComponents.TIER.get(), 1);
+
+        float currentParticleTick = entity.tickCount + partialTicks;
+        float elapsedTicks = currentParticleTick - entity.lastParticleTick;
+
+
+        float particlesPerTick = (float)(Math.abs((tier - 1) % 3) + 1);
+
+        entity.particlesToSpawn += elapsedTicks * particlesPerTick;
+        int particlesSpawned = (int) Math.floor(entity.particlesToSpawn);
+
+        if(particlesSpawned <= 0) return;
+
+        entity.lastParticleTick = currentParticleTick;
+        entity.particlesToSpawn -= particlesSpawned;
+
+        Vec3 fusePosLast = getFuseWorldPos(entity, partialTicks - elapsedTicks);
+        Vec3 fusePosNow = getFuseWorldPos(entity, partialTicks);
+
         SimpleParticleType type = (tier >= 4 && tier <= 6) ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FLAME;
 
-        Minecraft.getInstance().level.addParticle(type,
-                fusePos.x(),
-                fusePos.y(),
-                fusePos.z(),
-                Minecraft.getInstance().level.random.nextGaussian() * 0.002,
-                Minecraft.getInstance().level.random.nextGaussian() * 0.002,
-                Minecraft.getInstance().level.random.nextGaussian() * 0.002);
+        for(int i = 0; i < particlesSpawned; i++){
+            float t = (float) i / particlesSpawned;
+            double px = Mth.lerp(t, fusePosLast.x, fusePosNow.x);
+            double py = Mth.lerp(t, fusePosLast.y, fusePosNow.y);
+            double pz = Mth.lerp(t, fusePosLast.z, fusePosNow.z);
+            Minecraft.getInstance().level.addParticle(
+                    type,
+                    px, py, pz,
+                    Minecraft.getInstance().level.random.nextGaussian() * 0.002,
+                    Minecraft.getInstance().level.random.nextGaussian() * 0.002,
+                    Minecraft.getInstance().level.random.nextGaussian() * 0.002);
+        }
     }
 
     private static Vec3 rotate(Vec3 vec, float xRot, float yRot, float zRot){

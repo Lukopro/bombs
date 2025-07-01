@@ -27,6 +27,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -244,19 +245,12 @@ public class CustomExplosion extends Explosion {
                         if (entity instanceof LivingEntity livingentity) {
                             d11 = 1.0 - livingentity.getAttributeValue(Attributes.EXPLOSION_KNOCKBACK_RESISTANCE);
 
-                            if(stack.has(DataComponents.POTION_CONTENTS)){
+                            if(BombModifierUtil.hasModifier(stack, "laden") && stack.has(DataComponents.POTION_CONTENTS)){
                                 for(MobEffectInstance effect : stack.get(DataComponents.POTION_CONTENTS).getAllEffects()){
                                     livingentity.addEffect(new MobEffectInstance(effect));
                                 }
                             }
 
-                        } else {
-                            d11 = d10;
-                        }
-
-                        if (entity instanceof LivingEntity) {
-                            LivingEntity livingentity = (LivingEntity)entity;
-                            d11 = 1.0 - livingentity.getAttributeValue(Attributes.EXPLOSION_KNOCKBACK_RESISTANCE);
                         } else {
                             d11 = d10;
                         }
@@ -290,6 +284,33 @@ public class CustomExplosion extends Explosion {
             Vec3 velocity = entry.getValue();
             if(player instanceof ServerPlayer serverPlayer) {
                 serverPlayer.connection.send(new ClientboundSetEntityMotionPacket(player));
+            }
+        }
+
+        if(BombModifierUtil.hasModifier(stack, "imbued") && stack.has(DataComponents.POTION_CONTENTS)){
+            Iterable<MobEffectInstance> effects = stack.get(DataComponents.POTION_CONTENTS).getAllEffects();
+            if(effects.iterator().hasNext()){
+                AreaEffectCloud cloud = new AreaEffectCloud(
+                        level_, x_, y_, z_);
+
+                cloud.setRadius(radius_ - 0.5F);
+                cloud.setRadiusOnUse(-0.2F);
+                cloud.setWaitTime(10);
+                cloud.setDuration(100 * (int)radius_);
+                cloud.setRadiusPerTick(-cloud.getRadius() / cloud.getDuration());
+
+
+                for(MobEffectInstance effect : effects){
+                    cloud.addEffect(new MobEffectInstance(
+                            effect.getEffect(),
+                            effect.getDuration() / 4,
+                            effect.getAmplifier(),
+                            effect.isAmbient(),
+                            effect.isVisible()
+                    ));
+                }
+
+                level_.addFreshEntity(cloud);
             }
         }
     }
@@ -374,7 +395,7 @@ public class CustomExplosion extends Explosion {
 
         serverLevel.sendParticles(ParticleTypes.EXPLOSION, x_, y_, z_, particleCount, spread, spread, spread, 0.1);
 
-        if(stack.has(DataComponents.POTION_CONTENTS)) {
+        if(BombModifierUtil.hasModifier(stack, "laden") && stack.has(DataComponents.POTION_CONTENTS)) {
             int color = stack.get(DataComponents.POTION_CONTENTS).getColor();
             float r = (color >> 16 & 255) / 255.0F;
             float g = (color >> 8 & 255) / 255.0F;

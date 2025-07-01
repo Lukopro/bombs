@@ -24,6 +24,7 @@
   "modifier.bombs.quickdraw": "Quickdraw",
   "modifier.bombs.float": "Floating",
   "modifier.bombs.sink": "Sinking",
+  "modifier.bombs.laden": "Laden",
   "modifier.bombs.imbued": "Imbued",
 
   "modifier.bombs.flame.info": "Adds fire to explosions.",
@@ -40,7 +41,8 @@
   "modifier.bombs.quickdraw.info": "Throw bombs instantly.",
   "modifier.bombs.float.info": "Decreases gravity.",
   "modifier.bombs.sink.info": "Increases gravity.",
-  "modifier.bombs.imbued.info": "Applies potion effect upon exploding.",
+  "modifier.bombs.laden.info": "Applies potion effect upon exploding.",
+  "modifier.bombs.imbued.info": "Spawns lingering potion effect cloud upon exploding.",
 
   "tier.bombs.1": "Dynamite",
   "tier.bombs.2": "Dynamite II",

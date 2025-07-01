@@ -5,6 +5,7 @@ import net.luko.bombs.data.ModDataComponents;
 import net.luko.bombs.entity.ModEntities;
 import net.luko.bombs.entity.ThrownBombEntity;
 import net.luko.bombs.util.BombModifierUtil;
+import net.luko.bombs.util.BombPotionUtil;
 import net.luko.bombs.util.BombTextureUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
@@ -218,11 +219,12 @@ public class BombItem extends Item {
                 MutableComponent modifierComponent = Component.literal("- ")
                         .append(Component.translatable("modifier.bombs." + mod));
 
-                if(mod.equals("imbued") && stack.has(DataComponents.POTION_CONTENTS)){
-                    ItemStack tempPotionStack = new ItemStack(Items.POTION);
-                    tempPotionStack.set(DataComponents.POTION_CONTENTS, stack.get(DataComponents.POTION_CONTENTS));
-                    int potionColor = stack.get(DataComponents.POTION_CONTENTS).getColor();
-                    String potionDescriptionId = ((PotionItem) Items.POTION).getDescriptionId(tempPotionStack);
+                if(mod.equals("laden") || mod.equals("imbued")){
+                    int potionColor = stack.get(DataComponents.POTION_CONTENTS) == null
+                            ? 0x385dc6
+                            : stack.get(DataComponents.POTION_CONTENTS).getColor();
+
+                    String potionDescriptionId = BombPotionUtil.getDescriptionId(stack);
 
                     modifierComponent.append(Component.literal(" ("))
                             .append(Component.translatable(potionDescriptionId))

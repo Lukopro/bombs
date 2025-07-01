@@ -1,7 +1,7 @@
 {
   "type": "bombs:demolition_modifier",
   "input_bomb": { "tag": "bombs:bomb" },
-  "input_modifier": { "item": "minecraft:potion" },
-  "modifier": "laden",
+  "input_modifier": { "item": "minecraft:lingering_potion" },
+  "modifier": "imbued",
   "special_tag": "Potion"
 }

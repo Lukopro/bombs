@@ -1,6 +1,8 @@
 package net.luko.bombs.recipe;
 
 import net.luko.bombs.data.ModDataComponents;
+import net.luko.bombs.util.BombModifierUtil;
+import net.luko.bombs.util.BombRecipeUtil;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
@@ -25,8 +27,8 @@ public record DemolitionModifierRecipe(Ingredient inputBomb, Ingredient inputMod
         List<String> modifiers = bomb.getOrDefault(ModDataComponents.MODIFIERS.get(), List.of());
 
         for (String s : modifiers) {
-            if (s.equals(modifierName)) {
-                return false; // Already has this upgrade
+            if (s.equals(modifierName) || BombModifierUtil.incompatible(s, modifierName)) {
+                return false; // Already has this modifier or incompatible modifier
             }
         }
         return true;
@@ -57,6 +59,7 @@ public record DemolitionModifierRecipe(Ingredient inputBomb, Ingredient inputMod
     private List<String> sortedModifiers(List<String> modifiers){
         // Sort modifiersArray using a preset order
         Map<String, Integer> orderMap = Map.ofEntries(
+                Map.entry("laden", -1),
                 Map.entry("imbued", -1),
                 Map.entry("golden", 0),
                 Map.entry("flame", 1),

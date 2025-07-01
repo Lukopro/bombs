@@ -101,7 +101,7 @@ public class DemolitionTableMenu extends AbstractContainerMenu {
     protected static final int VANILLA_SLOT_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INVENTORY_SLOT_COUNT;
     protected static final int VANILLA_FIRST_SLOT_INDEX = 0;
     protected static final int TE_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT;
-    protected static final int TE_INVENTORY_SLOT_COUNT = 4;  // must be the number of slots you have!
+    protected static final int TE_INVENTORY_SLOT_COUNT = 11;  // must be the number of slots you have!
 
     @Override
     public ItemStack quickMoveStack(Player player, int slot) {

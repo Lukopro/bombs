@@ -60,8 +60,8 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
 
         this.tickLife = BombsConfig.BOMB_TIMEOUT_TIME.get();
 
-        this.particlesToSpawn = 0.0F;
         this.lastParticleTick = this.tickCount;
+        this.particlesToSpawn = 0.0F;
     }
 
     public ThrownBombEntity(EntityType<? extends ThrownBombEntity> type, Level level, LivingEntity thrower, float explosionPower){
@@ -79,8 +79,8 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
 
         this.tickLife = BombsConfig.BOMB_TIMEOUT_TIME.get();
 
-        this.particlesToSpawn = 0.0F;
         this.lastParticleTick = this.tickCount;
+        this.particlesToSpawn = 0.0F;
     }
 
     @Override

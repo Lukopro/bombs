@@ -19,4 +19,3 @@
 - Swarm, spawn bees that explode
 - Weiner bomb tier 0
 - Explosion noise
-- Less flame particles (modular partialTicks)

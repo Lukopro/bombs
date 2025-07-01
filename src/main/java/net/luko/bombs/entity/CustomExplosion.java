@@ -13,8 +13,13 @@ import javax.annotation.Nullable;
 import net.luko.bombs.util.BombModifierUtil;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -34,7 +39,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.enchantment.ProtectionEnchantment;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.BaseFireBlock;
@@ -49,6 +56,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.joml.Vector3f;
 
 // Vanilla Explosion class was not adaptable enough, so I copied the entire thing and adapted it as I saw fit.
 // Class and instance variables have an underscore _ to differentiate from super's variables.
@@ -370,6 +378,20 @@ public class CustomExplosion extends Explosion {
         double spread = this.radius_ * 0.3;
 
         serverLevel.sendParticles(ParticleTypes.EXPLOSION, x_, y_, z_, particleCount, spread, spread, spread, 0.1);
+        if(stack.hasTag() && stack.getTag().contains("Potion")) {
+            String potionId = stack.getTag().getString("Potion");
+            ItemStack tempPotionStack = new ItemStack(Items.POTION);
+            Potion potion = ForgeRegistries.POTIONS.getValue(new ResourceLocation(potionId));
+            PotionUtils.setPotion(tempPotionStack, potion);
+
+            int color = PotionUtils.getColor(PotionUtils.getMobEffects(stack));
+            float r = (color >> 16 & 255) / 255.0F;
+            float g = (color >> 8 & 255) / 255.0F;
+            float b = (color & 255) / 255.0F;
+
+            serverLevel.sendParticles(new DustParticleOptions(new Vector3f(r, g, b), 1.0F),
+                    x_, y_, z_, particleCount * 5, spread, spread, spread, 1.0);
+        }
     }
 
     private static void addBlockDrops(ObjectArrayList<Pair<ItemStack, BlockPos>> pDropPositionArray, ItemStack pStack, BlockPos pPos) {

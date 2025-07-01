@@ -49,7 +49,7 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
         for(int i = 0; i < modifiers.size(); i++){
             if(modifiers.getString(i).equals(modifierName) ||
                     incompatibleModifierLists.getOrDefault(modifiers.getString(i), Set.of()).contains(modifierName)){
-                return false; // Already has this upgrade or incompatible upgrade
+                return false; // Already has this modifier or incompatible modifier
             }
         }
         return true;

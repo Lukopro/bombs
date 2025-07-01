@@ -405,7 +405,7 @@ public class CustomExplosion extends Explosion {
 
         serverLevel.sendParticles(ParticleTypes.EXPLOSION, x_, y_, z_, particleCount, spread, spread, spread, 0.1);
 
-        if(BombModifierUtil.hasModifier(stack, "imbued")) {
+        if(BombModifierUtil.hasModifier(stack, "laden")) {
             int color = PotionUtils.getColor(PotionUtils.getMobEffects(stack));
             float r = (color >> 16 & 255) / 255.0F;
             float g = (color >> 8 & 255) / 255.0F;

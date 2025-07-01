@@ -4,6 +4,7 @@ import net.luko.bombs.config.BombsConfig;
 import net.luko.bombs.entity.ModEntities;
 import net.luko.bombs.entity.ThrownBombEntity;
 import net.luko.bombs.util.BombModifierUtil;
+import net.luko.bombs.util.BombPotionUtil;
 import net.luko.bombs.util.BombTextureUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
@@ -229,19 +230,11 @@ public class BombItem extends Item {
                 MutableComponent modifierComponent = Component.literal("- ")
                         .append(Component.translatable("modifier.bombs." + mod));
 
-                if(mod.equals("imbued") && stack.getTag().contains("Potion")){
-                    String potionId = stack.getTag().getString("Potion");
-                    if(potionId.isEmpty()) potionId = "minecraft:empty";
-
-                    ItemStack tempPotionStack = new ItemStack(Items.POTION);
-                    CompoundTag tempPotionTag = new CompoundTag();
-                    tempPotionTag.putString("Potion", potionId);
-                    tempPotionStack.setTag(tempPotionTag);
+                if(mod.equals("laden") || mod.equals("imbued")){
                     int potionColor = PotionUtils.getColor(
-                            PotionUtils.getPotion(
-                                    tempPotionStack));
+                            PotionUtils.getMobEffects(stack));
 
-                    String potionDescriptionId = ((PotionItem) Items.POTION).getDescriptionId(tempPotionStack);
+                    String potionDescriptionId = BombPotionUtil.getDescriptionId(stack);
 
                     modifierComponent.append(Component.literal(" ("))
                             .append(Component.translatable(potionDescriptionId))

@@ -23,6 +23,11 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
     private final String modifierName;
     private final String specialTag;
 
+    private final Map<String, Set<String>> incompatibleModifierLists = Map.ofEntries(
+            Map.entry("laden", Set.of("imbued")),
+            Map.entry("imbued", Set.of("laden"))
+    );
+
     public DemolitionModifierRecipe(ResourceLocation id, Ingredient inputBomb, Ingredient inputModifier, String modifierName, String specialTag){
         this.id = id;
         this.inputBomb = inputBomb;
@@ -33,17 +38,18 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
 
     @Override
     public boolean matches(Container isolatedContainer, Level level){
-        ItemStack bomb = isolatedContainer.getItem(0);
-        ItemStack modifier = isolatedContainer.getItem(1);
+        ItemStack bombItem = isolatedContainer.getItem(0);
+        ItemStack modifierItem = isolatedContainer.getItem(1);
 
-        if(!inputBomb.test(bomb) || !inputModifier.test(modifier)) return false;
+        if(!inputBomb.test(bombItem) || !inputModifier.test(modifierItem)) return false;
 
-        CompoundTag tag = bomb.getOrCreateTag();
+        CompoundTag tag = bombItem.getOrCreateTag();
         ListTag modifiers = tag.getList("Modifiers", CompoundTag.TAG_STRING);
 
         for(int i = 0; i < modifiers.size(); i++){
-            if(modifiers.getString(i).equals(modifierName)){
-                return false; // Already has this upgrade
+            if(modifiers.getString(i).equals(modifierName) ||
+                    incompatibleModifierLists.getOrDefault(modifiers.getString(i), Set.of()).contains(modifierName)){
+                return false; // Already has this upgrade or incompatible upgrade
             }
         }
         return true;
@@ -94,6 +100,7 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
 
         // Sort modifiersArray using a preset order
         Map<String, Integer> orderMap = Map.ofEntries(
+                Map.entry("laden", -1),
                 Map.entry("imbued", -1),
                 Map.entry("golden", 0),
                 Map.entry("flame", 1),

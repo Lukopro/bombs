@@ -31,6 +31,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -250,8 +251,10 @@ public class CustomExplosion extends Explosion {
                             d11 = ProtectionEnchantment.getExplosionKnockbackAfterDampener(livingentity, d10);
 
                             if(stack.hasTag() && (stack.getTag().contains("Potion") || stack.getTag().contains("CustomPotionEffects"))){
-                                for(MobEffectInstance effect : PotionUtils.getMobEffects(stack)){
-                                    livingentity.addEffect(new MobEffectInstance(effect));
+                                if(BombModifierUtil.hasModifier(stack, "laden")){
+                                    for(MobEffectInstance effect : PotionUtils.getMobEffects(stack)){
+                                        livingentity.addEffect(new MobEffectInstance(effect));
+                                    }
                                 }
                             }
 
@@ -288,6 +291,36 @@ public class CustomExplosion extends Explosion {
             Vec3 velocity = entry.getValue();
             if(player instanceof ServerPlayer serverPlayer) {
                 serverPlayer.connection.send(new ClientboundSetEntityMotionPacket(player));
+            }
+        }
+
+        if(BombModifierUtil.hasModifier(stack, "imbued")){
+            List<MobEffectInstance> effects = PotionUtils.getMobEffects(stack);
+            if(!effects.isEmpty()){
+                AreaEffectCloud cloud = new AreaEffectCloud(
+                        level_, x_, y_, z_);
+
+                cloud.setRadius(radius_ - 0.5F);
+                cloud.setRadiusOnUse(-0.2F);
+                cloud.setWaitTime(10);
+                cloud.setDuration(100 * (int)radius_);
+                cloud.setRadiusPerTick(-cloud.getRadius() / cloud.getDuration());
+
+                if(stack.hasTag() && stack.getTag().contains("CustomPotionEffects")){
+                    for(MobEffectInstance effect : effects){
+                        cloud.addEffect(new MobEffectInstance(
+                                effect.getEffect(),
+                                effect.getDuration() / 4,
+                                effect.getAmplifier(),
+                                effect.isAmbient(),
+                                effect.isVisible()
+                        ));
+                    }
+                } else {
+                    cloud.setPotion(PotionUtils.getPotion(stack));
+                }
+
+                level_.addFreshEntity(cloud);
             }
         }
     }

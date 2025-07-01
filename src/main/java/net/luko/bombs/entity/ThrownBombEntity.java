@@ -1,11 +1,13 @@
 package net.luko.bombs.entity;
 
+import net.luko.bombs.config.BombsConfig;
 import net.luko.bombs.item.ModItems;
 import net.luko.bombs.util.BombModifierUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
@@ -37,6 +39,8 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
     public static final float RANDOM_SPIN_SPEED_MIN = 15.0F;
     public static final float RANDOM_SPIN_SPEED_MAX = 25.0F;
 
+    public final int tickLife;
+
     public ThrownBombEntity(EntityType<? extends ThrownBombEntity> type, Level level) {
         super(type, level);
         this.explosionPower = DEFAULT_POWER;
@@ -44,6 +48,19 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
         this.randomSideTilt = RANDOM_SIDE_TILT_MAX * (float)Math.random();
         this.initialForwardTilt = RANDOM_FORWARD_TILT_MAX * (float)Math.random();
         this.randomSpinSpeed = RANDOM_SPIN_SPEED_MIN + (RANDOM_SPIN_SPEED_MAX - RANDOM_SPIN_SPEED_MIN) * (float)Math.random();
+
+        this.tickLife = BombsConfig.BOMB_TIMEOUT_TIME.get();
+    }
+
+    public ThrownBombEntity(EntityType<? extends ThrownBombEntity> type, Level level, float explosionPower) {
+        super(type, level);
+        this.explosionPower = explosionPower;
+
+        this.randomSideTilt = RANDOM_SIDE_TILT_MAX * (float)Math.random();
+        this.initialForwardTilt = RANDOM_FORWARD_TILT_MAX * (float)Math.random();
+        this.randomSpinSpeed = RANDOM_SPIN_SPEED_MIN + (RANDOM_SPIN_SPEED_MAX - RANDOM_SPIN_SPEED_MIN) * (float)Math.random();
+
+        this.tickLife = BombsConfig.BOMB_TIMEOUT_TIME.get();
     }
 
     public ThrownBombEntity(EntityType<? extends ThrownBombEntity> type, Level level, LivingEntity thrower, float explosionPower){
@@ -60,6 +77,8 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
 
         this.initialForwardTilt = (ThrownBombEntity.RANDOM_FORWARD_TILT_MAX / 2) + randomForwardTilt + throwerXRot - 20.0F;
         this.randomSpinSpeed = RANDOM_SPIN_SPEED_MIN + (RANDOM_SPIN_SPEED_MAX - RANDOM_SPIN_SPEED_MIN) * (float)Math.random();
+
+        this.tickLife = BombsConfig.BOMB_TIMEOUT_TIME.get();
     }
 
     @Override
@@ -80,14 +99,48 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
     }
 
     @Override
+    public double getDefaultGravity(){
+        double gravity = 0.03F;
+        if(BombModifierUtil.hasModifier(getItem(), "float")) gravity /= 3;
+        if(BombModifierUtil.hasModifier(getItem(), "sink")) gravity *= 3;
+        return gravity;
+    }
+
+    @Override
+    public void tick(){
+        super.tick();
+        if(tickCount % 40 == 0 && tickCount >= this.tickLife) discard();
+    }
+
+    @Override
+    public boolean isPickable(){
+        return true;
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount){
+        if(source.getDirectEntity() instanceof ThrownBombEntity) return false;
+        if(!level().isClientSide()){
+            explode();
+        }
+        super.hurt(source, amount);
+        return false;
+    }
+
+    @Override
     protected void onHitEntity(EntityHitResult result){
-        explode();
+        if(result.getEntity() instanceof ThrownBombEntity) return;
+        if(!level().isClientSide()){
+            explode();
+        }
         super.onHitEntity(result);
     }
 
     @Override
     protected void onHitBlock(BlockHitResult result){
-        explode();
+        if(!level().isClientSide()){
+            explode();
+        }
         super.onHitBlock(result);
     }
 
@@ -96,7 +149,7 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
                 level(),
                 this,
                 null,
-                new ModifierExplosionDamageCalculator(new ExplosionDamageCalculator(), getItem()),
+                new ModifierExplosionDamageCalculator(getItem()),
                 this.getX(),
                 this.getY(),
                 this.getZ(),
@@ -104,9 +157,7 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
                 BombModifierUtil.hasModifier(getItem(), "flame"),
                 getBlockInteraction(getItem()),
                 getItem());
-        if(!level().isClientSide()) {
-            explosion.explode();
-        }
+        explosion.explode();
         explosion.finalizeExplosion(true);
         discard();
     }
@@ -137,11 +188,9 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
     }
 
     private class ModifierExplosionDamageCalculator extends ExplosionDamageCalculator{
-        private final ExplosionDamageCalculator vanilla;
         private final ItemStack stack;
 
-        public ModifierExplosionDamageCalculator(ExplosionDamageCalculator vanilla, ItemStack stack){
-            this.vanilla = vanilla;
+        public ModifierExplosionDamageCalculator(ItemStack stack){
             this.stack = stack;
         }
 

@@ -10,17 +10,22 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.luko.bombs.Bombs;
 import net.luko.bombs.block.ModBlocks;
+import net.luko.bombs.data.ModDataComponents;
+import net.luko.bombs.item.ModItems;
 import net.luko.bombs.recipe.DemolitionUpgradeRecipe;
-import net.luko.bombs.screen.DemolitionTableMenu;
+import net.luko.bombs.recipe.DemolitionUpgradeRecipeInput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DemolitionUpgradeCategory implements IRecipeCategory<DemolitionUpgradeRecipe> {
     public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "demolition_upgrade");
     public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Bombs.MODID,
-            "textures/gui/demolition_table_gui_upgrade.png");
+            "textures/gui/demolition_jei_recipe.png");
 
     public static final RecipeType<DemolitionUpgradeRecipe> DEMOLITION_UPGRADE_TYPE =
             new RecipeType<>(UID, DemolitionUpgradeRecipe.class);
@@ -29,7 +34,7 @@ public class DemolitionUpgradeCategory implements IRecipeCategory<DemolitionUpgr
     private final IDrawable icon;
 
     public DemolitionUpgradeCategory(IGuiHelper helper) {
-        this.background = helper.createDrawable(TEXTURE, 0, 20, 176, 55);
+        this.background = helper.createDrawable(TEXTURE, 0, 0, 122, 64);
         this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModBlocks.DEMOLITION_TABLE.get()));
     }
 
@@ -55,24 +60,36 @@ public class DemolitionUpgradeCategory implements IRecipeCategory<DemolitionUpgr
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, DemolitionUpgradeRecipe recipe, IFocusGroup focuses) {
-        builder.addSlot(RecipeIngredientRole.INPUT,
-                DemolitionTableMenu.DEMOLITION_TABLE_SLOT_0_X,
-                DemolitionTableMenu.DEMOLITION_TABLE_SLOTS_Y - 20).
-                addIngredients(recipe.inputBomb());
+        List<ItemStack> bombInputs = new ArrayList<>();
+        bombInputs.add(new ItemStack(ModItems.DYNAMITE.get()));
+        for(int i = 2; i <= 5; i++){
+            ItemStack bomb = new ItemStack(ModItems.DYNAMITE.get());
+            bomb.set(ModDataComponents.TIER.get(), i);
+            bombInputs.add(bomb);
+        }
 
-        builder.addSlot(RecipeIngredientRole.INPUT,
-                        DemolitionTableMenu.DEMOLITION_TABLE_SLOT_1_X,
-                        DemolitionTableMenu.DEMOLITION_TABLE_SLOTS_Y - 20).
-                addIngredients(recipe.inputUpgrade());
 
-        builder.addSlot(RecipeIngredientRole.INPUT,
-                        DemolitionTableMenu.DEMOLITION_TABLE_SLOT_2_X,
-                        DemolitionTableMenu.DEMOLITION_TABLE_SLOTS_Y - 20).
-                addIngredients(recipe.inputCasing());
+        List<ItemStack> validBombInputs = new ArrayList<>();
+        List<ItemStack> outputs = new ArrayList<>();
+        for(ItemStack input : bombInputs){
+            DemolitionUpgradeRecipeInput recipeInput = new DemolitionUpgradeRecipeInput(input, recipe.inputUpgrade().getItems()[0]);
 
-        builder.addSlot(RecipeIngredientRole.OUTPUT,
-                DemolitionTableMenu.DEMOLITION_TABLE_SLOT_3_X,
-                DemolitionTableMenu.DEMOLITION_TABLE_SLOTS_Y - 20)
-                .addItemStack(recipe.getResultItem(null));
+            if(recipe.matches(recipeInput, null)) {
+                validBombInputs.add(input);
+                ItemStack result = recipe.assemble(recipeInput, null);
+                if (!result.isEmpty()) {
+                    outputs.add(result);
+                }
+            }
+        }
+
+        builder.addSlot(RecipeIngredientRole.INPUT, 19, 25)
+                .addItemStacks(validBombInputs);
+
+        builder.addSlot(RecipeIngredientRole.INPUT, 53, 25)
+                .addIngredients(recipe.inputUpgrade());
+
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 87, 25)
+                .addItemStacks(outputs);
     }
 }

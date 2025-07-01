@@ -17,7 +17,7 @@ public class ModEntities {
     public static final Supplier<EntityType<ThrownBombEntity>> THROWN_BOMB = ENTITIES.register(
             "thrown_bomb",
             () -> EntityType.Builder.<ThrownBombEntity>of(ThrownBombEntity::new, MobCategory.MISC)
-                    .sized(0.25F, 0.25F)
+                    .sized(0.5F, 0.5F)
                     .clientTrackingRange(32)
                     .updateInterval(10)
                     .build("thrown_bomb"));

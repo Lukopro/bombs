@@ -12,7 +12,6 @@ import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.luko.bombs.Bombs;
 import net.luko.bombs.block.ModBlocks;
 import net.luko.bombs.recipe.DemolitionModifierRecipe;
-import net.luko.bombs.screen.DemolitionTableMenu;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -21,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 public class DemolitionModifierCategory implements IRecipeCategory<DemolitionModifierRecipe> {
     public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "demolition_modifier");
     public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Bombs.MODID,
-            "textures/gui/demolition_table_gui_modifier.png");
+            "textures/gui/demolition_jei_recipe.png");
 
     public static final RecipeType<DemolitionModifierRecipe> DEMOLITION_MODIFIER_TYPE =
             new RecipeType<>(UID, DemolitionModifierRecipe.class);
@@ -30,7 +29,7 @@ public class DemolitionModifierCategory implements IRecipeCategory<DemolitionMod
     private final IDrawable icon;
 
     public DemolitionModifierCategory(IGuiHelper helper) {
-        this.background = helper.createDrawable(TEXTURE, 0, 20, 176, 55);
+        this.background = helper.createDrawable(TEXTURE, 0, 0, 122, 64);
         this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModBlocks.DEMOLITION_TABLE.get()));
     }
 
@@ -56,19 +55,13 @@ public class DemolitionModifierCategory implements IRecipeCategory<DemolitionMod
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, DemolitionModifierRecipe recipe, IFocusGroup focuses) {
-        builder.addSlot(RecipeIngredientRole.INPUT,
-                        DemolitionTableMenu.DEMOLITION_TABLE_SLOT_0_X,
-                        DemolitionTableMenu.DEMOLITION_TABLE_SLOTS_Y - 20).
-                addIngredients(recipe.getInputBomb());
+        builder.addSlot(RecipeIngredientRole.INPUT, 19, 25)
+                .addIngredients(recipe.inputBomb());
 
-        builder.addSlot(RecipeIngredientRole.INPUT,
-                        DemolitionTableMenu.DEMOLITION_TABLE_SLOT_1_X,
-                        DemolitionTableMenu.DEMOLITION_TABLE_SLOTS_Y - 20).
-                addIngredients(recipe.getInputModifier());
+        builder.addSlot(RecipeIngredientRole.INPUT, 53, 25)
+                .addIngredients(recipe.inputModifier());
 
-        builder.addSlot(RecipeIngredientRole.OUTPUT,
-                        DemolitionTableMenu.DEMOLITION_TABLE_SLOT_3_X,
-                        DemolitionTableMenu.DEMOLITION_TABLE_SLOTS_Y - 20)
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 87, 25)
                 .addItemStack(recipe.getResultItem(null));
     }
 }

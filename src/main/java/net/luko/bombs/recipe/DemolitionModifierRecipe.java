@@ -2,16 +2,18 @@ package net.luko.bombs.recipe;
 
 import net.luko.bombs.data.ModDataComponents;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public record DemolitionModifierRecipe(Ingredient inputBomb, Ingredient inputModifier, String modifierName) implements Recipe<DemolitionModifierRecipeInput> {
+public record DemolitionModifierRecipe(Ingredient inputBomb, Ingredient inputModifier, String modifierName, @Nullable String specialTag) implements Recipe<DemolitionModifierRecipeInput> {
 
     @Override
     public boolean matches(DemolitionModifierRecipeInput recipeInput, Level level){
@@ -40,10 +42,14 @@ public record DemolitionModifierRecipe(Ingredient inputBomb, Ingredient inputMod
 
         List<String> oldModifiers = new ArrayList<>(bomb.getOrDefault(ModDataComponents.MODIFIERS.get(), List.of()));
         oldModifiers.add(modifierName);
-
         List<String> newModifiers = sortedModifiers(oldModifiers);
 
         bomb.set(ModDataComponents.MODIFIERS.get(), newModifiers);
+
+        if(specialTag != null && specialTag.equals("Potion")){
+            bomb.set(DataComponents.POTION_CONTENTS,
+                    recipeInput.getItem(1).get(DataComponents.POTION_CONTENTS));
+        }
 
         return bomb;
     }
@@ -51,17 +57,20 @@ public record DemolitionModifierRecipe(Ingredient inputBomb, Ingredient inputMod
     private List<String> sortedModifiers(List<String> modifiers){
         // Sort modifiersArray using a preset order
         Map<String, Integer> orderMap = Map.ofEntries(
+                Map.entry("imbued", -1),
                 Map.entry("golden", 0),
                 Map.entry("flame", 1),
                 Map.entry("light", 2),
-                Map.entry("contained", 3),
-                Map.entry("pacified", 4),
-                Map.entry("dampened", 5),
-                Map.entry("shatter", 6),
-                Map.entry("lethal", 7),
-                Map.entry("shockwave", 8),
-                Map.entry("evaporate", 9),
-                Map.entry("gentle", 10)
+                Map.entry("float", 3),
+                Map.entry("sink", 4),
+                Map.entry("contained", 5),
+                Map.entry("pacified", 6),
+                Map.entry("dampened", 7),
+                Map.entry("shatter", 8),
+                Map.entry("lethal", 9),
+                Map.entry("shockwave", 10),
+                Map.entry("evaporate", 11),
+                Map.entry("gentle", 12)
         );
 
         List<String> sortedModifiers = new ArrayList<>(modifiers);
@@ -95,18 +104,6 @@ public record DemolitionModifierRecipe(Ingredient inputBomb, Ingredient inputMod
         }
 
         return result;
-    }
-
-    public Ingredient getInputBomb(){
-        return inputBomb;
-    }
-
-    public Ingredient getInputModifier(){
-        return inputModifier;
-    }
-
-    public String getModifierName(){
-        return modifierName;
     }
 
     public RecipeSerializer<?> getSerializer(){

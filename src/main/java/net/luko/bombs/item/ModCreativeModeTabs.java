@@ -24,7 +24,7 @@ public class ModCreativeModeTabs {
                         /* Add items to Bombs creative mode tab */
 
                         pOutput.accept(ModItems.DYNAMITE.get());
-                        for(int i = 2; i <= 5; i++){
+                        for(int i = 2; i <= 6; i++){
                             ItemStack tempStack = new ItemStack(ModItems.DYNAMITE.get());
                             tempStack.set(ModDataComponents.TIER.get(), i);
                             pOutput.accept(tempStack);

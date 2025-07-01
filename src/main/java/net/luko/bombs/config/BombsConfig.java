@@ -1,9 +1,6 @@
 package net.luko.bombs.config;
 
-import net.luko.bombs.item.ModItems;
 import net.neoforged.neoforge.common.ModConfigSpec;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.config.ModConfig;
 
 import java.util.Map;
 
@@ -13,56 +10,86 @@ public class BombsConfig {
     private static final float POWER_MIN = 0.0F;
     private static final float POWER_MAX = 50.0F;
 
-    private static final Map<String, Float> DEFAULT_POWER_VALUES = Map.of(
-            "basic", 1.5F,
-            "strong", 2.5F,
-            "blaze", 4.0F,
-            "dragon", 5.5F,
-            "crystal", 7.0F
+    private static final Map<Integer, Float> DEFAULT_POWER_VALUES = Map.of(
+            1, 2.0F,
+            2, 3.0F,
+            3, 4.0F,
+            4, 5.0F,
+            5, 6.0F,
+            6, 7.0F
     );
 
-    public static ModConfigSpec.DoubleValue BASIC_DYNAMITE_BASE_POWER;
-    public static ModConfigSpec.DoubleValue STRONG_DYNAMITE_BASE_POWER;
-    public static ModConfigSpec.DoubleValue BLAZE_DYNAMITE_BASE_POWER;
-    public static ModConfigSpec.DoubleValue DRAGON_DYNAMITE_BASE_POWER;
-    public static ModConfigSpec.DoubleValue CRYSTAL_DYNAMITE_BASE_POWER;
+    public static ModConfigSpec.BooleanValue QUICKDRAW_BY_DEFAULT;
+
+    public static ModConfigSpec.DoubleValue DYNAMITE_BASE_POWER;
+    public static ModConfigSpec.DoubleValue DYNAMITE_II_BASE_POWER;
+    public static ModConfigSpec.DoubleValue DYNAMITE_III_BASE_POWER;
+
+    public static ModConfigSpec.DoubleValue SOUL_DYNAMITE_BASE_POWER;
+    public static ModConfigSpec.DoubleValue SOUL_DYNAMITE_II_BASE_POWER;
+    public static ModConfigSpec.DoubleValue SOUL_DYNAMITE_III_BASE_POWER;
+
+    public static ModConfigSpec.IntValue BOMB_TIMEOUT_TIME;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
+        builder.push("Mechanics");
+
+        QUICKDRAW_BY_DEFAULT = builder
+                .comment("Bombs are thrown instantly, regardless of modifiers (default: false)")
+                .define("quickdrawByDefault",
+                        false);
+
+        builder.pop();
+
         builder.push("Dynamite Base Damage");
 
-        BASIC_DYNAMITE_BASE_POWER = builder
-                .comment("Base explosion power of basic Dynamite (default: 1.5)")
-                .defineInRange("basicDynamiteBasePower",
-                        DEFAULT_POWER_VALUES.get("basic"),
+        DYNAMITE_BASE_POWER = builder
+                .comment("Base explosion power of basic Dynamite (default: 2.0)")
+                .defineInRange("dynamiteBasePower",
+                        DEFAULT_POWER_VALUES.get(1),
                         POWER_MIN, POWER_MAX);
 
-        STRONG_DYNAMITE_BASE_POWER = builder
-                .comment("Base explosion power of Strong Dynamite (default: 2.5)")
-                .defineInRange("strongDynamiteBasePower",
-                        DEFAULT_POWER_VALUES.get("strong"),
+        DYNAMITE_II_BASE_POWER = builder
+                .comment("Base explosion power of Dynamite II (default: 3.0)")
+                .defineInRange("dynamiteIIBasePower",
+                        DEFAULT_POWER_VALUES.get(2),
                         POWER_MIN, POWER_MAX);
 
-        BLAZE_DYNAMITE_BASE_POWER = builder
-                .comment("Base explosion power of Blaze Dynamite (default: 4.0)")
-                .defineInRange("blazeDynamiteBasePower",
-                        DEFAULT_POWER_VALUES.get("blaze"),
+        DYNAMITE_III_BASE_POWER = builder
+                .comment("Base explosion power of Dynamite III (default: 4.0)")
+                .defineInRange("dynamiteIIIBasePower",
+                        DEFAULT_POWER_VALUES.get(3),
                         POWER_MIN, POWER_MAX);
 
-        DRAGON_DYNAMITE_BASE_POWER = builder
-                .comment("Base explosion power of Dragon Dynamite (default: 5.5)")
-                .defineInRange("dragonDynamiteBasePower",
-                        DEFAULT_POWER_VALUES.get("dragon"),
+        SOUL_DYNAMITE_BASE_POWER = builder
+                .comment("Base explosion power of Soul Dynamite (default: 5.0)")
+                .defineInRange("soulDynamiteBasePower",
+                        DEFAULT_POWER_VALUES.get(4),
                         POWER_MIN, POWER_MAX);
 
-        CRYSTAL_DYNAMITE_BASE_POWER = builder
-                .comment("Base explosion power of Crystal Dynamite (default: 7.0)")
-                .defineInRange("crystalDynamiteBasePower",
-                        DEFAULT_POWER_VALUES.get("crystal"),
+        SOUL_DYNAMITE_II_BASE_POWER = builder
+                .comment("Base explosion power of Soul Dynamite II (default: 6.0)")
+                .defineInRange("soulDynamiteIIBasePower",
+                        DEFAULT_POWER_VALUES.get(5),
+                        POWER_MIN, POWER_MAX);
+
+        SOUL_DYNAMITE_III_BASE_POWER = builder
+                .comment("Base explosion power of Soul Dynamite III (default: 7.0)")
+                .defineInRange("soulDynamiteIIIBasePower",
+                        DEFAULT_POWER_VALUES.get(6),
                         POWER_MIN, POWER_MAX);
 
         builder.pop();
+
+        builder.push("Performance");
+
+        BOMB_TIMEOUT_TIME = builder
+                .comment("How many ticks should a bomb exist before it despawns? (default: 1200)")
+                .defineInRange("bombTimeoutTime",
+                        1200,
+                        40, Integer.MAX_VALUE);
 
         COMMON_CONFIG = builder.build();
     }

@@ -1,6 +1,5 @@
 {
   "type": "bombs:demolition_modifier",
-  "id": "bombs:modifier_lethal",
   "input_bomb": { "tag": "bombs:bomb" },
   "input_modifier": { "item": "minecraft:flint" },
   "modifier": "lethal"

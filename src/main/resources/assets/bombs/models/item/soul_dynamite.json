@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "bombs:item/strong_dynamite"
+    "layer0": "bombs:item/soul_dynamite"
   }
 }

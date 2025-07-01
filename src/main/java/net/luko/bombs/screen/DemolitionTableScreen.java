@@ -10,25 +10,16 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
+import java.util.List;
+
 public class DemolitionTableScreen extends AbstractContainerScreen<DemolitionTableMenu> {
-    // Gui texture when the BlockEntity is empty
-    private static final ResourceLocation EMPTY_TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/gui/demolition_table_gui_empty.png");
-
-    // Gui texture when the BlockEntity has just a bomb
-    private static final ResourceLocation BOMB_TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/gui/demolition_table_gui_bomb.png");
-
-    // Gui texture when the BlockEntity has a bomb, upgrade, no casing
-    private static final ResourceLocation MODIFIER_TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/gui/demolition_table_gui_modifier.png");
-
-    // Gui texture when the BlockEntity has just a bomb, upgrade, and casing
-    private static final ResourceLocation UPGRADE_TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/gui/demolition_table_gui_upgrade.png");
+    private static final ResourceLocation TEXTURE =
+            ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/gui/demolition_table.png");
 
     public DemolitionTableScreen(DemolitionTableMenu menu, Inventory inventory, Component title){
         super(menu, inventory, title);
+        this.imageWidth = 196;
+        this.imageHeight = 189;
     }
 
     @Override
@@ -47,11 +38,26 @@ public class DemolitionTableScreen extends AbstractContainerScreen<DemolitionTab
         guiGraphics.blit(getTexture(), x, y, 0, 0, imageWidth, imageHeight);
     }
 
+    protected void renderInvalidSlots(GuiGraphics guiGraphics){
+        List<Integer> invalidRecipeSlots = menu.blockEntity.getInvalidRecipeSlots();
+        for(int i : invalidRecipeSlots){
+            int x = leftPos + DemolitionTableMenu.SLOT_X_POSITIONS.get(i);
+            int y = topPos + DemolitionTableMenu.SLOT_Y_POSITIONS.get(i);
+            guiGraphics.fill(x, y, x + 16, y + 16, 0x40FF0000);
+        }
+    }
+
+    @Override
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY){
+
+    }
+
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick){
         renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         renderTooltip(guiGraphics, mouseX, mouseY);
+        renderInvalidSlots(guiGraphics);
     }
 
     @Override
@@ -60,17 +66,6 @@ public class DemolitionTableScreen extends AbstractContainerScreen<DemolitionTab
     }
 
     private ResourceLocation getTexture(){
-        boolean hasBomb = !(menu.getSlot(DemolitionTableMenu.TE_INVENTORY_FIRST_SLOT_INDEX + 0).getItem().isEmpty());
-        boolean hasUpgrade = !(menu.getSlot(DemolitionTableMenu.TE_INVENTORY_FIRST_SLOT_INDEX + 1).getItem().isEmpty());
-        boolean hasCasing = !(menu.getSlot(DemolitionTableMenu.TE_INVENTORY_FIRST_SLOT_INDEX + 2).getItem().isEmpty());
-
-        if(!hasBomb){
-            return EMPTY_TEXTURE;
-        } else if(!hasUpgrade){
-            return BOMB_TEXTURE;
-        } else if(!hasCasing){
-            return MODIFIER_TEXTURE;
-        }
-        return UPGRADE_TEXTURE;
+        return TEXTURE;
     }
 }

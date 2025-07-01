@@ -13,8 +13,10 @@ import javax.annotation.Nullable;
 import net.luko.bombs.util.BombModifierUtil;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -23,6 +25,7 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -32,6 +35,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Block;
@@ -45,6 +49,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.EventHooks;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 // Vanilla Explosion class was not adaptable enough, so I copied the entire thing and adapted it as I saw fit.
 // Class and instance variables have an underscore _ to differentiate from super's variables.
@@ -233,6 +238,19 @@ public class CustomExplosion extends Explosion {
                         }
 
                         double d11;
+                        if (entity instanceof LivingEntity livingentity) {
+                            d11 = 1.0 - livingentity.getAttributeValue(Attributes.EXPLOSION_KNOCKBACK_RESISTANCE);
+
+                            if(stack.has(DataComponents.POTION_CONTENTS)){
+                                for(MobEffectInstance effect : stack.get(DataComponents.POTION_CONTENTS).getAllEffects()){
+                                    livingentity.addEffect(new MobEffectInstance(effect));
+                                }
+                            }
+
+                        } else {
+                            d11 = d10;
+                        }
+
                         if (entity instanceof LivingEntity) {
                             LivingEntity livingentity = (LivingEntity)entity;
                             d11 = 1.0 - livingentity.getAttributeValue(Attributes.EXPLOSION_KNOCKBACK_RESISTANCE);

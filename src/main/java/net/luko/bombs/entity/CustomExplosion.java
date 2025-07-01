@@ -249,16 +249,9 @@ public class CustomExplosion extends Explosion {
                         if (entity instanceof LivingEntity livingentity) {
                             d11 = ProtectionEnchantment.getExplosionKnockbackAfterDampener(livingentity, d10);
 
-                            if(stack.hasTag() && stack.getTag().contains("Potion")){
-                                ResourceLocation potionResourceLocation = ResourceLocation.tryParse(
-                                        stack.getTag().getString("Potion"));
-                                if(potionResourceLocation != null){
-                                    Potion potion = ForgeRegistries.POTIONS.getValue(potionResourceLocation);
-                                    if(potion != null){
-                                        for(MobEffectInstance effect : potion.getEffects()){
-                                            livingentity.addEffect(new MobEffectInstance(effect));
-                                        }
-                                    }
+                            if(stack.hasTag() && (stack.getTag().contains("Potion") || stack.getTag().contains("CustomPotionEffects"))){
+                                for(MobEffectInstance effect : PotionUtils.getMobEffects(stack)){
+                                    livingentity.addEffect(new MobEffectInstance(effect));
                                 }
                             }
 
@@ -378,12 +371,8 @@ public class CustomExplosion extends Explosion {
         double spread = this.radius_ * 0.3;
 
         serverLevel.sendParticles(ParticleTypes.EXPLOSION, x_, y_, z_, particleCount, spread, spread, spread, 0.1);
-        if(stack.hasTag() && stack.getTag().contains("Potion")) {
-            String potionId = stack.getTag().getString("Potion");
-            ItemStack tempPotionStack = new ItemStack(Items.POTION);
-            Potion potion = ForgeRegistries.POTIONS.getValue(new ResourceLocation(potionId));
-            PotionUtils.setPotion(tempPotionStack, potion);
 
+        if(BombModifierUtil.hasModifier(stack, "imbued")) {
             int color = PotionUtils.getColor(PotionUtils.getMobEffects(stack));
             float r = (color >> 16 & 255) / 255.0F;
             float g = (color >> 8 & 255) / 255.0F;

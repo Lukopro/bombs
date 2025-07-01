@@ -4,6 +4,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
@@ -66,9 +67,18 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
         tag.put("Modifiers", newModifiers);
 
         if(specialTag != null && specialTag.equals("Potion")){
-            tag.putString("Potion",
-                    isolatedContainer.getItem(1).copy()
-                    .getTag().getString("Potion"));
+            ItemStack potion = isolatedContainer.getItem(1).copy();
+            if(!potion.hasTag()){
+                System.out.println("[BOMBS] Wtf is that potion?? Where did you get that?");
+                return ItemStack.EMPTY;
+            }
+            if(potion.getTag().contains("CustomPotionEffects")) {
+                tag.put("CustomPotionEffects",
+                        potion.getTag().getList("CustomPotionEffects", Tag.TAG_COMPOUND).copy());
+            }else{
+                tag.putString("Potion",
+                        potion.getTag().getString("Potion"));
+            }
         }
 
         return bomb;

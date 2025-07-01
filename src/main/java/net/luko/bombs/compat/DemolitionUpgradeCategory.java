@@ -87,19 +87,13 @@ public class DemolitionUpgradeCategory implements IRecipeCategory<DemolitionUpgr
             }
         }
 
-        builder.addSlot(RecipeIngredientRole.INPUT,
-                19,
-                25).
-                addItemStacks(validBombInputs);
+        builder.addSlot(RecipeIngredientRole.INPUT, 19, 25)
+                        .addItemStacks(validBombInputs);
 
-        builder.addSlot(RecipeIngredientRole.INPUT,
-                        53,
-                        25).
-                addIngredients(recipe.getInputUpgrade());
+        builder.addSlot(RecipeIngredientRole.INPUT, 53, 25)
+                .addIngredients(recipe.getInputUpgrade());
 
-        builder.addSlot(RecipeIngredientRole.OUTPUT,
-                87,
-                25)
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 87, 25)
                 .addItemStacks(outputs);
     }
 }

@@ -33,6 +33,7 @@ public class ThrownBombRenderer extends EntityRenderer<ThrownBombEntity> {
             5.0F, ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/entity/soul_dynamite_mid.png"),
             6.0F, ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/entity/soul_dynamite_max.png")
     );
+
     public ThrownBombRenderer(EntityRendererProvider.Context context){
         super(context);
         this.model = new DynamiteModel<>(context.bakeLayer(DynamiteModel.LAYER_LOCATION));

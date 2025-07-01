@@ -188,6 +188,9 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
         if(result.equals(itemHandler.getStackInSlot(INPUT_SLOT))) result = ItemStack.EMPTY;
 
         itemHandler.setStackInSlot(OUTPUT_SLOT, result);
+        setChanged();
+        if(!level.isClientSide())
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
     }
 
     public ItemStack fullAssemble(){

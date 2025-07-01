@@ -52,17 +52,15 @@ public class Bombs
     private void commonSetup(final FMLCommonSetupEvent event)
     {
         event.enqueueWork(BombConfigSync::syncBombExplosionPowers);
-        event.enqueueWork(() -> {
-            DispenserBlock.registerBehavior(ModItems.DYNAMITE.get(), new DefaultDispenseItemBehavior(){
-                @Override
-                protected ItemStack execute(BlockSource source, ItemStack stack){
-                    if(!(stack.getItem() instanceof BombItem bomb)) return stack;
+        event.enqueueWork(() -> DispenserBlock.registerBehavior(ModItems.DYNAMITE.get(), new DefaultDispenseItemBehavior(){
+            @Override
+            protected ItemStack execute(BlockSource source, ItemStack stack){
+                if(!(stack.getItem() instanceof BombItem bomb)) return stack;
 
-                    bomb.throwBomb(source.getLevel(), source, stack);
-                    return stack;
-                }
-            });
-        });
+                bomb.throwBomb(source.getLevel(), source, stack);
+                return stack;
+            }
+        }));
     }
 
     @SubscribeEvent

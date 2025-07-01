@@ -142,7 +142,7 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
                 level(),
                 this,
                 null,
-                new ModifierExplosionDamageCalculator(new ExplosionDamageCalculator(), getItem()),
+                new ModifierExplosionDamageCalculator(getItem()),
                 this.getX(),
                 this.getY(),
                 this.getZ(),
@@ -188,7 +188,7 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
     private class ModifierExplosionDamageCalculator extends ExplosionDamageCalculator{
         private final ItemStack stack;
 
-        public ModifierExplosionDamageCalculator(ExplosionDamageCalculator vanilla, ItemStack stack){
+        public ModifierExplosionDamageCalculator(ItemStack stack){
             this.stack = stack;
         }
 

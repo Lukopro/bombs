@@ -56,19 +56,13 @@ public class DemolitionModifierCategory implements IRecipeCategory<DemolitionMod
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, DemolitionModifierRecipe recipe, IFocusGroup focuses) {
-        builder.addSlot(RecipeIngredientRole.INPUT,
-                        19,
-                        25).
-                addIngredients(recipe.getInputBomb());
+        builder.addSlot(RecipeIngredientRole.INPUT, 19, 25)
+                .addIngredients(recipe.getInputBomb());
 
-        builder.addSlot(RecipeIngredientRole.INPUT,
-                        53,
-                        25).
-                addIngredients(recipe.getInputModifier());
+        builder.addSlot(RecipeIngredientRole.INPUT, 53, 25)
+                .addIngredients(recipe.getInputModifier());
 
-        builder.addSlot(RecipeIngredientRole.OUTPUT,
-                        87,
-                        25)
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 87, 25)
                 .addItemStack(recipe.getResultItem(null));
     }
 }

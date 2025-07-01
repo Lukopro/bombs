@@ -12,7 +12,6 @@ import net.minecraft.world.entity.player.Inventory;
 import java.util.List;
 
 public class DemolitionTableScreen extends AbstractContainerScreen<DemolitionTableMenu> {
-    // Gui texture when the BlockEntity is empty
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/gui/demolition_table.png");
 
@@ -43,7 +42,7 @@ public class DemolitionTableScreen extends AbstractContainerScreen<DemolitionTab
 
     }
 
-    protected void renderInvalidSlots(GuiGraphics guiGraphics, int mouseX, int mouseY){
+    protected void renderInvalidSlots(GuiGraphics guiGraphics){
         List<Integer> invalidRecipeSlots = menu.blockEntity.getInvalidRecipeSlots();
         for(int i : invalidRecipeSlots){
             int x = leftPos + DemolitionTableMenu.SLOT_X_POSITIONS.get(i);
@@ -57,7 +56,7 @@ public class DemolitionTableScreen extends AbstractContainerScreen<DemolitionTab
         renderBackground(guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         renderTooltip(guiGraphics, mouseX, mouseY);
-        renderInvalidSlots(guiGraphics, mouseX, mouseY);
+        renderInvalidSlots(guiGraphics);
     }
 
     @Override

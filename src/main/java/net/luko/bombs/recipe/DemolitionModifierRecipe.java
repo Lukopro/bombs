@@ -88,14 +88,16 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
                 Map.entry("golden", 0),
                 Map.entry("flame", 1),
                 Map.entry("light", 2),
-                Map.entry("contained", 3),
-                Map.entry("pacified", 4),
-                Map.entry("dampened", 5),
-                Map.entry("shatter", 6),
-                Map.entry("lethal", 7),
-                Map.entry("shockwave", 8),
-                Map.entry("evaporate", 9),
-                Map.entry("gentle", 10)
+                Map.entry("float", 3),
+                Map.entry("sink", 4),
+                Map.entry("contained", 5),
+                Map.entry("pacified", 6),
+                Map.entry("dampened", 7),
+                Map.entry("shatter", 8),
+                Map.entry("lethal", 9),
+                Map.entry("shockwave", 10),
+                Map.entry("evaporate", 11),
+                Map.entry("gentle", 12)
         );
 
         Collections.sort(modifiersArray, (a, b) -> {

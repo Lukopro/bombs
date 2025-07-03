@@ -3,6 +3,7 @@ package net.luko.bombs;
 import net.luko.bombs.block.ModBlocks;
 import net.luko.bombs.block.entity.ModBlockEntities;
 import net.luko.bombs.config.BombsConfig;
+import net.luko.bombs.data.ModManagers;
 import net.luko.bombs.entity.ModEntities;
 import net.luko.bombs.item.BombItem;
 import net.luko.bombs.item.ModCreativeModeTabs;
@@ -13,11 +14,15 @@ import net.luko.bombs.screen.ModMenuTypes;
 import net.luko.bombs.util.BombConfigSync;
 import net.minecraft.core.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.DispenserBlock;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -25,6 +30,9 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Mod(Bombs.MODID)
 public class Bombs
@@ -45,6 +53,8 @@ public class Bombs
         ModMenuTypes.register(modEventBus);
         ModRecipeTypes.register(modEventBus);
         ModRecipeSerializers.register(modEventBus);
+
+        ModManagers.init();
 
         modEventBus.addListener(this::commonSetup);
     }
@@ -67,5 +77,21 @@ public class Bombs
     public void onServerStarting(ServerStartingEvent event)
     {
 
+    }
+
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+    public class ModReloadListenerRegistry{
+        private static final List<PreparableReloadListener> LISTENERS = new ArrayList<>();
+
+        public static void register(PreparableReloadListener listener){
+            LISTENERS.add(listener);
+        }
+
+        @SubscribeEvent
+        public static void onReload(AddReloadListenerEvent event){
+            for(PreparableReloadListener listener : LISTENERS){
+                event.addListener(listener);
+            }
+        }
     }
 }

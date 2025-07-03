@@ -1,0 +1,6 @@
+{
+  "strength": 2.0,
+  "block1": "minecraft:snow_block",
+  "block2": "minecraft:ice",
+  "block3": "minecraft:packed_ice"
+}

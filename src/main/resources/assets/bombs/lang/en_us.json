@@ -26,6 +26,7 @@
   "modifier.bombs.sink": "Sinking",
   "modifier.bombs.laden": "Laden",
   "modifier.bombs.imbued": "Imbued",
+  "modifier.bombs.frost": "Frost",
 
   "modifier.bombs.flame.info": "Adds fire to explosions.",
   "modifier.bombs.light.info": "Flies farther.",
@@ -43,6 +44,7 @@
   "modifier.bombs.sink.info": "Increases gravity.",
   "modifier.bombs.laden.info": "Applies potion effect upon exploding.",
   "modifier.bombs.imbued.info": "Spawns lingering potion effect cloud upon exploding.",
+  "modifier.bombs.frost.info": "yerr",
 
   "tier.bombs.1": "Dynamite",
   "tier.bombs.2": "Dynamite II",

@@ -72,19 +72,27 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
 
         tag.put("Modifiers", newModifiers);
 
-        if(specialTag != null && specialTag.equals("Potion")){
-            ItemStack potion = isolatedContainer.getItem(1).copy();
-            if(!potion.hasTag()){
-                System.out.println("[BOMBS] Wtf is that potion?? Where did you get that?");
-                return ItemStack.EMPTY;
+        if(specialTag != null){
+            switch (specialTag){
+                case "Potion":{
+                    ItemStack potion = isolatedContainer.getItem(1).copy();
+                    if(!potion.hasTag()){
+                        System.out.println("[BOMBS] Wtf is that potion?? Where did you get that?");
+                        return ItemStack.EMPTY;
+                    }
+                    if(potion.getTag().contains("CustomPotionEffects")) {
+                        tag.put("CustomPotionEffects",
+                                potion.getTag().getList("CustomPotionEffects", Tag.TAG_COMPOUND).copy());
+                    }else{
+                        tag.putString("Potion",
+                                potion.getTag().getString("Potion"));
+                    }
+                }
+                case "Theme":{
+                    tag.putString("Theme", modifierName);
+                }
             }
-            if(potion.getTag().contains("CustomPotionEffects")) {
-                tag.put("CustomPotionEffects",
-                        potion.getTag().getList("CustomPotionEffects", Tag.TAG_COMPOUND).copy());
-            }else{
-                tag.putString("Potion",
-                        potion.getTag().getString("Potion"));
-            }
+
         }
 
         return bomb;

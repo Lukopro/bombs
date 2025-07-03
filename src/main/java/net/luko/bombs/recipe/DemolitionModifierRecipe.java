@@ -47,9 +47,17 @@ public record DemolitionModifierRecipe(Ingredient inputBomb, Ingredient inputMod
 
         bomb.set(ModDataComponents.MODIFIERS.get(), newModifiers);
 
-        if(specialTag != null && specialTag.equals("Potion")){
-            bomb.set(DataComponents.POTION_CONTENTS,
-                    recipeInput.getItem(1).get(DataComponents.POTION_CONTENTS));
+        if(specialTag != null){
+            switch (specialTag){
+                case "Potion":{
+                    bomb.set(DataComponents.POTION_CONTENTS,
+                            recipeInput.getItem(1).get(DataComponents.POTION_CONTENTS));
+                }
+                case "Theme":{
+                    bomb.set(ModDataComponents.THEME, modifierName);
+                }
+            }
+
         }
 
         return bomb;
@@ -58,6 +66,7 @@ public record DemolitionModifierRecipe(Ingredient inputBomb, Ingredient inputMod
     private List<String> sortedModifiers(List<String> modifiers){
         // Sort modifiersArray using a preset order
         Map<String, Integer> orderMap = Map.ofEntries(
+                Map.entry("frost", -2),
                 Map.entry("laden", -1),
                 Map.entry("imbued", -1),
                 Map.entry("golden", 0),

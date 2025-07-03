@@ -47,7 +47,8 @@ public class BombItem extends Item {
             Map.entry("quickdraw", Style.EMPTY.withColor(TextColor.fromRgb(0x7a5c3c))),
             Map.entry("golden", Style.EMPTY.withColor(TextColor.fromRgb(0xffe017))),
             Map.entry("float", Style.EMPTY.withColor(TextColor.fromRgb(0xcbcf9b))),
-            Map.entry("sink", Style.EMPTY.withColor(TextColor.fromRgb(0x3d372e)))
+            Map.entry("sink", Style.EMPTY.withColor(TextColor.fromRgb(0x3d372e))),
+            Map.entry("frost", Style.EMPTY.withColor(TextColor.fromRgb(0xafede6)))
     );
 
     private static Map<Integer, Float> explosionPowerMap = new HashMap<>();

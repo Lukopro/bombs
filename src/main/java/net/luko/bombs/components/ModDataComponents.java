@@ -29,6 +29,13 @@ public class ModDataComponents {
                             .networkSynchronized(ByteBufCodecs.fromCodecWithRegistries(Codec.STRING.listOf()))
                             .build());
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> THEME =
+            DATA_COMPONENTS.register("theme", () ->
+                    DataComponentType.<String>builder()
+                            .persistent(Codec.STRING)
+                            .networkSynchronized(ByteBufCodecs.STRING_UTF8)
+                            .build());
+
     public static void register(IEventBus eventBus){
         DATA_COMPONENTS.register(eventBus);
     }

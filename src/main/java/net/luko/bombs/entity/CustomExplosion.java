@@ -4,18 +4,21 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+
+import java.util.*;
 import javax.annotation.Nullable;
 
+import net.luko.bombs.Bombs;
+import net.luko.bombs.components.ModDataComponents;
+import net.luko.bombs.data.themes.ThemeData;
+import net.luko.bombs.data.themes.ThemeManager;
 import net.luko.bombs.util.BombModifierUtil;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -25,6 +28,10 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.Clearable;
+import net.minecraft.world.Container;
+import net.minecraft.world.Containers;
+import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.AreaEffectCloud;
@@ -73,9 +80,12 @@ public class CustomExplosion extends Explosion {
     private final DamageSource damageSource_;
     private final ExplosionDamageCalculator damageCalculator_;
     private final ObjectArrayList<BlockPos> toBlow_ = new ObjectArrayList<>();
+    private final Map<BlockPos, Float> almostBroke = new HashMap<BlockPos, Float>();
     private final Map<Player, Vec3> hitPlayers_ = Maps.newHashMap();
     private final Vec3 position_;
     private final ItemStack stack;
+    private final ThemeData themeData;
+    private final float themeStrength;
     /* Saved for later!
     public CustomExplosion(Level pLevel, @Nullable Entity pSource, double pToBlowX, double pToBlowY, double pToBlowZ, float pRadius, List<BlockPos> pPositions, ItemStack stack) {
         this(pLevel, pSource, pToBlowX, pToBlowY, pToBlowZ, pRadius, false, Explosion.BlockInteraction.DESTROY_WITH_DECAY, pPositions, stack);
@@ -104,6 +114,15 @@ public class CustomExplosion extends Explosion {
         this.damageCalculator_ = pDamageCalculator == null ? this.makeDamageCalculator(pSource) : pDamageCalculator;
         this.position_ = new Vec3(this.x_, this.y_, this.z_);
         this.stack = stack;
+
+        if(stack.has(ModDataComponents.THEME)){
+            String themeId = stack.get(ModDataComponents.THEME);
+            ResourceLocation themeRL = ResourceLocation.tryParse(themeId.contains(":") ? themeId : Bombs.MODID + ":" + themeId);
+            this.themeData = themeRL != null && ThemeManager.hasTheme(themeRL) ? ThemeManager.get(themeRL) : null;
+        } else {
+            this.themeData = null;
+        }
+        this.themeStrength = this.themeData == null ? 0.0F : this.themeData.getStrength();
     }
 
     private ExplosionDamageCalculator makeDamageCalculator(@Nullable Entity pEntity) {
@@ -150,6 +169,7 @@ public class CustomExplosion extends Explosion {
     public void explode() {
         this.level_.gameEvent(this.source_, GameEvent.EXPLODE, new Vec3(this.x_, this.y_, this.z_));
         Set<BlockPos> set = Sets.newHashSet();
+        Map<BlockPos, Float> map = new HashMap<>();
         int i = 16;
 
         for(int j = 0; j < 16; ++j) {
@@ -168,7 +188,7 @@ public class CustomExplosion extends Explosion {
                         double d6 = this.y_;
                         double d8 = this.z_;
 
-                        for(float f1 = 0.3F; f > 0.0F; f -= 0.22500001F) {
+                        for(float f1 = 0.3F; f > -this.themeStrength / 3.0F; f -= 0.22500001F) {
                             BlockPos blockpos = BlockPos.containing(d4, d6, d8);
                             BlockState blockstate = this.level_.getBlockState(blockpos);
                             FluidState fluidstate = this.level_.getFluidState(blockpos);
@@ -188,6 +208,8 @@ public class CustomExplosion extends Explosion {
 
                             if (f > 0.0F && this.damageCalculator_.shouldBlockExplode(this, this.level_, blockpos, blockstate, f)) {
                                 set.add(blockpos);
+                            } else if (f > -this.themeStrength){
+                                if(!blockstate.isAir()) map.merge(blockpos, f, Math::max);
                             }
 
                             d4 += d0 * (double)0.3F;
@@ -200,6 +222,10 @@ public class CustomExplosion extends Explosion {
         }
 
         this.toBlow_.addAll(set);
+        this.almostBroke.putAll(map);
+
+        almostBroke.keySet().removeIf(toBlow_::contains);
+
         float f2 = this.radius_ * 2.0F;
         int k1 = Mth.floor(this.x_ - (double)f2 - 1.0D);
         int l1 = Mth.floor(this.x_ + (double)f2 + 1.0D);
@@ -242,13 +268,17 @@ public class CustomExplosion extends Explosion {
                         }
 
                         double d11;
-                        if (entity instanceof LivingEntity livingentity) {
-                            d11 = 1.0 - livingentity.getAttributeValue(Attributes.EXPLOSION_KNOCKBACK_RESISTANCE);
+                        if (entity instanceof LivingEntity livingEntity) {
+                            d11 = 1.0 - livingEntity.getAttributeValue(Attributes.EXPLOSION_KNOCKBACK_RESISTANCE);
 
                             if(BombModifierUtil.hasModifier(stack, "laden") && stack.has(DataComponents.POTION_CONTENTS)){
                                 for(MobEffectInstance effect : stack.get(DataComponents.POTION_CONTENTS).getAllEffects()){
-                                    livingentity.addEffect(new MobEffectInstance(effect));
+                                    livingEntity.addEffect(new MobEffectInstance(effect));
                                 }
+                            }
+
+                            if(BombModifierUtil.hasModifier(this.stack, "frost")){
+                                livingEntity.setTicksFrozen(livingEntity.getTicksFrozen() + (int)(20.0F * this.radius_));
                             }
 
                         } else {
@@ -370,6 +400,35 @@ public class CustomExplosion extends Explosion {
 
                     blockstate.onBlockExploded(this.level_, blockpos, this);
                     this.level_.getProfiler().pop();
+                }
+            }
+
+            if(this.themeData != null){
+                for(Map.Entry<BlockPos, Float> entry : almostBroke.entrySet()){
+                    BlockPos pos = entry.getKey();
+                    float f = entry.getValue();
+
+                    BlockState replacement = themeData.getReplacementBlock(f);
+                    if(replacement == null || replacement == Blocks.AIR.defaultBlockState()) continue;
+
+                    BlockState oldState = level_.getBlockState(pos);
+                    BlockEntity blockEntity = level_.getBlockEntity(pos);
+
+                    if (blockEntity != null) {
+                        if(blockEntity instanceof Container container){
+                            Containers.dropContents(level_, pos, container);
+                        } else if (blockEntity instanceof Clearable clearable){
+                            clearable.clearContent();
+                        } else if(blockEntity instanceof WorldlyContainer worldly){
+                            Containers.dropContents(level_, pos, worldly);
+                        } else {
+                            Bombs.LOGGER.warn("BlockEntity at {} does not expose items to drop", pos);
+                        }
+
+                        oldState.onRemove(level_, pos, oldState, false);
+                    }
+
+                    level_.setBlockAndUpdate(pos, replacement);
                 }
             }
 

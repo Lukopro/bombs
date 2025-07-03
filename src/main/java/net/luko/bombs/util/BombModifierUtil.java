@@ -1,8 +1,6 @@
 package net.luko.bombs.util;
 
-import net.luko.bombs.data.ModDataComponents;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.luko.bombs.components.ModDataComponents;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;

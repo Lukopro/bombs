@@ -1,7 +1,7 @@
 package net.luko.bombs.item;
 
 import net.luko.bombs.config.BombsConfig;
-import net.luko.bombs.data.ModDataComponents;
+import net.luko.bombs.components.ModDataComponents;
 import net.luko.bombs.entity.ModEntities;
 import net.luko.bombs.entity.ThrownBombEntity;
 import net.luko.bombs.util.BombModifierUtil;
@@ -10,12 +10,8 @@ import net.luko.bombs.util.BombTextureUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.dispenser.BlockSource;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -29,11 +25,9 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 

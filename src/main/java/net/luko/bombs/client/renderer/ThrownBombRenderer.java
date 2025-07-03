@@ -3,7 +3,7 @@ package net.luko.bombs.client.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.luko.bombs.Bombs;
-import net.luko.bombs.data.ModDataComponents;
+import net.luko.bombs.components.ModDataComponents;
 import net.luko.bombs.client.model.DynamiteModel;
 import net.luko.bombs.entity.ThrownBombEntity;
 import net.luko.bombs.util.BombTextureUtil;

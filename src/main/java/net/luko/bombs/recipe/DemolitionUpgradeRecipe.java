@@ -1,6 +1,6 @@
 package net.luko.bombs.recipe;
 
-import net.luko.bombs.data.ModDataComponents;
+import net.luko.bombs.components.ModDataComponents;
 import net.luko.bombs.item.BombItem;
 import net.luko.bombs.item.ModItems;
 import net.minecraft.core.HolderLookup;

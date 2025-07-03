@@ -1,6 +1,6 @@
 package net.luko.bombs.util;
 
-import net.luko.bombs.data.ModDataComponents;
+import net.luko.bombs.components.ModDataComponents;
 import net.minecraft.world.item.ItemStack;
 
 public class BombTextureUtil {

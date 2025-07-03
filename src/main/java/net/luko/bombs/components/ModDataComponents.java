@@ -1,4 +1,4 @@
-package net.luko.bombs.data;
+package net.luko.bombs.components;
 
 import com.mojang.serialization.Codec;
 import net.luko.bombs.Bombs;

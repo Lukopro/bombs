@@ -10,7 +10,7 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.luko.bombs.Bombs;
 import net.luko.bombs.block.ModBlocks;
-import net.luko.bombs.data.ModDataComponents;
+import net.luko.bombs.components.ModDataComponents;
 import net.luko.bombs.item.ModItems;
 import net.luko.bombs.recipe.DemolitionUpgradeRecipe;
 import net.luko.bombs.recipe.DemolitionUpgradeRecipeInput;

@@ -2,7 +2,7 @@ package net.luko.bombs.item;
 
 import net.luko.bombs.Bombs;
 import net.luko.bombs.block.ModBlocks;
-import net.luko.bombs.data.ModDataComponents;
+import net.luko.bombs.components.ModDataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;

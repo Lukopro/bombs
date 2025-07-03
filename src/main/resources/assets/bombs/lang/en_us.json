@@ -44,7 +44,7 @@
   "modifier.bombs.sink.info": "Increases gravity.",
   "modifier.bombs.laden.info": "Applies potion effect upon exploding.",
   "modifier.bombs.imbued.info": "Spawns lingering potion effect cloud upon exploding.",
-  "modifier.bombs.frost.info": "yerr",
+  "modifier.bombs.frost.info": "Applies 'frost' theme and freezes nearby enemies.",
 
   "tier.bombs.1": "Dynamite",
   "tier.bombs.2": "Dynamite II",

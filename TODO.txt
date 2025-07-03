@@ -7,8 +7,7 @@
 - Dynamite launcher
 - Beheading modifier
 - Hover modifier
-- Dirt modifier, ice modifier
-- Adjust explosion ray count based on radius
+- Dirt modifier
 - Mobs that have dynamite will throw them
 - Redstone modifier (powers redstone upon explosion)
 - Super high tiers/nukes

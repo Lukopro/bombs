@@ -1,6 +1,7 @@
 package net.luko.bombs.item;
 
 import net.luko.bombs.config.BombsConfig;
+import net.luko.bombs.data.modifiers.ModifierColorManager;
 import net.luko.bombs.data.themes.ThemeManager;
 import net.luko.bombs.entity.ModEntities;
 import net.luko.bombs.entity.ThrownBombEntity;
@@ -94,7 +95,6 @@ public class BombItem extends Item {
             if (!level.isClientSide()) {
                 throwBomb(level, player, stack, getBaseVelocity(stack));
             }
-            ThemeManager.printThemes();
             return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
         }
 
@@ -244,7 +244,7 @@ public class BombItem extends Item {
                             .append(Component.literal(")"))
                             .withStyle(Style.EMPTY.withColor(potionColor));
                 } else {
-                    modifierComponent.withStyle(modifierColorMap.getOrDefault(mod, Style.EMPTY.withColor(TextColor.fromRgb(0x3d372e))));
+                    modifierComponent.withStyle(Style.EMPTY.withColor(ModifierColorManager.INSTANCE.getColor(mod)));
                 }
 
                 tooltip.add(modifierComponent);

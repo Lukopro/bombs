@@ -28,6 +28,26 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
             Map.entry("imbued", Set.of("laden"))
     );
 
+    // Sort modifiersArray using a preset order
+    private final Map<String, Integer> orderMap = Map.ofEntries(
+            Map.entry("frost", -2),
+            Map.entry("laden", -1),
+            Map.entry("imbued", -1),
+            Map.entry("golden", 0),
+            Map.entry("flame", 1),
+            Map.entry("light", 2),
+            Map.entry("float", 3),
+            Map.entry("sink", 4),
+            Map.entry("contained", 5),
+            Map.entry("pacified", 6),
+            Map.entry("dampened", 7),
+            Map.entry("shatter", 8),
+            Map.entry("lethal", 9),
+            Map.entry("shockwave", 10),
+            Map.entry("evaporate", 11),
+            Map.entry("gentle", 12)
+    );
+
     public DemolitionModifierRecipe(ResourceLocation id, Ingredient inputBomb, Ingredient inputModifier, String modifierName, String specialTag){
         this.id = id;
         this.inputBomb = inputBomb;
@@ -106,24 +126,7 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
             modifiersArray.add(modifiersTag.getString(i));
         }
 
-        // Sort modifiersArray using a preset order
-        Map<String, Integer> orderMap = Map.ofEntries(
-                Map.entry("laden", -1),
-                Map.entry("imbued", -1),
-                Map.entry("golden", 0),
-                Map.entry("flame", 1),
-                Map.entry("light", 2),
-                Map.entry("float", 3),
-                Map.entry("sink", 4),
-                Map.entry("contained", 5),
-                Map.entry("pacified", 6),
-                Map.entry("dampened", 7),
-                Map.entry("shatter", 8),
-                Map.entry("lethal", 9),
-                Map.entry("shockwave", 10),
-                Map.entry("evaporate", 11),
-                Map.entry("gentle", 12)
-        );
+
 
         Collections.sort(modifiersArray, (a, b) -> {
             int indexA = orderMap.getOrDefault(a, Integer.MAX_VALUE);

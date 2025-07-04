@@ -170,12 +170,12 @@ public class CustomExplosion extends Explosion {
         this.level_.gameEvent(this.source_, GameEvent.EXPLODE, new Vec3(this.x_, this.y_, this.z_));
         Set<BlockPos> set = Sets.newHashSet();
         Map<BlockPos, Float> map = new HashMap<>();
-        int i = 16;
+        int gridSize = 4 + (int)Math.floor(Math.pow(radius_, 1.4));
 
-        for(int j = 0; j < 16; ++j) {
-            for(int k = 0; k < 16; ++k) {
-                for(int l = 0; l < 16; ++l) {
-                    if (j == 0 || j == 15 || k == 0 || k == 15 || l == 0 || l == 15) {
+        for(int j = 0; j < gridSize; ++j) {
+            for(int k = 0; k < gridSize; ++k) {
+                for(int l = 0; l < gridSize; ++l) {
+                    if (j == 0 || j == gridSize - 1 || k == 0 || k == gridSize - 1 || l == 0 || l == gridSize - 1) {
                         double d0 = (double)((float)j / 15.0F * 2.0F - 1.0F);
                         double d1 = (double)((float)k / 15.0F * 2.0F - 1.0F);
                         double d2 = (double)((float)l / 15.0F * 2.0F - 1.0F);

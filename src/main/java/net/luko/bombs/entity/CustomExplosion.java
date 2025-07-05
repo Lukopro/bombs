@@ -254,13 +254,19 @@ public class CustomExplosion extends Explosion {
                             d11 = 1.0 - livingEntity.getAttributeValue(Attributes.EXPLOSION_KNOCKBACK_RESISTANCE);
 
                             if(BombModifierUtil.hasModifier(stack, "laden") && stack.has(DataComponents.POTION_CONTENTS)){
-                                for(MobEffectInstance effect : stack.get(DataComponents.POTION_CONTENTS).getAllEffects()){
-                                    livingEntity.addEffect(new MobEffectInstance(effect));
+                                for(MobEffectInstance baseEffect : stack.get(DataComponents.POTION_CONTENTS).getAllEffects()){
+                                    livingEntity.addEffect(new MobEffectInstance(
+                                            baseEffect.getEffect(),
+                                            (int)(baseEffect.getDuration() * (d10)),
+                                            baseEffect.getAmplifier(),
+                                            baseEffect.isAmbient(),
+                                            baseEffect.isVisible()
+                                    ));
                                 }
                             }
 
                             if (this.hasFrostModifier) {
-                                livingEntity.setTicksFrozen(livingEntity.getTicksFrozen() + (int) (20.0F * this.radius_));
+                                livingEntity.setTicksFrozen(livingEntity.getTicksFrozen() + (int) (30.0F * this.radius_ * d10));
                             }
 
                         } else {

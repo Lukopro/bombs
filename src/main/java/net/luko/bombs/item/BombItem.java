@@ -38,24 +38,6 @@ import java.util.*;
 
 public class BombItem extends Item {
 
-    private static final Map<String, Style> modifierColorMap = Map.ofEntries(
-            Map.entry("flame", Style.EMPTY.withColor(TextColor.fromRgb(0xff5e00))),
-            Map.entry("light", Style.EMPTY.withColor(TextColor.fromRgb(0xffffe0))),
-            Map.entry("contained", Style.EMPTY.withColor(TextColor.fromRgb(0x369c7d))),
-            Map.entry("pacified", Style.EMPTY.withColor(TextColor.fromRgb(0x369c7d))),
-            Map.entry("dampened", Style.EMPTY.withColor(TextColor.fromRgb(0x369c7d))),
-            Map.entry("shatter", Style.EMPTY.withColor(TextColor.fromRgb(0x5f9c36))),
-            Map.entry("lethal", Style.EMPTY.withColor(TextColor.fromRgb(0x5f9c36))),
-            Map.entry("shockwave", Style.EMPTY.withColor(TextColor.fromRgb(0x5f9c36))),
-            Map.entry("gentle", Style.EMPTY.withColor(TextColor.fromRgb(0x369c98))),
-            Map.entry("evaporate", Style.EMPTY.withColor(TextColor.fromRgb(0x9aa9b5))),
-            Map.entry("quickdraw", Style.EMPTY.withColor(TextColor.fromRgb(0x7a5c3c))),
-            Map.entry("golden", Style.EMPTY.withColor(TextColor.fromRgb(0xffe017))),
-            Map.entry("float", Style.EMPTY.withColor(TextColor.fromRgb(0xcbcf9b))),
-            Map.entry("sink", Style.EMPTY.withColor(TextColor.fromRgb(0x3d372e))),
-            Map.entry("frost", Style.EMPTY.withColor(TextColor.fromRgb(0xafede6)))
-    );
-
     private static Map<Integer, Float> explosionPowerMap = new HashMap<>();
     static{
         explosionPowerMap.put(1, 2.0F);

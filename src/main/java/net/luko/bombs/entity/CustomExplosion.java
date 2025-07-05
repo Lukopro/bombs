@@ -79,6 +79,7 @@ public class CustomExplosion extends Explosion {
     private final ExplosionDamageCalculator damageCalculator_;
     private final LongOpenHashSet toBlow_ = new LongOpenHashSet();
     private final Long2FloatOpenHashMap almostBroke = new Long2FloatOpenHashMap();
+
     private final Map<Player, Vec3> hitPlayers_ = Maps.newHashMap();
     private final Vec3 position_;
     private final ItemStack stack;
@@ -133,6 +134,8 @@ public class CustomExplosion extends Explosion {
         this.hasShockwaveModifier = BombModifierUtil.hasModifier(stack, "shockwave");
         this.hasImbuedModifier = BombModifierUtil.hasModifier(stack, "imbued");
         this.dropChance = Math.min(1.0F, 10.0F / radius_);
+
+        almostBroke.defaultReturnValue(Float.NEGATIVE_INFINITY);
     }
 
     private ExplosionDamageCalculator makeDamageCalculator(@Nullable Entity pEntity) {
@@ -145,8 +148,6 @@ public class CustomExplosion extends Explosion {
     @Override
     public void explode() {
         this.level_.gameEvent(this.source_, GameEvent.EXPLODE, new Vec3(this.x_, this.y_, this.z_));
-        Long2FloatOpenHashMap map = new Long2FloatOpenHashMap();
-        map.defaultReturnValue(Float.NEGATIVE_INFINITY);
 
         BlockPos.MutableBlockPos blockpos = new BlockPos.MutableBlockPos();
 
@@ -193,16 +194,12 @@ public class CustomExplosion extends Explosion {
                             if (f > 0.0F && this.damageCalculator_.shouldBlockExplode(this, this.level_, blockpos, blockstate, f)) {
                                 toBlow_.add(blockpos.asLong());
                             } else if (this.hasTheme && f > -this.themeStrength){
-                                if(!blockstate.isAir()) map.merge(blockpos.asLong(), f, Math::max);
+                                if(!blockstate.isAir()) almostBroke.merge(blockpos.asLong(), f, Math::max);
                             }
                         }
                     }
                 }
             }
-        }
-
-        if(hasTheme) {
-            this.almostBroke.putAll(map);
         }
 
         float f2 = this.radius_ * 2.0F;
@@ -251,14 +248,20 @@ public class CustomExplosion extends Explosion {
 
                             if (this.stack.hasTag() && (this.stack.getTag().contains("Potion") || this.stack.getTag().contains("CustomPotionEffects"))) {
                                 if (this.hasLadenModifier) {
-                                    for (MobEffectInstance effect : PotionUtils.getMobEffects(this.stack)) {
-                                        livingEntity.addEffect(new MobEffectInstance(effect));
+                                    for (MobEffectInstance baseEffect : PotionUtils.getMobEffects(this.stack)) {
+                                        livingEntity.addEffect(new MobEffectInstance(
+                                                baseEffect.getEffect(),
+                                                (int)(baseEffect.getDuration() * (d10)),
+                                                baseEffect.getAmplifier(),
+                                                baseEffect.isAmbient(),
+                                                baseEffect.isVisible()
+                                        ));
                                     }
                                 }
                             }
 
                             if (this.hasFrostModifier) {
-                                livingEntity.setTicksFrozen(livingEntity.getTicksFrozen() + (int) (20.0F * this.radius_));
+                                livingEntity.setTicksFrozen(livingEntity.getTicksFrozen() + (int) (30.0F * this.radius_ * d10));
                             }
 
                         } else {

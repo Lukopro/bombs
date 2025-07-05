@@ -8,7 +8,7 @@ public class BombsConfig {
     public static final ModConfigSpec COMMON_CONFIG;
 
     private static final float POWER_MIN = 0.0F;
-    private static final float POWER_MAX = 50.0F;
+    private static final float POWER_MAX = 100.0F;
 
     private static final Map<Integer, Float> DEFAULT_POWER_VALUES = Map.of(
             1, 2.0F,

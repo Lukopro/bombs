@@ -1,12 +1,15 @@
 package net.luko.bombs.entity;
 
+import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
 import net.luko.bombs.config.BombsConfig;
 import net.luko.bombs.item.ModItems;
 import net.luko.bombs.util.BombModifierUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,8 +20,11 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
@@ -197,25 +203,40 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
     }
 
     private class ModifierExplosionDamageCalculator extends ExplosionDamageCalculator{
-        private final ItemStack stack;
+        private final boolean shatter;
+        private final boolean evaporate;
+
+        private Object2FloatOpenHashMap<Block> cachedBlockResistanceValues;
+        private Object2FloatOpenHashMap<Fluid> cachedFluidResistanceValues;
 
         public ModifierExplosionDamageCalculator(ItemStack stack){
-            this.stack = stack;
+            this.shatter = BombModifierUtil.hasModifier(stack, "shatter");
+            this.evaporate = BombModifierUtil.hasModifier(stack, "evaporate");
+            this.cachedBlockResistanceValues = new Object2FloatOpenHashMap<>();
+            this.cachedFluidResistanceValues = new Object2FloatOpenHashMap<>();
         }
 
         @Override
         public Optional<Float> getBlockExplosionResistance(Explosion explosion, BlockGetter reader, BlockPos pos, BlockState state, FluidState fluid) {
-            float blockResistance = state.getExplosionResistance(reader, pos, explosion);
-            float fluidResistance = fluid.getExplosionResistance(reader, pos, explosion);
 
-            if(BombModifierUtil.hasModifier(this.stack, "shatter")){
-                blockResistance *= 0.4F;
-            }
+            float blockResistance = hasStaticExplosionResistance(state.getBlock())
+                    ? cachedBlockResistanceValues.computeIfAbsent(state.getBlock(),
+                    b -> state.getExplosionResistance(reader, pos, explosion))
+                    : state.getExplosionResistance(reader, pos, explosion);
 
-            if(BombModifierUtil.hasModifier(this.stack, "evaporate")){
-                fluidResistance *= 0.0F;
-            }
+            float fluidResistance = evaporate || fluid.getType() == Fluids.EMPTY
+                    ? 0.0F
+                    : cachedFluidResistanceValues.computeIfAbsent(fluid.getType(),
+                    f -> fluid.getExplosionResistance(reader, pos, explosion));
+
+            if(shatter) blockResistance *= 0.4F;
+
             return Optional.of(Math.max(blockResistance, fluidResistance));
+        }
+
+        private static boolean hasStaticExplosionResistance(Block block){
+            ResourceLocation id = BuiltInRegistries.BLOCK.getKey(block);
+            return id.getNamespace().equals("minecraft");
         }
     }
 }

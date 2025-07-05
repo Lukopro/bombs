@@ -3,6 +3,7 @@ package net.luko.bombs.screen;
 import net.luko.bombs.block.ModBlocks;
 import net.luko.bombs.block.entity.DemolitionTableBlockEntity;
 import net.luko.bombs.item.BombItem;
+import net.luko.bombs.util.BombRecipeUtil;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -73,7 +74,16 @@ public class DemolitionTableMenu extends AbstractContainerMenu {
                 }
             });
 
-            for(int i = 1; i < 10; i++){
+            for(int i = 1; i < 4; i++){
+                this.addSlot(new SlotItemHandler(this.blockEntity.itemHandler, i, SLOT_X_POSITIONS.get(i), SLOT_Y_POSITIONS.get(i)){
+                    @Override
+                    public boolean mayPlace(ItemStack stack){
+                        return BombRecipeUtil.validUpgradeIngredient(level, stack);
+                    }
+                });
+            }
+
+            for(int i = 4; i < 10; i++){
                 this.addSlot(new SlotItemHandler(this.blockEntity.itemHandler, i, SLOT_X_POSITIONS.get(i), SLOT_Y_POSITIONS.get(i)));
             }
 

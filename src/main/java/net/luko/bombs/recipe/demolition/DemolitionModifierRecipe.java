@@ -2,6 +2,7 @@ package net.luko.bombs.recipe.demolition;
 
 import net.luko.bombs.components.ModDataComponents;
 import net.luko.bombs.config.BombsConfig;
+import net.luko.bombs.data.modifiers.ModifierPriorityManager;
 import net.luko.bombs.recipe.ModRecipeSerializers;
 import net.luko.bombs.recipe.ModRecipeTypes;
 import net.luko.bombs.util.BombModifierUtil;
@@ -70,24 +71,7 @@ public record DemolitionModifierRecipe(Ingredient inputBomb, Ingredient inputMod
 
     private List<String> sortedModifiers(List<String> modifiers){
         // Sort modifiersArray using a preset order
-        Map<String, Integer> orderMap = Map.ofEntries(
-                Map.entry("frost", -2),
-                Map.entry("laden", -1),
-                Map.entry("imbued", -1),
-                Map.entry("golden", 0),
-                Map.entry("flame", 1),
-                Map.entry("light", 2),
-                Map.entry("float", 3),
-                Map.entry("sink", 4),
-                Map.entry("contained", 5),
-                Map.entry("pacified", 6),
-                Map.entry("dampened", 7),
-                Map.entry("shatter", 8),
-                Map.entry("lethal", 9),
-                Map.entry("shockwave", 10),
-                Map.entry("evaporate", 11),
-                Map.entry("gentle", 12)
-        );
+        Map<String, Integer> orderMap = ModifierPriorityManager.INSTANCE.getPriorities();
 
         List<String> sortedModifiers = new ArrayList<>(modifiers);
 

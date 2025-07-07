@@ -1,0 +1,18 @@
+{
+  "frost": -2,
+  "laden": -1,
+  "imbued": -1,
+  "golden": 0,
+  "flame": 1,
+  "light": 2,
+  "float": 3,
+  "sink": 4,
+  "contained": 5,
+  "pacified": 6,
+  "dampened": 7,
+  "shatter": 8,
+  "lethal": 9,
+  "shockwave": 10,
+  "evaporate": 11,
+  "gentle": 12
+}

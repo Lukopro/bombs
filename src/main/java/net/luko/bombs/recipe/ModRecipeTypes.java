@@ -1,6 +1,8 @@
 package net.luko.bombs.recipe;
 
 import net.luko.bombs.Bombs;
+import net.luko.bombs.recipe.demolition.DemolitionModifierRecipe;
+import net.luko.bombs.recipe.demolition.DemolitionUpgradeRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -22,6 +24,14 @@ public class ModRecipeTypes {
             RECIPE_TYPES.register("demolition_modifier", () -> new RecipeType<>() {
                 public String toString() {
                     return Bombs.MODID + ":demolition_modifier";
+                }
+            });
+
+    public static final RegistryObject<RecipeType<BombRecipe>> BOMB_TYPE =
+            RECIPE_TYPES.register("bomb", () -> new RecipeType<>() {
+                @Override
+                public String toString() {
+                    return Bombs.MODID + ":bomb";
                 }
             });
 

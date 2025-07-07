@@ -1,4 +1,4 @@
-package net.luko.bombs.recipe;
+package net.luko.bombs.recipe.demolition;
 
 import com.google.gson.JsonObject;
 import net.minecraft.network.FriendlyByteBuf;

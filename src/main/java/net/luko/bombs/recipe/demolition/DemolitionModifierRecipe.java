@@ -1,5 +1,8 @@
-package net.luko.bombs.recipe;
+package net.luko.bombs.recipe.demolition;
 
+import net.luko.bombs.config.BombsConfig;
+import net.luko.bombs.recipe.ModRecipeSerializers;
+import net.luko.bombs.recipe.ModRecipeTypes;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -62,6 +65,8 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
         ItemStack modifierItem = isolatedContainer.getItem(1);
 
         if(!inputBomb.test(bombItem) || !inputModifier.test(modifierItem)) return false;
+
+        if(BombsConfig.RESTRICTED_MODIFIERS.get().contains(modifierName)) return false;
 
         CompoundTag tag = bombItem.getOrCreateTag();
         ListTag modifiers = tag.getList("Modifiers", CompoundTag.TAG_STRING);

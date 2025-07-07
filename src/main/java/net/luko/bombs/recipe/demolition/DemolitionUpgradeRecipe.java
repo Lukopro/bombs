@@ -1,7 +1,9 @@
-package net.luko.bombs.recipe;
+package net.luko.bombs.recipe.demolition;
 
 import net.luko.bombs.item.BombItem;
 import net.luko.bombs.item.ModItems;
+import net.luko.bombs.recipe.ModRecipeSerializers;
+import net.luko.bombs.recipe.ModRecipeTypes;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;

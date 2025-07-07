@@ -1,6 +1,5 @@
 package net.luko.bombs.compat;
 
-import com.mojang.serialization.Decoder;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -12,13 +11,11 @@ import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.luko.bombs.Bombs;
 import net.luko.bombs.block.ModBlocks;
 import net.luko.bombs.item.ModItems;
-import net.luko.bombs.recipe.DemolitionUpgradeRecipe;
-import net.luko.bombs.screen.DemolitionTableMenu;
+import net.luko.bombs.recipe.demolition.DemolitionUpgradeRecipe;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;

@@ -17,4 +17,3 @@
 - Weiner bomb tier 0
 - Explosion noise
 - Soak modifier, sponge, explode on contact with water
-- Data driven modifier priorities

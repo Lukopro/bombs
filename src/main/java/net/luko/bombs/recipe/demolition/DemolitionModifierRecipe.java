@@ -1,6 +1,9 @@
-package net.luko.bombs.recipe;
+package net.luko.bombs.recipe.demolition;
 
 import net.luko.bombs.components.ModDataComponents;
+import net.luko.bombs.config.BombsConfig;
+import net.luko.bombs.recipe.ModRecipeSerializers;
+import net.luko.bombs.recipe.ModRecipeTypes;
 import net.luko.bombs.util.BombModifierUtil;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
@@ -22,6 +25,8 @@ public record DemolitionModifierRecipe(Ingredient inputBomb, Ingredient inputMod
         ItemStack modifier = recipeInput.getItem(1);
 
         if(!inputBomb.test(bomb) || !inputModifier.test(modifier)) return false;
+
+        if(BombsConfig.RESTRICTED_MODIFIERS.get().contains(modifierName)) return false;
 
         List<String> modifiers = bomb.getOrDefault(ModDataComponents.MODIFIERS.get(), List.of());
 

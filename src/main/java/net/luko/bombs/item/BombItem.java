@@ -66,7 +66,7 @@ public class BombItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand){
         ItemStack stack = player.getItemInHand(hand);
 
-        if(BombsConfig.QUICKDRAW_BY_DEFAULT.get() || BombModifierUtil.hasModifier(stack, "quickdraw")) {
+        if(BombModifierUtil.hasModifier(stack, "quickdraw")) {
             if (!level.isClientSide()) {
                 throwBomb(level, player, stack, getBaseVelocity(stack));
             }

@@ -6,13 +6,12 @@ import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import net.luko.bombs.Bombs;
-import net.luko.bombs.recipe.DemolitionModifierRecipe;
-import net.luko.bombs.recipe.DemolitionUpgradeRecipe;
+import net.luko.bombs.recipe.demolition.DemolitionModifierRecipe;
+import net.luko.bombs.recipe.demolition.DemolitionUpgradeRecipe;
 import net.luko.bombs.recipe.ModRecipeTypes;
 import net.luko.bombs.screen.DemolitionTableScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 

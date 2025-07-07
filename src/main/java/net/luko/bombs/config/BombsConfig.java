@@ -2,6 +2,7 @@ package net.luko.bombs.config;
 
 import net.neoforged.neoforge.common.ModConfigSpec;
 
+import java.util.List;
 import java.util.Map;
 
 public class BombsConfig {
@@ -19,8 +20,6 @@ public class BombsConfig {
             6, 7.0F
     );
 
-    public static ModConfigSpec.BooleanValue QUICKDRAW_BY_DEFAULT;
-
     public static ModConfigSpec.DoubleValue DYNAMITE_BASE_POWER;
     public static ModConfigSpec.DoubleValue DYNAMITE_II_BASE_POWER;
     public static ModConfigSpec.DoubleValue DYNAMITE_III_BASE_POWER;
@@ -29,19 +28,13 @@ public class BombsConfig {
     public static ModConfigSpec.DoubleValue SOUL_DYNAMITE_II_BASE_POWER;
     public static ModConfigSpec.DoubleValue SOUL_DYNAMITE_III_BASE_POWER;
 
+    public static ModConfigSpec.ConfigValue<List<? extends String>> DEFAULT_MODIFIERS;
+    public static ModConfigSpec.ConfigValue<List<? extends String>> RESTRICTED_MODIFIERS;
+
     public static ModConfigSpec.IntValue BOMB_TIMEOUT_TIME;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
-
-        builder.push("Mechanics");
-
-        QUICKDRAW_BY_DEFAULT = builder
-                .comment("Bombs are thrown instantly, regardless of modifiers (default: false)")
-                .define("quickdrawByDefault",
-                        false);
-
-        builder.pop();
 
         builder.push("Dynamite Base Damage");
 
@@ -80,6 +73,22 @@ public class BombsConfig {
                 .defineInRange("soulDynamiteIIIBasePower",
                         DEFAULT_POWER_VALUES.get(6),
                         POWER_MIN, POWER_MAX);
+
+        builder.pop();
+
+        builder.push("Modifiers");
+
+        DEFAULT_MODIFIERS = builder
+                .comment("List of modifiers applied to dynamite by default")
+                .defineList("defaultModifiers",
+                        List.of(),
+                        obj -> obj instanceof String);
+
+        RESTRICTED_MODIFIERS = builder
+                .comment("List of modifiers that are not allowed to be applied")
+                .defineList("restrictedModifiers",
+                        List.of(),
+                        obj -> obj instanceof String);
 
         builder.pop();
 

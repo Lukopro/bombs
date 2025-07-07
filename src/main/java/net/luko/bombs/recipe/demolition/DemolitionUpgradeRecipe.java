@@ -1,8 +1,10 @@
-package net.luko.bombs.recipe;
+package net.luko.bombs.recipe.demolition;
 
 import net.luko.bombs.components.ModDataComponents;
 import net.luko.bombs.item.BombItem;
 import net.luko.bombs.item.ModItems;
+import net.luko.bombs.recipe.ModRecipeSerializers;
+import net.luko.bombs.recipe.ModRecipeTypes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;

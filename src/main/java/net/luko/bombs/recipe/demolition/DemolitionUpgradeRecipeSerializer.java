@@ -1,4 +1,4 @@
-package net.luko.bombs.recipe;
+package net.luko.bombs.recipe.demolition;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -6,7 +6,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
@@ -29,7 +28,6 @@ public class DemolitionUpgradeRecipeSerializer implements RecipeSerializer<Demol
 
     @Override
     public MapCodec<DemolitionUpgradeRecipe> codec() {
-        System.out.println("Upgrade recipe serializer CODEC retrieved!");
         return CODEC;
     }
 

@@ -2,6 +2,8 @@ package net.luko.bombs.block.entity;
 
 import net.luko.bombs.item.BombItem;
 import net.luko.bombs.recipe.*;
+import net.luko.bombs.recipe.demolition.DemolitionModifierRecipeInput;
+import net.luko.bombs.recipe.demolition.DemolitionUpgradeRecipeInput;
 import net.luko.bombs.screen.DemolitionTableMenu;
 import net.luko.bombs.util.BombRecipeUtil;
 import net.minecraft.core.BlockPos;

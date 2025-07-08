@@ -50,6 +50,8 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
     public float lastParticleTick;
     public float particlesToSpawn;
 
+    private Boolean hasHydrosensitiveModifier = null;
+
     public ThrownBombEntity(EntityType<? extends ThrownBombEntity> type, Level level) {
         super(type, level);
         this.explosionPower = DEFAULT_POWER;
@@ -121,10 +123,18 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
         return gravity;
     }
 
+    private boolean hasHydrosensitiveModifier(){
+        if(hasHydrosensitiveModifier == null){
+            hasHydrosensitiveModifier = BombModifierUtil.hasModifier(getItem(), "hydrosensitive");
+        }
+        return hasHydrosensitiveModifier;
+    }
+
     @Override
     public void tick(){
         super.tick();
         if(tickCount % 40 == 0 && tickCount >= this.tickLife) discard();
+        if(!level().isClientSide() && this.isInWaterOrBubble() && hasHydrosensitiveModifier()) explode();
     }
 
     @Override

@@ -1,7 +1,6 @@
-package net.luko.bombs.entity;
+package net.luko.bombs.entity.bomb;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.longs.Long2FloatMap;
 import it.unimi.dsi.fastutil.longs.Long2FloatOpenHashMap;
@@ -15,7 +14,6 @@ import net.luko.bombs.Bombs;
 import net.luko.bombs.data.themes.ThemeData;
 import net.luko.bombs.data.themes.ThemeManager;
 import net.luko.bombs.util.BombModifierUtil;
-import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;

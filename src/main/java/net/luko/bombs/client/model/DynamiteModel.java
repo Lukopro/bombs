@@ -3,7 +3,7 @@ package net.luko.bombs.client.model;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.luko.bombs.Bombs;
-import net.luko.bombs.entity.ThrownBombEntity;
+import net.luko.bombs.entity.bomb.ThrownBombEntity;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;

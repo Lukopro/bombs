@@ -1,9 +1,5 @@
 {
   "item.bombs.dynamite": "Dynamite",
-  "item.bombs.strong_dynamite": "Strong Dynamite",
-  "item.bombs.blaze_dynamite": "Blaze Dynamite",
-  "item.bombs.dragon_dynamite": "Dragon Dynamite",
-  "item.bombs.crystal_dynamite": "Crystal Dynamite",
 
   "block.bombs.demolition_table": "Demolition Table",
 
@@ -27,6 +23,7 @@
   "modifier.bombs.laden": "Laden",
   "modifier.bombs.imbued": "Imbued",
   "modifier.bombs.frost": "Frost",
+  "modifier.bombs.hydrosensitive": "Hydro-Sensitive",
 
   "modifier.bombs.flame.info": "Adds fire to explosions.",
   "modifier.bombs.light.info": "Flies farther.",
@@ -45,6 +42,7 @@
   "modifier.bombs.laden.info": "Applies potion effect upon exploding.",
   "modifier.bombs.imbued.info": "Spawns lingering potion effect cloud upon exploding.",
   "modifier.bombs.frost.info": "Applies 'frost' theme and freezes nearby enemies.",
+  "modifier.bombs.hydrosensitive.info": "Explodes on contact with water.",
 
   "tier.bombs.1": "Dynamite",
   "tier.bombs.2": "Dynamite II",

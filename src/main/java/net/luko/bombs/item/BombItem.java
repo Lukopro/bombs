@@ -1,10 +1,8 @@
 package net.luko.bombs.item;
 
-import net.luko.bombs.config.BombsConfig;
 import net.luko.bombs.data.modifiers.ModifierColorManager;
-import net.luko.bombs.data.themes.ThemeManager;
 import net.luko.bombs.entity.ModEntities;
-import net.luko.bombs.entity.ThrownBombEntity;
+import net.luko.bombs.entity.bomb.ThrownBombEntity;
 import net.luko.bombs.util.BombModifierUtil;
 import net.luko.bombs.util.BombPotionUtil;
 import net.luko.bombs.util.BombTextureUtil;
@@ -12,7 +10,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;

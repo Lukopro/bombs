@@ -14,5 +14,6 @@
   "lethal": 9,
   "shockwave": 10,
   "evaporate": 11,
-  "gentle": 12
+  "hydrosensitive": 12,
+  "gentle": 13
 }

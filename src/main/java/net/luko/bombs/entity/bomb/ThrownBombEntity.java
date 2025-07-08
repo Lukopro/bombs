@@ -1,15 +1,13 @@
-package net.luko.bombs.entity;
+package net.luko.bombs.entity.bomb;
 
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
 import net.luko.bombs.config.BombsConfig;
 import net.luko.bombs.item.ModItems;
 import net.luko.bombs.util.BombModifierUtil;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
@@ -31,8 +29,6 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -54,6 +50,8 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
 
     public float lastParticleTick;
     public float particlesToSpawn;
+
+    private Boolean hasHydrosensitiveModifier = null;
 
     public ThrownBombEntity(EntityType<? extends ThrownBombEntity> type, Level level) {
         this(type, level, DEFAULT_POWER);
@@ -117,10 +115,18 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
         return gravity;
     }
 
+    private boolean hasHydrosensitiveModifier(){
+        if(hasHydrosensitiveModifier == null){
+            hasHydrosensitiveModifier = BombModifierUtil.hasModifier(getItem(), "hydrosensitive");
+        }
+        return hasHydrosensitiveModifier;
+    }
+
     @Override
     public void tick(){
         super.tick();
         if(tickCount % 40 == 0 && tickCount >= this.tickLife) discard();
+        if(!level().isClientSide() && this.isInWaterOrBubble() && hasHydrosensitiveModifier()) explode();
     }
 
     @Override
@@ -142,7 +148,7 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
     protected void onHitEntity(EntityHitResult result){
         if(result.getEntity() instanceof ThrownBombEntity) return;
         if(!level().isClientSide()){
-            explode();
+            this.explode();
         }
         super.onHitEntity(result);
     }
@@ -150,7 +156,7 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
     @Override
     protected void onHitBlock(BlockHitResult result){
         if(!level().isClientSide()){
-            explode();
+            this.explode();
         }
         super.onHitBlock(result);
     }

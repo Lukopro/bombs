@@ -16,4 +16,3 @@
 - Swarm, spawn bees that explode
 - Weiner bomb tier 0
 - Explosion noise
-- Soak modifier, sponge, explode on contact with water

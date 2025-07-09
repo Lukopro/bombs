@@ -113,12 +113,12 @@ public class BombItem extends Item {
     public void throwBomb(Level level, Player player, ItemStack stack, float velocity){
         ThrownBombEntity bombEntity = new ThrownBombEntity(ModEntities.THROWN_BOMB.get(), level, player, calculateExplosionPower(stack));
 
-        // Spawns bomb slightly in front of player.
-        Vec3 forward = player.getLookAngle();
+        // Spawns bomb slightly in front of thrower.
+        Vec3 lookAngle = player.getLookAngle();
         bombEntity.setPos(
-                player.getX() + forward.x * 0.6,
-                player.getY() + player.getEyeHeight() + forward.y * 0.6,
-                player.getZ() + forward.z * 0.6
+                player.getX() + lookAngle.x * 0.6,
+                player.getY() + player.getEyeHeight() + lookAngle.y * 0.6,
+                player.getZ() + lookAngle.z * 0.6
         );
 
         // bombEntity is given an ItemStack with an NBT tag.
@@ -174,12 +174,46 @@ public class BombItem extends Item {
                         : SoundEvents.FIRECHARGE_USE;
 
         level.playSound(null, source.x(), source.y(), source.z(),
-                soundEvent, SoundSource.PLAYERS, 0.5F, 1.0F);
+                soundEvent, SoundSource.BLOCKS, 0.5F, 1.0F);
 
         // Bomb is spawned server-side
         level.addFreshEntity(bombEntity);
 
         stack.shrink(1);
+    }
+
+    public void throwBomb(Level level, LivingEntity thrower, float pitch, float yaw, ItemStack stack, float velocity){
+        ThrownBombEntity bombEntity = new ThrownBombEntity(ModEntities.THROWN_BOMB.get(), level, thrower, calculateExplosionPower(stack));
+
+        // Spawns bomb slightly in front of thrower.
+        Vec3 lookAngle = Vec3.directionFromRotation(pitch, yaw);
+        bombEntity.setPos(
+                thrower.getX() + lookAngle.x * 0.6,
+                thrower.getY() + thrower.getEyeHeight() + lookAngle.y * 0.6,
+                thrower.getZ() + lookAngle.z * 0.6
+        );
+
+        // bombEntity is given an ItemStack with an NBT tag.
+        bombEntity.setItem(stack);
+
+        // Bomb is launched from the player.
+        bombEntity.shootFromRotation(thrower,
+                pitch, yaw, 0.0F,
+                velocity, 1.0F);
+
+        // Play sound
+        SoundEvent soundEvent =
+                (stack.hasTag() &&
+                        stack.getTag().contains("Tier") &&
+                        stack.getTag().getInt("Tier") >= 4)
+                        ? SoundEvents.WITHER_SHOOT
+                        : SoundEvents.FIRECHARGE_USE;
+
+        level.playSound(null, thrower.getX(), thrower.getY(), thrower.getZ(),
+                soundEvent, SoundSource.HOSTILE, 0.5F, 1.0F);
+
+        // Bomb is spawned server-side
+        level.addFreshEntity(bombEntity);
     }
 
     @Override
@@ -246,7 +280,7 @@ public class BombItem extends Item {
         }
     }
 
-    private float getBaseVelocity(ItemStack stack){
+    public float getBaseVelocity(ItemStack stack){
         if(BombModifierUtil.hasModifier(stack, "light")){
             return 2.5F;
         }

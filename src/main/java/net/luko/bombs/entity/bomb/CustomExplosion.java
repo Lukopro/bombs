@@ -228,8 +228,8 @@ public class CustomExplosion extends Explosion {
 
                         // Modifier adaptation
                         float damageAmount = (float) ((int) ((d10 * d10 + d10) / 2.0D * 7.0D * (double) f2 + 1.0D));
-                        if (this.hasLethalModifier) {
-                            damageAmount *= 2.0F;
+                        if (!this.hasLethalModifier) {
+                            damageAmount *= 0.5F;
                         }
 
                         if ((entity instanceof ItemEntity || entity instanceof AbstractMinecart || entity instanceof Boat)) {

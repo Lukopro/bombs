@@ -52,6 +52,10 @@ public class MountHonseGoal extends Goal {
             prospector.getNavigation().moveTo(targetHonse, 1.0F);
         } else {
             prospector.startRiding(targetHonse, true);
+
+            if(target != null && target.isAlive()){
+                prospector.setTarget(target);
+            }
         }
     }
 

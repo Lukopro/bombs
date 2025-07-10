@@ -8,11 +8,16 @@ import net.luko.bombs.client.renderer.HonseRenderer;
 import net.luko.bombs.client.renderer.ProspectorRenderer;
 import net.luko.bombs.client.renderer.ThrownBombRenderer;
 import net.luko.bombs.entity.ModEntities;
+import net.luko.bombs.item.ModItems;
 import net.luko.bombs.screen.DemolitionTableScreen;
 import net.luko.bombs.screen.ModMenuTypes;
+import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.world.item.SpawnEggItem;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -39,5 +44,18 @@ public class ClientModEvents {
         event.registerLayerDefinition(DynamiteModel.LAYER_LOCATION, DynamiteModel::createBodyLayer);
         event.registerLayerDefinition(ProspectorModel.LAYER_LOCATION, ProspectorModel::createBodyLayer);
         event.registerLayerDefinition(HonseModel.LAYER_LOCATION, HonseModel::createBodyLayer);
+    }
+
+    @SubscribeEvent
+    public static void registerItemColors(RegisterColorHandlersEvent.Item event){
+        ItemColors itemColors = event.getItemColors();
+
+        itemColors.register(
+                (stack, layer) -> layer == 0
+                        ? ((ForgeSpawnEggItem) stack.getItem()).getColor(0)
+                        : ((ForgeSpawnEggItem) stack.getItem()).getColor(1),
+                ModItems.PROSPECTOR_SPAWN_EGG.get(),
+                ModItems.HONSE_SPAWN_EGG.get()
+        );
     }
 }

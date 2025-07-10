@@ -39,7 +39,6 @@ public class ProspectorEntity extends PathfinderMob implements RangedAttackMob {
     protected ProspectorEntity(EntityType<? extends PathfinderMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
         this.setPersistenceRequired();
-        this.giveSpawnItems();
     }
 
     @Override

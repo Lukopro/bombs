@@ -32,7 +32,7 @@ public class MountHonseGoal extends Goal {
         targetHonse = prospector.level().getEntitiesOfClass(
                 HonseEntity.class, prospector.getBoundingBox().inflate(48.0)
                 ).stream()
-                .filter(honse -> honse.getPassengers().size() < 2)
+                .filter(honse -> (honse.getPassengers().size() < 2 && !honse.isTamed()))
                 .min(Comparator.comparing(prospector::distanceTo))
                 .orElse(null);
 

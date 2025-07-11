@@ -347,7 +347,7 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
 
     @Override
     public boolean canTakeItemThroughFace(int index, ItemStack stack, Direction direction){
-        return direction == Direction.DOWN && index == 3;
+        return direction == Direction.DOWN && index == OUTPUT_SLOT;
     }
 
     @Override

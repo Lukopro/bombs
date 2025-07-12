@@ -28,7 +28,7 @@ public class WorldSpawningHandler {
 
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         for(ServerLevel level : server.getAllLevels()){
-            //trySpawnInLevel(level);
+            trySpawnInLevel(level);
         }
     }
 

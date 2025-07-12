@@ -5,7 +5,7 @@ import com.mojang.math.Axis;
 import net.luko.bombs.Bombs;
 import net.luko.bombs.components.ModDataComponents;
 import net.luko.bombs.client.model.DynamiteModel;
-import net.luko.bombs.entity.ThrownBombEntity;
+import net.luko.bombs.entity.bomb.ThrownBombEntity;
 import net.luko.bombs.util.BombTextureUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;

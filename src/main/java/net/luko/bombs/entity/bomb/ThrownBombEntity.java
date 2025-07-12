@@ -1,4 +1,4 @@
-package net.luko.bombs.entity;
+package net.luko.bombs.entity.bomb;
 
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
 import net.luko.bombs.config.BombsConfig;

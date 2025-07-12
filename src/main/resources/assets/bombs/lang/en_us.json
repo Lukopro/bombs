@@ -7,6 +7,9 @@
 
   "block.bombs.demolition_table": "Demolition Table",
 
+  "entity.bombs.prospector": "Prospector",
+  "entity.bombs.honse": "Honse",
+
   "recipe.bombs.demolition_upgrade": "Bomb Upgrade Recipe",
   "recipe.bombs.demolition_modifier": "Bomb Modifier Recipe",
 

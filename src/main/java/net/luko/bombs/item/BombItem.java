@@ -1,10 +1,9 @@
 package net.luko.bombs.item;
 
-import net.luko.bombs.config.BombsConfig;
 import net.luko.bombs.components.ModDataComponents;
 import net.luko.bombs.data.modifiers.ModifierColorManager;
 import net.luko.bombs.entity.ModEntities;
-import net.luko.bombs.entity.ThrownBombEntity;
+import net.luko.bombs.entity.bomb.ThrownBombEntity;
 import net.luko.bombs.util.BombModifierUtil;
 import net.luko.bombs.util.BombPotionUtil;
 import net.luko.bombs.util.BombTextureUtil;
@@ -143,6 +142,38 @@ public class BombItem extends Item {
         }
     }
 
+    public void throwBomb(Level level, LivingEntity thrower, float pitch, float yaw, ItemStack stack, float velocity){
+        ThrownBombEntity bombEntity = new ThrownBombEntity(ModEntities.THROWN_BOMB.get(), level, thrower, calculateExplosionPower(stack));
+
+        // Spawns bomb slightly in front of thrower.
+        Vec3 lookAngle = Vec3.directionFromRotation(pitch, yaw);
+        bombEntity.setPos(
+                thrower.getX() + lookAngle.x * 0.6,
+                thrower.getY() + thrower.getEyeHeight() + lookAngle.y * 0.6,
+                thrower.getZ() + lookAngle.z * 0.6
+        );
+
+        // bombEntity is given an ItemStack with an NBT tag.
+        bombEntity.setItem(stack);
+
+        // Bomb is launched from the player.
+        bombEntity.shootFromRotation(thrower,
+                pitch, yaw, 0.0F,
+                velocity, 1.0F);
+
+        // Play sound
+        SoundEvent soundEvent =
+                (stack.getOrDefault(ModDataComponents.TIER.get(), 1) >= 4)
+                        ? SoundEvents.WITHER_SHOOT
+                        : SoundEvents.FIRECHARGE_USE;
+
+        level.playSound(null, thrower.getX(), thrower.getY(), thrower.getZ(),
+                soundEvent, SoundSource.HOSTILE, 0.5F, 1.0F);
+
+        // Bomb is spawned server-side
+        level.addFreshEntity(bombEntity);
+    }
+
     public void throwBomb(Level level, BlockSource source, ItemStack stack) {
         Direction direction = source.state().getValue(DispenserBlock.FACING);
 
@@ -232,7 +263,7 @@ public class BombItem extends Item {
         }
     }
 
-    private float getBaseVelocity(ItemStack stack){
+    public float getBaseVelocity(ItemStack stack){
         if(BombModifierUtil.hasModifier(stack, "light")){
             return 2.5F;
         }

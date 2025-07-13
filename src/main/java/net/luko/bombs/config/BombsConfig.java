@@ -33,6 +33,8 @@ public class BombsConfig {
 
     public static ModConfigSpec.IntValue BOMB_TIMEOUT_TIME;
 
+    public static ModConfigSpec.DoubleValue PROSPECTOR_SPAWN_CHANCE;
+
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
@@ -99,6 +101,18 @@ public class BombsConfig {
                 .defineInRange("bombTimeoutTime",
                         1200,
                         40, Integer.MAX_VALUE);
+
+        builder.pop();
+
+        builder.push("Mob Spawning");
+
+        PROSPECTOR_SPAWN_CHANCE = builder
+                .comment("What is the chance for prospectors and honses to spawn per minute? (default: 0.001)")
+                .defineInRange("prospectorSpawnChance",
+                        0.001,
+                        0.0, 1.0);
+
+        builder.pop();
 
         COMMON_CONFIG = builder.build();
     }

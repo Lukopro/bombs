@@ -6,13 +6,8 @@ import net.luko.bombs.entity.ai.goal.MountHonseGoal;
 import net.luko.bombs.entity.ai.goal.PursueWhileMountedGoal;
 import net.luko.bombs.item.BombItem;
 import net.luko.bombs.item.ModItems;
-import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.IntTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -29,20 +24,13 @@ import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 public class ProspectorEntity extends PathfinderMob implements RangedAttackMob {
     private static final float ATTACK_RANGE = 8.0F;

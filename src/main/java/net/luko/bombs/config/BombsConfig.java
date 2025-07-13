@@ -33,7 +33,7 @@ public class BombsConfig {
 
     public static ForgeConfigSpec.IntValue BOMB_TIMEOUT_TIME;
 
-
+    public static ForgeConfigSpec.DoubleValue PROSPECTOR_SPAWN_CHANCE;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -101,6 +101,18 @@ public class BombsConfig {
                 .defineInRange("bombTimeoutTime",
                         1200,
                         40, Integer.MAX_VALUE);
+
+        builder.pop();
+
+        builder.push("Mob Spawning");
+
+        PROSPECTOR_SPAWN_CHANCE = builder
+                .comment("What is the chance for prospectors and honses to spawn per minute? (default: 0.001)")
+                .defineInRange("prospectorSpawnChance",
+                        0.001,
+                        0.0, 1.0);
+
+        builder.pop();
 
         COMMON_CONFIG = builder.build();
     }

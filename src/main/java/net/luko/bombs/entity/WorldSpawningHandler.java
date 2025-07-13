@@ -1,6 +1,7 @@
 package net.luko.bombs.entity;
 
 import net.luko.bombs.Bombs;
+import net.luko.bombs.config.BombsConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -15,7 +16,6 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 @Mod.EventBusSubscriber(modid = Bombs.MODID)
 public class WorldSpawningHandler {
     private static final int TICK_INTERVAL = 1200;
-    private static final double SPAWN_CHANCE = 0.002;
     private static int tickCounter = 0;
 
     @SubscribeEvent
@@ -35,7 +35,8 @@ public class WorldSpawningHandler {
     private static void trySpawnInLevel(ServerLevel level){
         if(level.dimension() != ServerLevel.OVERWORLD || level.players().isEmpty()) return;
 
-        if(level.random.nextDouble() >= SPAWN_CHANCE * level.players().size()) return;
+        double spawnChance = BombsConfig.PROSPECTOR_SPAWN_CHANCE.get() * (double)level.players().size();
+        if(level.random.nextDouble() > spawnChance) return;
 
         spawnBigGroupNearPlayer(level);
     }
@@ -51,7 +52,7 @@ public class WorldSpawningHandler {
         int spawned = 0;
         int attempts = 0;
 
-        while(spawned < groupCount || attempts < groupCount * 10){
+        while(spawned < groupCount && attempts < groupCount * 10){
             attempts++;
 
             BlockPos groupPos = basePos.offset(level.random.nextInt(20) - 10, 0, level.random.nextInt(20) - 10);
@@ -98,6 +99,10 @@ public class WorldSpawningHandler {
             if(Math.abs(dx) < minDistance && Math.abs(dz) < minDistance) continue;
 
             BlockPos pos = origin.offset(dx, 0, dz);
+            if(!level.isLoaded(pos)){
+                tickCounter = TICK_INTERVAL - 20;
+                return null;
+            }
             BlockPos surface = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos);
             if(!isSpawnAreaClear(level, surface.below(), 1.4)){
                 return surface;

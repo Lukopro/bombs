@@ -29,8 +29,6 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.List;
-
 public class ProspectorEntity extends PathfinderMob implements RangedAttackMob {
     private static final float ATTACK_RANGE = 8.0F;
     private static final float DISMOUNT_RANGE = 16.0F;

@@ -34,7 +34,7 @@ public class HonseEntity extends AbstractHorse {
 
     @Override
     public Vec3 getPassengerAttachmentPoint(Entity passenger, EntityDimensions dimensions, float scaleFactor){
-        return new Vec3(0.0, 1.26, 0.0);
+        return new Vec3(0.0, 1.8, 0.0);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class HonseEntity extends AbstractHorse {
         moveFunc.accept(
                 passenger,
                 this.getX() + offsetX,
-                this.getY() + 1.26 - (passenger.getBbHeight() / 2.0),
+                this.getY() + this.getPassengerAttachmentPoint(passenger, passenger.getDimensions(passenger.getPose()), 1.0F).y - (passenger.getBbHeight() / 2.0),
                 this.getZ() + offsetZ
         );
 

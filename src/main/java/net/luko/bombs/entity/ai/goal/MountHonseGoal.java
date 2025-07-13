@@ -36,7 +36,7 @@ public class MountHonseGoal extends Goal {
                 .min(Comparator.comparing(prospector::distanceTo))
                 .orElse(null);
 
-        return targetHonse != null;
+        return targetHonse != null && !targetHonse.isTamed();
     }
 
     @Override

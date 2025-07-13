@@ -100,6 +100,12 @@ public class ProspectorEntity extends PathfinderMob implements RangedAttackMob {
         return super.interactAt(player, hitVec, hand);
     }
 
+    @Override
+    public void tick(){
+        super.tick();
+        if(this.getTarget() instanceof Player player && (player.isCreative() || player.isSpectator())) this.setTarget(null);
+    }
+
     public static AttributeSupplier.Builder createAttributes(){
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 20.0)

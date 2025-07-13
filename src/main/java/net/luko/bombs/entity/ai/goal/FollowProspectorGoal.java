@@ -48,7 +48,7 @@ public class FollowProspectorGoal extends Goal {
 
     @Override
     public void tick(){
-        if(targetProspector != null && !honse.isVehicle()){
+        if(canContinueToUse()){
             honse.getNavigation().moveTo(targetProspector, speed);
         }
     }

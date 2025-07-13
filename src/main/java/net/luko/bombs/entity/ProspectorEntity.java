@@ -42,6 +42,11 @@ public class ProspectorEntity extends PathfinderMob implements RangedAttackMob {
     }
 
     @Override
+    public double getMyRidingOffset(){
+        return -0.4;
+    }
+
+    @Override
     protected void registerGoals(){
         this.goalSelector.addGoal(1, new PursueWhileMountedGoal(this, DISMOUNT_RANGE));
         this.goalSelector.addGoal(2, new MountHonseGoal(this, REMOUNT_RANGE, DISMOUNT_RANGE));
@@ -85,6 +90,12 @@ public class ProspectorEntity extends PathfinderMob implements RangedAttackMob {
         }
 
         return super.interactAt(player, hitVec, hand);
+    }
+
+    @Override
+    public void tick(){
+        super.tick();
+        if(this.getTarget() instanceof Player player && (player.isCreative() || player.isSpectator())) this.setTarget(null);
     }
 
     public static AttributeSupplier.Builder createAttributes(){

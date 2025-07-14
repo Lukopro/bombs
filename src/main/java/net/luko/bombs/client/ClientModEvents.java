@@ -48,12 +48,8 @@ public class ClientModEvents {
 
     @SubscribeEvent
     public static void registerItemColors(RegisterColorHandlersEvent.Item event){
-        ItemColors itemColors = event.getItemColors();
-
-        itemColors.register(
-                (stack, layer) -> layer == 0
-                        ? ((ForgeSpawnEggItem) stack.getItem()).getColor(0)
-                        : ((ForgeSpawnEggItem) stack.getItem()).getColor(1),
+        event.register(
+                (stack, layer) -> ((ForgeSpawnEggItem) stack.getItem()).getColor(layer),
                 ModItems.PROSPECTOR_SPAWN_EGG.get(),
                 ModItems.HONSE_SPAWN_EGG.get()
         );

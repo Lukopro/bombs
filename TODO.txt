@@ -16,3 +16,6 @@
 - Swarm, spawn bees that explode
 - Weiner bomb tier 0
 - Explosion noise
+- Different honse textures
+- Can't tame honse that is mounted by prospector
+- Config option for prospectors to attack villagers

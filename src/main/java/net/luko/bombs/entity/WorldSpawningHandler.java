@@ -46,7 +46,16 @@ public class WorldSpawningHandler {
 
         if(basePos == null) return;
 
-        int groupCount = 2 + level.random.nextInt(2);
+        int groupMin = BombsConfig.PROSPECTOR_GROUP_MIN.get();
+        int groupMax = BombsConfig.PROSPECTOR_GROUP_MAX.get();
+        int groupCount = 0;
+        if(groupMin > groupMax){
+            Bombs.LOGGER.warn("Prospector group minimum spawn value is greater that the group maximum spawn value.");
+            groupCount = groupMin;
+        } else {
+            groupCount = level.random.nextIntBetweenInclusive(groupMin, groupMax);
+        }
+
         int spawned = 0;
         int attempts = 0;
 
@@ -54,10 +63,11 @@ public class WorldSpawningHandler {
             attempts++;
 
             BlockPos groupPos = basePos.offset(level.random.nextInt(20) - 10, 0, level.random.nextInt(20) - 10);
-            BlockPos surface = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, groupPos);
+            BlockPos surface = level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, groupPos);
 
             if(isSpawnAreaClear(level, surface.below(), 1.6)){
                 spawnSmallGroup(level, groupPos);
+                spawned++;
             }
         }
     }
@@ -77,9 +87,10 @@ public class WorldSpawningHandler {
             prospector.giveSpawnItems();
 
             BlockPos spawnOffset = pos.offset(level.random.nextInt(3) - 1, 0, level.random.nextInt(3) - 1);
-            prospector.moveTo(spawnOffset.getX() + 0.5,
-                    spawnOffset.getY() + 0.1,
-                    spawnOffset.getZ() + 0.5,
+            BlockPos surfaceOffset = level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, spawnOffset);
+            prospector.moveTo(surfaceOffset.getX() + 0.5,
+                    surfaceOffset.getY() + 0.1,
+                    surfaceOffset.getZ() + 0.5,
                     level.random.nextFloat() * 360.0F, 0.0F);
             level.addFreshEntity(prospector);
 
@@ -97,8 +108,8 @@ public class WorldSpawningHandler {
             if(Math.abs(dx) < minDistance && Math.abs(dz) < minDistance) continue;
 
             BlockPos pos = origin.offset(dx, 0, dz);
-            BlockPos surface = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos);
-            if(!isSpawnAreaClear(level, surface.below(), 1.4)){
+            BlockPos surface = level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, pos);
+            if(isSpawnAreaClear(level, surface.below(), 1.6)){
                 return surface;
             }
         }

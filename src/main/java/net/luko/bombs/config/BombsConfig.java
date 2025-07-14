@@ -34,6 +34,8 @@ public class BombsConfig {
     public static ForgeConfigSpec.IntValue BOMB_TIMEOUT_TIME;
 
     public static ForgeConfigSpec.DoubleValue PROSPECTOR_SPAWN_CHANCE;
+    public static ForgeConfigSpec.IntValue PROSPECTOR_GROUP_MIN;
+    public static ForgeConfigSpec.IntValue PROSPECTOR_GROUP_MAX;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -111,6 +113,18 @@ public class BombsConfig {
                 .defineInRange("prospectorSpawnChance",
                         0.001,
                         0.0, 1.0);
+
+        PROSPECTOR_GROUP_MIN = builder
+                .comment("Minimum number of groups (1 honse, 2 prospectors) to spawn at a time (default: 2)")
+                .defineInRange("prospectorGroupMin",
+                        2,
+                        0, Integer.MAX_VALUE);
+
+        PROSPECTOR_GROUP_MAX = builder
+                .comment("Maximum number of groups (1 honse, 2 prospectors) to spawn at a time (default: 3)")
+                .defineInRange("prospectorGroupMax",
+                        3,
+                        0, Integer.MAX_VALUE);
 
         builder.pop();
 

@@ -32,6 +32,9 @@ public class ModCreativeModeTabs {
 
                         pOutput.accept(ModBlocks.DEMOLITION_TABLE.get());
 
+                        pOutput.accept(ModItems.PROSPECTOR_SPAWN_EGG.get());
+                        pOutput.accept(ModItems.HONSE_SPAWN_EGG.get());
+
                     })
                     .build());
 

@@ -46,8 +46,6 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
     public static final float RANDOM_SPIN_SPEED_MIN = 15.0F;
     public static final float RANDOM_SPIN_SPEED_MAX = 25.0F;
 
-    public final int tickLife;
-
     public float lastParticleTick;
     public float particlesToSpawn;
 
@@ -65,8 +63,6 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
         this.initialForwardTilt = RANDOM_FORWARD_TILT_MAX * (float)Math.random();
         this.randomSpinSpeed = RANDOM_SPIN_SPEED_MIN + (RANDOM_SPIN_SPEED_MAX - RANDOM_SPIN_SPEED_MIN) * (float)Math.random();
 
-        this.tickLife = BombsConfig.BOMB_TIMEOUT_TIME.get();
-
         this.lastParticleTick = this.tickCount;
         this.particlesToSpawn = 0.0F;
     }
@@ -76,7 +72,6 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
 
         this.explosionPower = explosionPower;
 
-
         this.randomSideTilt = RANDOM_SIDE_TILT_MAX * (float)Math.random();
 
         float randomForwardTilt = RANDOM_FORWARD_TILT_MAX * (float)Math.random();
@@ -84,10 +79,12 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
         this.initialForwardTilt = (ThrownBombEntity.RANDOM_FORWARD_TILT_MAX / 2) + randomForwardTilt + throwerXRot - 20.0F;
         this.randomSpinSpeed = RANDOM_SPIN_SPEED_MIN + (RANDOM_SPIN_SPEED_MAX - RANDOM_SPIN_SPEED_MIN) * (float)Math.random();
 
-        this.tickLife = BombsConfig.BOMB_TIMEOUT_TIME.get();
-
         this.lastParticleTick = this.tickCount;
         this.particlesToSpawn = 0.0F;
+    }
+
+    private static int getTickLife(){
+        return BombsConfig.BOMB_TIMEOUT_TIME.get();
     }
 
     @Override
@@ -125,7 +122,7 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
     @Override
     public void tick(){
         super.tick();
-        if(tickCount % 40 == 0 && tickCount >= this.tickLife) discard();
+        if(tickCount % 40 == 0 && tickCount >= getTickLife()) discard();
         if(!level().isClientSide() && this.isInWaterOrBubble() && hasHydrosensitiveModifier()) explode();
     }
 

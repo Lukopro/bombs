@@ -1,9 +1,7 @@
 {
   "item.bombs.dynamite": "Dynamite",
-  "item.bombs.strong_dynamite": "Strong Dynamite",
-  "item.bombs.blaze_dynamite": "Blaze Dynamite",
-  "item.bombs.dragon_dynamite": "Dragon Dynamite",
-  "item.bombs.crystal_dynamite": "Crystal Dynamite",
+  "item.bombs.prospector_spawn_egg": "Prospector Spawn Egg",
+  "item.bombs.honse_spawn_egg": "Honse Spawn Egg",
 
   "block.bombs.demolition_table": "Demolition Table",
 

@@ -1,10 +1,15 @@
 package net.luko.bombs.entity;
 
 import net.luko.bombs.entity.ai.goal.FollowProspectorGoal;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -16,14 +21,39 @@ import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.Nullable;
 
 public class HonseEntity extends AbstractHorse {
+    private static final EntityDataAccessor<Integer> DATA_COLOR =
+            SynchedEntityData.defineId(HonseEntity.class, EntityDataSerializers.INT);
     private float jumpPower = 0.0F;
 
     protected HonseEntity(EntityType<? extends AbstractHorse> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
         this.setFlag(4, true);
+    }
+
+    @Override
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor accessor, DifficultyInstance difficulty, MobSpawnType spawnType,
+                                        SpawnGroupData groupData, CompoundTag tag){
+        SpawnGroupData data = super.finalizeSpawn(accessor, difficulty, spawnType, groupData, tag);
+        this.setColor(this.getRandom().nextInt(2));
+        return data;
+    }
+
+    @Override
+    protected void defineSynchedData(){
+        super.defineSynchedData();
+        this.entityData.define(DATA_COLOR, 0);
+    }
+
+    public int getColor(){
+        return this.entityData.get(DATA_COLOR);
+    }
+
+    public void setColor(int color){
+        this.entityData.set(DATA_COLOR, color);
     }
 
     @Override

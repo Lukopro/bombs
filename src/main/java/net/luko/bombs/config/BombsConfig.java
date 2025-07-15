@@ -116,13 +116,13 @@ public class BombsConfig {
                         0.0, 1.0);
 
         PROSPECTOR_GROUP_MIN = builder
-                .comment("Minimum number of groups (1 honse, 2 prospectors) to spawn at a time (default: 2)")
+                .comment("Minimum number of groups (1 honse, 2 prospectors) that try to spawn at a time (default: 2)")
                 .defineInRange("prospectorGroupMin",
                         2,
                         0, Integer.MAX_VALUE);
 
         PROSPECTOR_GROUP_MAX = builder
-                .comment("Maximum number of groups (1 honse, 2 prospectors) to spawn at a time (default: 3)")
+                .comment("Maximum number of groups (1 honse, 2 prospectors) that try to spawn at a time (default: 3)")
                 .defineInRange("prospectorGroupMax",
                         3,
                         0, Integer.MAX_VALUE);

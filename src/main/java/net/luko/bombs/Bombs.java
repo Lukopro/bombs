@@ -44,7 +44,7 @@ public class Bombs
     {
         IEventBus modEventBus = context.getModEventBus();
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, BombsConfig.COMMON_CONFIG);
+        context.registerConfig(ModConfig.Type.COMMON, BombsConfig.COMMON_CONFIG);
         ModItems.register(modEventBus);
         ModEntities.register(modEventBus);
         ModCreativeModeTabs.register(modEventBus);

@@ -48,7 +48,7 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
 
         if(!inputBomb.test(bombItem) || !inputModifier.test(modifierItem)) return false;
 
-        if(BombsConfig.RESTRICTED_MODIFIERS.get().contains(modifierName)) return false;
+        if(BombsConfig.CRASTING_RESTRICTED_MODIFIERS.get().contains(modifierName)) return false;
 
         CompoundTag tag = bombItem.getOrCreateTag();
         ListTag modifiers = tag.getList("Modifiers", CompoundTag.TAG_STRING);

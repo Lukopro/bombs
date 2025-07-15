@@ -23,7 +23,7 @@ public class BombRecipe extends ShapelessRecipe {
     @Override
     public ItemStack assemble(CraftingContainer container, RegistryAccess access){
         ItemStack stack = super.assemble(container, access);
-        List<? extends String> defaultModifiers = BombsConfig.DEFAULT_MODIFIERS.get();
+        List<? extends String> defaultModifiers = BombsConfig.CRAFTING_DEFAULT_MODIFIERS.get();
 
         if(!defaultModifiers.isEmpty()){
             CompoundTag tag = stack.getOrCreateTag();

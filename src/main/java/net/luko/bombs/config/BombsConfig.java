@@ -28,14 +28,15 @@ public class BombsConfig {
     public static ForgeConfigSpec.DoubleValue SOUL_DYNAMITE_II_BASE_POWER;
     public static ForgeConfigSpec.DoubleValue SOUL_DYNAMITE_III_BASE_POWER;
 
-    public static ForgeConfigSpec.ConfigValue<List<? extends String>> DEFAULT_MODIFIERS;
-    public static ForgeConfigSpec.ConfigValue<List<? extends String>> RESTRICTED_MODIFIERS;
+    public static ForgeConfigSpec.ConfigValue<List<? extends String>> CRAFTING_DEFAULT_MODIFIERS;
+    public static ForgeConfigSpec.ConfigValue<List<? extends String>> CRASTING_RESTRICTED_MODIFIERS;
 
     public static ForgeConfigSpec.IntValue BOMB_TIMEOUT_TIME;
 
     public static ForgeConfigSpec.DoubleValue PROSPECTOR_SPAWN_CHANCE;
     public static ForgeConfigSpec.IntValue PROSPECTOR_GROUP_MIN;
     public static ForgeConfigSpec.IntValue PROSPECTOR_GROUP_MAX;
+    public static ForgeConfigSpec.ConfigValue<List<? extends String>> PROSPECTOR_DEFAULT_MODIFIERS;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -82,13 +83,13 @@ public class BombsConfig {
 
         builder.push("Modifiers");
 
-        DEFAULT_MODIFIERS = builder
+        CRAFTING_DEFAULT_MODIFIERS = builder
                 .comment("List of modifiers applied to dynamite by default")
                 .defineList("defaultModifiers",
                         List.of(),
                         obj -> obj instanceof String);
 
-        RESTRICTED_MODIFIERS = builder
+        CRASTING_RESTRICTED_MODIFIERS = builder
                 .comment("List of modifiers that are not allowed to be applied")
                 .defineList("restrictedModifiers",
                         List.of(),
@@ -125,6 +126,12 @@ public class BombsConfig {
                 .defineInRange("prospectorGroupMax",
                         3,
                         0, Integer.MAX_VALUE);
+
+        PROSPECTOR_DEFAULT_MODIFIERS = builder
+                .comment("List of modifiers applied to prospector's dynamite on spawn")
+                .defineList("prospectorDefaultModifiers",
+                        List.of("contained"),
+                        obj -> obj instanceof String);
 
         builder.pop();
 

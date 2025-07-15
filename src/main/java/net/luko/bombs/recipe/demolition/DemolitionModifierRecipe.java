@@ -27,7 +27,7 @@ public record DemolitionModifierRecipe(Ingredient inputBomb, Ingredient inputMod
 
         if(!inputBomb.test(bomb) || !inputModifier.test(modifier)) return false;
 
-        if(BombsConfig.RESTRICTED_MODIFIERS.get().contains(modifierName)) return false;
+        if(BombsConfig.CRAFTING_RESTRICTED_MODIFIERS.get().contains(modifierName)) return false;
 
         List<String> modifiers = bomb.getOrDefault(ModDataComponents.MODIFIERS.get(), List.of());
 

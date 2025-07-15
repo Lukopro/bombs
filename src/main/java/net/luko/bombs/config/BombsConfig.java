@@ -28,8 +28,8 @@ public class BombsConfig {
     public static ModConfigSpec.DoubleValue SOUL_DYNAMITE_II_BASE_POWER;
     public static ModConfigSpec.DoubleValue SOUL_DYNAMITE_III_BASE_POWER;
 
-    public static ModConfigSpec.ConfigValue<List<? extends String>> DEFAULT_MODIFIERS;
-    public static ModConfigSpec.ConfigValue<List<? extends String>> RESTRICTED_MODIFIERS;
+    public static ModConfigSpec.ConfigValue<List<? extends String>> CRAFTING_DEFAULT_MODIFIERS;
+    public static ModConfigSpec.ConfigValue<List<? extends String>> CRAFTING_RESTRICTED_MODIFIERS;
 
     public static ModConfigSpec.IntValue BOMB_TIMEOUT_TIME;
 
@@ -37,6 +37,8 @@ public class BombsConfig {
 
     public static final ModConfigSpec.IntValue PROSPECTOR_GROUP_MIN;
     public static final ModConfigSpec.IntValue PROSPECTOR_GROUP_MAX;
+
+    public static ModConfigSpec.ConfigValue<List<? extends String>> PROSPECTOR_DEFAULT_MODIFIERS;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -83,15 +85,15 @@ public class BombsConfig {
 
         builder.push("Modifiers");
 
-        DEFAULT_MODIFIERS = builder
-                .comment("List of modifiers applied to dynamite by default")
-                .defineList("defaultModifiers",
+        CRAFTING_DEFAULT_MODIFIERS = builder
+                .comment("List of modifiers applied to dynamite by default by crafting")
+                .defineList("craftingDefaultModifiers",
                         List.of(),
                         obj -> obj instanceof String);
 
-        RESTRICTED_MODIFIERS = builder
-                .comment("List of modifiers that are not allowed to be applied")
-                .defineList("restrictedModifiers",
+        CRAFTING_RESTRICTED_MODIFIERS = builder
+                .comment("List of modifiers that are not allowed to be applied by crafting")
+                .defineList("craftingRestrictedModifiers",
                         List.of(),
                         obj -> obj instanceof String);
 
@@ -116,16 +118,22 @@ public class BombsConfig {
                         0.0, 1.0);
 
         PROSPECTOR_GROUP_MIN = builder
-                .comment("Minimum number of groups (1 honse, 2 prospectors) to spawn at a time (default: 2)")
+                .comment("Minimum number of groups (1 honse, 2 prospectors) that try to spawn at a time (default: 2)")
                 .defineInRange("prospectorGroupMin",
                         2,
                         0, Integer.MAX_VALUE);
 
         PROSPECTOR_GROUP_MAX = builder
-                .comment("Maximum number of groups (1 honse, 2 prospectors) to spawn at a time (default: 3)")
+                .comment("Maximum number of groups (1 honse, 2 prospectors) that try to spawn at a time (default: 3)")
                 .defineInRange("prospectorGroupMax",
                         3,
                         0, Integer.MAX_VALUE);
+
+        PROSPECTOR_DEFAULT_MODIFIERS = builder
+                .comment("List of modifiers applied to prospector's dynamite on spawn")
+                .defineList("prospectorDefaultModifiers",
+                        List.of("contained"),
+                        obj -> obj instanceof String);
 
         builder.pop();
 

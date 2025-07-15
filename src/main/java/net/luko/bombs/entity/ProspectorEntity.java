@@ -1,6 +1,7 @@
 package net.luko.bombs.entity;
 
 import net.luko.bombs.components.ModDataComponents;
+import net.luko.bombs.config.BombsConfig;
 import net.luko.bombs.entity.ai.goal.LazyRangedAttackGoal;
 import net.luko.bombs.entity.ai.goal.MountHonseGoal;
 import net.luko.bombs.entity.ai.goal.PursueWhileMountedGoal;
@@ -30,6 +31,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProspectorEntity extends PathfinderMob implements RangedAttackMob {
@@ -133,13 +135,18 @@ public class ProspectorEntity extends PathfinderMob implements RangedAttackMob {
                 .flatMap(reg -> reg.getHolder(Enchantments.BLAST_PROTECTION))
                 .orElseThrow(), 10);
         chest.set(DataComponents.HIDE_TOOLTIP, Unit.INSTANCE);
-        this.setItemSlot(EquipmentSlot.CHEST, chest);
-        this.setDropChance(EquipmentSlot.CHEST, 0.0F);
 
         ItemStack bomb = new ItemStack(ModItems.DYNAMITE.get());
         bomb.set(ModDataComponents.TIER.get(), 2);
-        bomb.set(ModDataComponents.MODIFIERS, List.of("contained"));
+        List<String> defaultModifiers = new ArrayList<>(BombsConfig.PROSPECTOR_DEFAULT_MODIFIERS.get());
+        if(!defaultModifiers.isEmpty()){
+            bomb.set(ModDataComponents.MODIFIERS.get(), defaultModifiers);
+        }
+
+        this.setItemSlot(EquipmentSlot.CHEST, chest);
         this.setItemInHand(InteractionHand.MAIN_HAND, bomb);
+
+        this.setDropChance(EquipmentSlot.CHEST, 0.0F);
         this.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
     }
 }

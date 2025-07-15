@@ -21,7 +21,7 @@ public class BombRecipe extends ShapelessRecipe {
     @Override
     public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries){
         ItemStack stack = super.assemble(input, registries);
-        List<String> defaultModifiers = new ArrayList<>(BombsConfig.DEFAULT_MODIFIERS.get());
+        List<String> defaultModifiers = new ArrayList<>(BombsConfig.CRAFTING_DEFAULT_MODIFIERS.get());
 
         if(!defaultModifiers.isEmpty()){
             stack.set(ModDataComponents.MODIFIERS.get(), defaultModifiers);

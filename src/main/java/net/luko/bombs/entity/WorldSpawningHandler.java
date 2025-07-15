@@ -66,7 +66,7 @@ public class WorldSpawningHandler {
             BlockPos surface = level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, groupPos);
 
             if(isSpawnAreaClear(level, surface.below(), 1.6)){
-                spawnSmallGroup(level, groupPos);
+                spawnSmallGroup(level, surface);
                 spawned++;
             }
         }
@@ -108,6 +108,10 @@ public class WorldSpawningHandler {
             if(Math.abs(dx) < minDistance && Math.abs(dz) < minDistance) continue;
 
             BlockPos pos = origin.offset(dx, 0, dz);
+            if(!level.isLoaded(pos)){
+                tickCounter = TICK_INTERVAL - 20;
+                return null;
+            }
             BlockPos surface = level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, pos);
             if(isSpawnAreaClear(level, surface.below(), 1.6)){
                 return surface;

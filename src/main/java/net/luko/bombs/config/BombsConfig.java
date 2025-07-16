@@ -29,7 +29,7 @@ public class BombsConfig {
     public static ForgeConfigSpec.DoubleValue SOUL_DYNAMITE_III_BASE_POWER;
 
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> CRAFTING_DEFAULT_MODIFIERS;
-    public static ForgeConfigSpec.ConfigValue<List<? extends String>> CRASTING_RESTRICTED_MODIFIERS;
+    public static ForgeConfigSpec.ConfigValue<List<? extends String>> CRAFTING_RESTRICTED_MODIFIERS;
 
     public static ForgeConfigSpec.IntValue BOMB_TIMEOUT_TIME;
 
@@ -89,7 +89,7 @@ public class BombsConfig {
                         List.of(),
                         obj -> obj instanceof String);
 
-        CRASTING_RESTRICTED_MODIFIERS = builder
+        CRAFTING_RESTRICTED_MODIFIERS = builder
                 .comment("List of modifiers that are not allowed to be applied")
                 .defineList("restrictedModifiers",
                         List.of(),

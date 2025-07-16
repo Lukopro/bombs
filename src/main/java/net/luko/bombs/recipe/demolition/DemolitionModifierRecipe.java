@@ -29,7 +29,9 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
 
     private final Map<String, Set<String>> incompatibleModifierLists = Map.ofEntries(
             Map.entry("laden", Set.of("imbued")),
-            Map.entry("imbued", Set.of("laden"))
+            Map.entry("imbued", Set.of("laden")),
+            Map.entry("frost", Set.of("dirt")),
+            Map.entry("dirt", Set.of("frost"))
     );
 
 
@@ -48,7 +50,7 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
 
         if(!inputBomb.test(bombItem) || !inputModifier.test(modifierItem)) return false;
 
-        if(BombsConfig.CRASTING_RESTRICTED_MODIFIERS.get().contains(modifierName)) return false;
+        if(BombsConfig.CRAFTING_RESTRICTED_MODIFIERS.get().contains(modifierName)) return false;
 
         CompoundTag tag = bombItem.getOrCreateTag();
         ListTag modifiers = tag.getList("Modifiers", CompoundTag.TAG_STRING);

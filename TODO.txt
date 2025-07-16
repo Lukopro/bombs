@@ -7,7 +7,9 @@
 - Dynamite launcher
 - Beheading modifier
 - Hover modifier
-- Dirt modifier
+- Eraser (or another way to take off modifiers)
+- Data driven modifiers (not recipes)?
+- Item Icon next to modifiers
 - Mobs that have dynamite will throw them
 - Redstone modifier (powers redstone upon explosion)
 - Super high tiers/nukes

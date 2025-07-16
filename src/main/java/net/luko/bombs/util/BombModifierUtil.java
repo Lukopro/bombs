@@ -10,7 +10,9 @@ import java.util.Set;
 public class BombModifierUtil {
     private static final Map<String, Set<String>> incompatibleModifierLists = Map.ofEntries(
             Map.entry("laden", Set.of("imbued")),
-            Map.entry("imbued", Set.of("laden"))
+            Map.entry("imbued", Set.of("laden")),
+            Map.entry("frost", Set.of("dirt")),
+            Map.entry("dirt", Set.of("frost"))
     );
 
     public static boolean hasModifier(ItemStack stack, String modifier){

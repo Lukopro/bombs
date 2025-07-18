@@ -94,9 +94,11 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
                         tag.putString("Potion",
                                 potion.getTag().getString("Potion"));
                     }
+                    break;
                 }
                 case "Theme":{
                     tag.putString("Theme", modifierName);
+                    break;
                 }
             }
 

@@ -52,7 +52,7 @@ public class BombItem extends Item {
         if (stack.has(ModDataComponents.TIER.get())){
             tier = stack.getOrDefault(ModDataComponents.TIER.get(), 1);
         }
-        return explosionPowerMap.getOrDefault(tier, 2.0F);
+        return explosionPowerMap.getOrDefault(tier, 0.5F);
     }
 
     public static void setExplosionPowerMapTier(int tier, float power){
@@ -125,10 +125,10 @@ public class BombItem extends Item {
                 velocity, 1.0F);
 
         // Play sound
-        SoundEvent soundEvent =
-                (stack.getOrDefault(ModDataComponents.TIER.get(), 1) >= 4)
-                        ? SoundEvents.WITHER_SHOOT
-                        : SoundEvents.FIRECHARGE_USE;
+        SoundEvent soundEvent = SoundEvents.FIRECHARGE_USE;
+        int tier = stack.getOrDefault(ModDataComponents.TIER.get(), 1);
+        if(tier >= 4) soundEvent = SoundEvents.WITHER_SHOOT;
+        else if (tier <= 0) soundEvent = SoundEvents.EGG_THROW;
 
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 soundEvent, SoundSource.PLAYERS, 0.5F, 1.0F);
@@ -162,10 +162,10 @@ public class BombItem extends Item {
                 velocity, 1.0F);
 
         // Play sound
-        SoundEvent soundEvent =
-                (stack.getOrDefault(ModDataComponents.TIER.get(), 1) >= 4)
-                        ? SoundEvents.WITHER_SHOOT
-                        : SoundEvents.FIRECHARGE_USE;
+        SoundEvent soundEvent = SoundEvents.FIRECHARGE_USE;
+        int tier = stack.getOrDefault(ModDataComponents.TIER.get(), 1);
+        if(tier >= 4) soundEvent = SoundEvents.WITHER_SHOOT;
+        else if (tier <= 0) soundEvent = SoundEvents.EGG_THROW;
 
         level.playSound(null, thrower.getX(), thrower.getY(), thrower.getZ(),
                 soundEvent, SoundSource.HOSTILE, 0.5F, 1.0F);
@@ -191,10 +191,11 @@ public class BombItem extends Item {
                 getBaseVelocity(stack), 1.0F);
 
         // Play sound
-        SoundEvent soundEvent =
-                (stack.getOrDefault(ModDataComponents.TIER.get(), 1)) >= 4
-                        ? SoundEvents.WITHER_SHOOT
-                        : SoundEvents.FIRECHARGE_USE;
+        SoundEvent soundEvent = SoundEvents.FIRECHARGE_USE;
+        int tier = stack.getOrDefault(ModDataComponents.TIER.get(), 1);
+        if(tier >= 4) soundEvent = SoundEvents.WITHER_SHOOT;
+        else if (tier <= 0) soundEvent = SoundEvents.EGG_THROW;
+
 
         level.playSound(null, source.pos(),
                 soundEvent, SoundSource.PLAYERS, 0.5F, 1.0F);

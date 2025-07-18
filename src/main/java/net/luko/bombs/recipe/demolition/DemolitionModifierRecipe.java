@@ -1,5 +1,6 @@
 package net.luko.bombs.recipe.demolition;
 
+import net.luko.bombs.Bombs;
 import net.luko.bombs.components.ModDataComponents;
 import net.luko.bombs.config.BombsConfig;
 import net.luko.bombs.data.modifiers.ModifierIncompatibilityManager;
@@ -20,6 +21,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public record DemolitionModifierRecipe(Ingredient inputBomb, Ingredient inputModifier, String modifierName, @Nullable String specialTag) implements Recipe<DemolitionModifierRecipeInput> {
+
+    public DemolitionModifierRecipe{
+        if(specialTag == null)
+            Bombs.LOGGER.debug(String.format("Modifier recipe registered for %s + %s gives '%s' with no special tag.",
+                    inputBomb.toString(), inputModifier.toString(), modifierName));
+        else Bombs.LOGGER.debug(String.format("Modifier recipe registered for %s + %s gives '%s' with special tag: %s",
+                inputBomb.toString(), inputModifier.toString(), modifierName, specialTag));
+    }
 
     @Override
     public boolean matches(DemolitionModifierRecipeInput recipeInput, Level level){

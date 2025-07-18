@@ -1,5 +1,6 @@
 package net.luko.bombs.recipe.demolition;
 
+import net.luko.bombs.Bombs;
 import net.luko.bombs.components.ModDataComponents;
 import net.luko.bombs.item.BombItem;
 import net.luko.bombs.item.ModItems;
@@ -14,6 +15,11 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
 public record DemolitionUpgradeRecipe(Ingredient inputUpgrade, int minTier, int maxTier) implements Recipe<DemolitionUpgradeRecipeInput> {
+
+    public DemolitionUpgradeRecipe{
+        Bombs.LOGGER.debug(String.format("Upgrade recipe found for %s for tiers %d-%d",
+                inputUpgrade, minTier, maxTier));
+    }
 
     @Override
     public boolean matches(DemolitionUpgradeRecipeInput recipeInput, Level level) {

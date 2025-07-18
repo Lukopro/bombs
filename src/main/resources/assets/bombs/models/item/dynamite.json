@@ -4,6 +4,8 @@
     "layer0": "bombs:item/dynamite"
   },
   "overrides": [
+    { "predicate": { "bombs:index": 0.0 }, "model": "bombs:item/weiner_dynamite" },
+    { "predicate": { "bombs:index": 1.0 }, "model": "bombs:item/dynamite" },
     { "predicate": { "bombs:index": 2.0 }, "model": "bombs:item/dynamite_mid" },
     { "predicate": { "bombs:index": 3.0 }, "model": "bombs:item/dynamite_max" },
     { "predicate": { "bombs:index": 4.0 }, "model": "bombs:item/soul_dynamite" },

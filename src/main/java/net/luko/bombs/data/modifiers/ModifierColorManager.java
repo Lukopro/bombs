@@ -32,7 +32,7 @@ public class ModifierColorManager extends SimpleJsonResourceReloadListener {
 
         JsonElement element = jsonMap.get(FILE_NAME);
         if(element == null){
-            System.err.println("[ModifierColorManager] colors.json not found at " + FILE_NAME);
+            Bombs.LOGGER.error("ModifierColorManager couldn't find colors.json at " + FILE_NAME);
             return;
         }
 
@@ -47,11 +47,11 @@ public class ModifierColorManager extends SimpleJsonResourceReloadListener {
                     int rbg = Integer.decode(hex);
                     colors.put(modifier, TextColor.fromRgb(rbg));
                 } catch (NumberFormatException e){
-                    System.err.println("[ModifierColorManager] Invalid color value for '" + modifier + "': " + hex);
+                    Bombs.LOGGER.error("ModifierColorManager found invalid color value in colors.json for '{}': {}", modifier, hex);
                 }
             }
         } catch (Exception e){
-            System.err.println("[ModifierColorManager] Failed to parse colors.json: " + e.getMessage());
+            Bombs.LOGGER.error("ModifierColorManager failed to parse colors.json: " + e.getMessage());
         }
     }
 

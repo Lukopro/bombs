@@ -23,6 +23,7 @@ import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
@@ -332,10 +333,13 @@ public class CustomExplosion extends Explosion {
         // Replaced the sound emitter to be server-side.
         // Random pitch between 0.63F and 0.77F
         float pitch = (1.0F + (this.level_.random.nextFloat() - this.level_.random.nextFloat()) * 0.2F) * 0.7F;
+        SoundEvent soundEvent = stack.getOrDefault(ModDataComponents.TIER.get(), 1) > 0
+                ? SoundEvents.GENERIC_EXPLODE.value()
+                : SoundEvents.PUFFER_FISH_FLOP;
         this.level_.playSound(
                 null,
                 this.x_, this.y_, this.z_,
-                SoundEvents.GENERIC_EXPLODE,
+                soundEvent,
                 SoundSource.BLOCKS,
                 this.radius_,
                 pitch

@@ -32,7 +32,7 @@ public class ModifierPriorityManager extends SimpleJsonResourceReloadListener {
 
         JsonElement element = jsonMap.get(FILE_NAME);
         if(element == null){
-            System.err.println("[ModifierPriorityManager] priorities.json not found at " + FILE_NAME);
+            Bombs.LOGGER.error("ModifierPriorityManager couldn't find priorities.json at " + FILE_NAME);
             return;
         }
 
@@ -45,7 +45,7 @@ public class ModifierPriorityManager extends SimpleJsonResourceReloadListener {
                 priorities.put(modifier, priorityValue);
             }
         } catch (Exception e){
-            System.err.println("[ModifierPrioritiesManager] Failed to parse priorities.json: " + e.getMessage());
+            Bombs.LOGGER.error("ModifierPriorityManager failed to parse priorities.json: " + e.getMessage());
         }
     }
 

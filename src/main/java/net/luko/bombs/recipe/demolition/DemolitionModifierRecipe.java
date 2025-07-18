@@ -1,6 +1,7 @@
 package net.luko.bombs.recipe.demolition;
 
 import net.luko.bombs.config.BombsConfig;
+import net.luko.bombs.data.modifiers.ModifierIncompatibilityManager;
 import net.luko.bombs.data.modifiers.ModifierPriorityManager;
 import net.luko.bombs.recipe.ModRecipeSerializers;
 import net.luko.bombs.recipe.ModRecipeTypes;
@@ -27,14 +28,6 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
     private final String modifierName;
     private final String specialTag;
 
-    private final Map<String, Set<String>> incompatibleModifierLists = Map.ofEntries(
-            Map.entry("laden", Set.of("imbued")),
-            Map.entry("imbued", Set.of("laden")),
-            Map.entry("frost", Set.of("dirt")),
-            Map.entry("dirt", Set.of("frost"))
-    );
-
-
     public DemolitionModifierRecipe(ResourceLocation id, Ingredient inputBomb, Ingredient inputModifier, String modifierName, String specialTag){
         this.id = id;
         this.inputBomb = inputBomb;
@@ -56,12 +49,17 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
         ListTag modifiers = tag.getList("Modifiers", CompoundTag.TAG_STRING);
 
         for(int i = 0; i < modifiers.size(); i++){
-            if(modifiers.getString(i).equals(modifierName) ||
-                    incompatibleModifierLists.getOrDefault(modifiers.getString(i), Set.of()).contains(modifierName)){
-                return false; // Already has this modifier or incompatible modifier
-            }
+            if(!checkModifier(modifiers.getString(i))) return false;
         }
         return true;
+    }
+
+    private boolean checkModifier(String otherMod) {
+        return this.checkModifier(this.modifierName, otherMod);
+    }
+
+    public boolean checkModifier(String mod, String otherMod){
+        return !mod.equals(otherMod) &&  ModifierIncompatibilityManager.INSTANCE.isCompatible(mod, otherMod);
     }
 
     @Override

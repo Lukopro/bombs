@@ -1,5 +1,6 @@
 package net.luko.bombs.recipe.demolition;
 
+import net.luko.bombs.Bombs;
 import net.luko.bombs.item.BombItem;
 import net.luko.bombs.item.ModItems;
 import net.luko.bombs.recipe.ModRecipeSerializers;
@@ -26,6 +27,8 @@ public class DemolitionUpgradeRecipe implements Recipe<Container> {
         this.inputUpgrade = inputUpgrade;
         this.minTier = minTier;
         this.maxTier = maxTier;
+        Bombs.LOGGER.debug(String.format("Upgrade recipe found for %s for tiers %d-%d",
+                inputUpgrade, minTier, maxTier));
     }
 
     public Ingredient getInputUpgrade(){

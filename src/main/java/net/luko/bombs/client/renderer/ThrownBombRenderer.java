@@ -23,6 +23,7 @@ public class ThrownBombRenderer extends EntityRenderer<ThrownBombEntity> {
     private final DynamiteModel<ThrownBombEntity> model;
 
     private static final Map<Float, ResourceLocation> TEXTURES = Map.of(
+            0.0F, ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/entity/weiner_dynamite.png"),
             1.0F, ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/entity/dynamite.png"),
             2.0F, ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/entity/dynamite_mid.png"),
             3.0F, ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/entity/dynamite_max.png"),

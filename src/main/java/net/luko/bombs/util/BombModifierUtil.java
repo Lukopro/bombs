@@ -16,4 +16,10 @@ public class BombModifierUtil {
         }
         return false;
     }
+
+    public static int getTier(ItemStack stack){
+        return stack.hasTag() && stack.getTag().contains("Tier")
+                ? stack.getTag().getInt("Tier")
+                : 1;
+    }
 }

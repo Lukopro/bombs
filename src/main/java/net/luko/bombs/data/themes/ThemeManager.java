@@ -1,6 +1,7 @@
 package net.luko.bombs.data.themes;
 
 import com.google.gson.*;
+import net.luko.bombs.Bombs;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -28,12 +29,13 @@ public class ThemeManager extends SimpleJsonResourceReloadListener {
         THEMES.clear();
         for(Map.Entry<ResourceLocation, JsonElement> entry : jsonMap.entrySet()){
             ResourceLocation id = entry.getKey();
+            Bombs.LOGGER.debug("ThemeManager found {}.json", id.getPath());
             try {
                 JsonObject json = GsonHelper.convertToJsonObject(entry.getValue(), "theme");
                 ThemeData themeData = ThemeData.fromJson(json);
                 THEMES.put(id, themeData);
             } catch (JsonParseException | IllegalArgumentException e) {
-                System.err.println("[ThemeManager] Failed to load theme " + id + ": " + e.getMessage());
+                Bombs.LOGGER.error("ThemeManager failed to load theme {}: {}", id, e.getMessage());
             }
         }
     }

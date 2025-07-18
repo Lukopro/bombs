@@ -1,6 +1,5 @@
 -~ THIS IS FOR PERSONAL USE, don't count on all of these!~-
 
-- Better logging, warning, errors
 - Optimize
 - New bomb types: Grenades, claymores, c4,
 - Dyes / custom effects

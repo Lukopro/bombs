@@ -1,5 +1,6 @@
 package net.luko.bombs.recipe.demolition;
 
+import net.luko.bombs.Bombs;
 import net.luko.bombs.config.BombsConfig;
 import net.luko.bombs.data.modifiers.ModifierIncompatibilityManager;
 import net.luko.bombs.data.modifiers.ModifierPriorityManager;
@@ -34,6 +35,11 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
         this.inputModifier = inputModifier;
         this.modifierName = modifierName;
         this.specialTag = specialTag;
+        if(specialTag == null)
+            Bombs.LOGGER.debug(String.format("Modifier recipe registered for %s + %s gives '%s' with no special tag.",
+                    inputBomb.toString(), inputModifier.toString(), modifierName));
+        else Bombs.LOGGER.debug(String.format("Modifier recipe registered for %s + %s gives '%s' with special tag: %s",
+                inputBomb.toString(), inputModifier.toString(), modifierName, specialTag));
     }
 
     @Override

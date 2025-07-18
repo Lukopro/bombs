@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.luko.bombs.Bombs;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -28,6 +29,7 @@ public class ModifierIncompatibilityManager extends SimpleJsonResourceReloadList
         incompatibilities.clear();
 
         for (var entry : jsonMap.entrySet()) {
+            Bombs.LOGGER.debug("ModifierIncompatibilityManager found {}.json", entry.getKey().getPath());
             try {
                 JsonObject json = entry.getValue().getAsJsonObject();
                 JsonArray array = json.getAsJsonArray("incompatible_with");
@@ -42,7 +44,7 @@ public class ModifierIncompatibilityManager extends SimpleJsonResourceReloadList
                 incompatibilities.put(modifier, Set.copyOf(incompatibleModifiers));
 
             } catch (Exception e) {
-                System.err.println("[ModifierIncompatibilityManager] Failed to parse " + entry.getKey().getPath() + ".json: " + e.getMessage());
+                Bombs.LOGGER.error("ModifierIncompatibilityManager failed to parse {}.json {}", entry.getKey().getPath(), e.getMessage());
             }
         }
     }

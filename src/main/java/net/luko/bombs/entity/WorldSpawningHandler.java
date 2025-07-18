@@ -42,6 +42,7 @@ public class WorldSpawningHandler {
     }
 
     private static void spawnBigGroupNearPlayer(ServerLevel level){
+        Bombs.LOGGER.debug("Spawning big prospector group.");
         Player randomPlayer = level.players().get(level.random.nextInt(level.players().size()));
         BlockPos playerPos = randomPlayer.blockPosition();
         BlockPos basePos = findSpawnPos(level, playerPos, 64);
@@ -72,6 +73,8 @@ public class WorldSpawningHandler {
                 spawned++;
             }
         }
+
+        Bombs.LOGGER.debug("Tried to spawn {} small prospector groups.", spawned);
     }
 
     private static void spawnSmallGroup(ServerLevel level, BlockPos pos){
@@ -100,6 +103,8 @@ public class WorldSpawningHandler {
                 prospector.startRiding(honse, true);
             }
         }
+
+        Bombs.LOGGER.debug("Spawned small prospector group (1 honse, 2 prospector).");
     }
 
     private static BlockPos findSpawnPos(ServerLevel level, BlockPos origin, int minDistance){
@@ -120,6 +125,7 @@ public class WorldSpawningHandler {
             }
         }
 
+        Bombs.LOGGER.debug("Couldn't find a spawn position!");
         return null;
     }
 

@@ -27,7 +27,6 @@ import org.jetbrains.annotations.Nullable;
 public class HonseEntity extends AbstractHorse {
     private static final EntityDataAccessor<Integer> DATA_COLOR =
             SynchedEntityData.defineId(HonseEntity.class, EntityDataSerializers.INT);
-    private float jumpPower = 0.0F;
 
     protected HonseEntity(EntityType<? extends AbstractHorse> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);

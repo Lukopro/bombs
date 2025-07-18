@@ -54,7 +54,7 @@ public class BombItem extends Item {
         if (stack.hasTag() && stack.getTag().contains("Tier")){
             tier = stack.getTag().getInt("Tier");
         }
-        float power = explosionPowerMap.getOrDefault(tier, 2.0F);
+        float power = explosionPowerMap.getOrDefault(tier, 0.5F);
         if(BombModifierUtil.hasModifier(stack, "golden")){
             power += 0.5F;
         }
@@ -130,12 +130,10 @@ public class BombItem extends Item {
                 velocity, 1.0F);
 
         // Play sound
-        SoundEvent soundEvent =
-                (stack.hasTag() &&
-                stack.getTag().contains("Tier") &&
-                stack.getTag().getInt("Tier") >= 4)
-                ? SoundEvents.WITHER_SHOOT
-                : SoundEvents.FIRECHARGE_USE;
+        SoundEvent soundEvent = SoundEvents.FIRECHARGE_USE;
+        int tier = BombModifierUtil.getTier(stack);
+        if(tier >= 4) soundEvent = SoundEvents.WITHER_SHOOT;
+        else if (tier <= 0) soundEvent = SoundEvents.EGG_THROW;
 
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 soundEvent, SoundSource.PLAYERS, 0.5F, 1.0F);
@@ -166,12 +164,10 @@ public class BombItem extends Item {
                 getBaseVelocity(stack), 1.0F);
 
         // Play sound
-        SoundEvent soundEvent =
-                (stack.hasTag() &&
-                        stack.getTag().contains("Tier") &&
-                        stack.getTag().getInt("Tier") >= 4)
-                        ? SoundEvents.WITHER_SHOOT
-                        : SoundEvents.FIRECHARGE_USE;
+        SoundEvent soundEvent = SoundEvents.FIRECHARGE_USE;
+        int tier = BombModifierUtil.getTier(stack);
+        if(tier >= 4) soundEvent = SoundEvents.WITHER_SHOOT;
+        else if (tier <= 0) soundEvent = SoundEvents.EGG_THROW;
 
         level.playSound(null, source.x(), source.y(), source.z(),
                 soundEvent, SoundSource.BLOCKS, 0.5F, 1.0F);
@@ -202,12 +198,10 @@ public class BombItem extends Item {
                 velocity, 1.0F);
 
         // Play sound
-        SoundEvent soundEvent =
-                (stack.hasTag() &&
-                        stack.getTag().contains("Tier") &&
-                        stack.getTag().getInt("Tier") >= 4)
-                        ? SoundEvents.WITHER_SHOOT
-                        : SoundEvents.FIRECHARGE_USE;
+        SoundEvent soundEvent = SoundEvents.FIRECHARGE_USE;
+        int tier = BombModifierUtil.getTier(stack);
+        if(tier >= 4) soundEvent = SoundEvents.WITHER_SHOOT;
+        else if (tier <= 0) soundEvent = SoundEvents.EGG_THROW;
 
         level.playSound(null, thrower.getX(), thrower.getY(), thrower.getZ(),
                 soundEvent, SoundSource.HOSTILE, 0.5F, 1.0F);

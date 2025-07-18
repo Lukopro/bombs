@@ -26,9 +26,9 @@ public record DemolitionModifierRecipe(Ingredient inputBomb, Ingredient inputMod
         ItemStack bomb = recipeInput.getItem(0);
         ItemStack modifier = recipeInput.getItem(1);
 
-        if(!inputBomb.test(bomb) || !inputModifier.test(modifier)) return false;
+        if(!this.inputBomb.test(bomb) || !this.inputModifier.test(modifier)) return false;
 
-        if(BombsConfig.CRAFTING_RESTRICTED_MODIFIERS.get().contains(modifierName)) return false;
+        if(BombsConfig.CRAFTING_RESTRICTED_MODIFIERS.get().contains(this.modifierName)) return false;
 
         List<String> modifiers = bomb.getOrDefault(ModDataComponents.MODIFIERS.get(), List.of());
 
@@ -55,20 +55,19 @@ public record DemolitionModifierRecipe(Ingredient inputBomb, Ingredient inputMod
         bomb.setCount(1);
 
         List<String> oldModifiers = new ArrayList<>(bomb.getOrDefault(ModDataComponents.MODIFIERS.get(), List.of()));
-        oldModifiers.add(modifierName);
+        oldModifiers.add(this.modifierName);
         List<String> newModifiers = sortedModifiers(oldModifiers);
 
         bomb.set(ModDataComponents.MODIFIERS.get(), newModifiers);
 
-        if(specialTag != null){
-            switch (specialTag){
-                case "Potion":{
+        if(this.specialTag != null){
+            switch (this.specialTag){
+                case "Potion" ->
                     bomb.set(DataComponents.POTION_CONTENTS,
                             recipeInput.getItem(1).get(DataComponents.POTION_CONTENTS));
-                }
-                case "Theme":{
-                    bomb.set(ModDataComponents.THEME, modifierName);
-                }
+
+                case "Theme" ->
+                    bomb.set(ModDataComponents.THEME, this.modifierName);
             }
 
         }
@@ -98,13 +97,13 @@ public record DemolitionModifierRecipe(Ingredient inputBomb, Ingredient inputMod
 
     @Override
     public ItemStack getResultItem(HolderLookup.Provider provider){
-        ItemStack result = inputBomb.getItems().length > 0
-                ? inputBomb.getItems()[0].copy()
+        ItemStack result = this.inputBomb.getItems().length > 0
+                ? this.inputBomb.getItems()[0].copy()
                 : ItemStack.EMPTY;
 
         if(!result.isEmpty()){
             List<String> oldModifiers = new ArrayList<>(result.getOrDefault(ModDataComponents.MODIFIERS.get(), List.of()));
-            oldModifiers.add(modifierName);
+            oldModifiers.add(this.modifierName);
 
             List<String> newModifiers = sortedModifiers(oldModifiers);
             result.set(ModDataComponents.MODIFIERS.get(), newModifiers);

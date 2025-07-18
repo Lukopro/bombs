@@ -2,6 +2,7 @@ package net.luko.bombs.recipe.demolition;
 
 import net.luko.bombs.components.ModDataComponents;
 import net.luko.bombs.config.BombsConfig;
+import net.luko.bombs.data.modifiers.ModifierIncompatibilityManager;
 import net.luko.bombs.data.modifiers.ModifierPriorityManager;
 import net.luko.bombs.recipe.ModRecipeSerializers;
 import net.luko.bombs.recipe.ModRecipeTypes;
@@ -32,11 +33,17 @@ public record DemolitionModifierRecipe(Ingredient inputBomb, Ingredient inputMod
         List<String> modifiers = bomb.getOrDefault(ModDataComponents.MODIFIERS.get(), List.of());
 
         for (String s : modifiers) {
-            if (s.equals(modifierName) || BombModifierUtil.incompatible(s, modifierName)) {
-                return false; // Already has this modifier or incompatible modifier
-            }
+            if(!checkModifier(s)) return false;
         }
         return true;
+    }
+
+    private boolean checkModifier(String otherMod) {
+        return this.checkModifier(this.modifierName, otherMod);
+    }
+
+    public boolean checkModifier(String mod, String otherMod){
+        return !mod.equals(otherMod) &&  ModifierIncompatibilityManager.INSTANCE.isCompatible(mod, otherMod);
     }
 
     @Override

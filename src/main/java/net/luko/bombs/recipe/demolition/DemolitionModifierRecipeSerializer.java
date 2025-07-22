@@ -38,7 +38,10 @@ public class DemolitionModifierRecipeSerializer implements RecipeSerializer<Demo
         buf.writeUtf(recipe.getModifierName());
 
         if(recipe.getSpecialTag() != null){
+            buf.writeBoolean(true);
             buf.writeUtf(recipe.getSpecialTag());
+        } else {
+            buf.writeBoolean(false);
         }
     }
 }

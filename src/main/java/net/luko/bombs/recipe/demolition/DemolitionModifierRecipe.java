@@ -7,7 +7,6 @@ import net.luko.bombs.data.modifiers.ModifierIncompatibilityManager;
 import net.luko.bombs.data.modifiers.ModifierPriorityManager;
 import net.luko.bombs.recipe.ModRecipeSerializers;
 import net.luko.bombs.recipe.ModRecipeTypes;
-import net.luko.bombs.util.BombModifierUtil;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;

@@ -1,5 +1,6 @@
 package net.luko.bombs.block.entity;
 
+import net.luko.bombs.data.modifiers.ModifierPriorityManager;
 import net.luko.bombs.item.BombItem;
 import net.luko.bombs.recipe.ModRecipeTypes;
 import net.luko.bombs.screen.DemolitionTableMenu;
@@ -33,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -204,13 +206,44 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
             }
         }
 
-        for(int i = MODIFIER_SLOT_1; i < OUTPUT_SLOT; i++){
-            if(!container.getItem(i).isEmpty()) {
-                result = getModifierRecipeOutput(result, container.getItem(i), i);
-            }
+        List<Integer> modifierCandidateSlots = getSortedModifierCandidateSlots(container);
+        for(int i : modifierCandidateSlots){
+            result = getModifierRecipeOutput(result, container.getItem(i), i);
         }
 
         return result;
+    }
+
+    private static class ModifierCandidate {
+        final String modifier;
+        final int slot;
+        final int priority;
+        final ItemStack ingredient;
+
+        ModifierCandidate(String modifier, int slot, int priority, ItemStack ingredient){
+            this.modifier = modifier;
+            this.slot = slot;
+            this.priority = priority;
+            this.ingredient = ingredient;
+        }
+    }
+
+    private List<Integer> getSortedModifierCandidateSlots(SimpleContainer container){
+        ItemStack inputBomb = container.getItem(INPUT_SLOT);
+
+        List<ModifierCandidate> candidates = new ArrayList<>();
+
+        for(int i = MODIFIER_SLOT_1; i < OUTPUT_SLOT; i++){
+            if(!container.getItem(i).isEmpty()) {
+                ModifierCandidate possibleCandidate = checkModifierRecipe(inputBomb, container.getItem(i), i);
+                if(possibleCandidate != null) candidates.add(possibleCandidate);
+                else markInvalidSlot(i);
+            }
+        }
+
+        candidates.sort(Comparator.comparingInt(a -> a.priority));
+
+        return candidates.stream().map(c -> c.slot).toList();
     }
 
     private ItemStack getUpgradeRecipeOutput(ItemStack input, ItemStack ingredient, int slot){
@@ -246,6 +279,24 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
                 }, () -> {
                     markInvalidSlot(slot);
                     result.set(input);
+                });
+
+        return result.get();
+    }
+
+    private ModifierCandidate checkModifierRecipe(ItemStack input, ItemStack ingredient, int slot){
+        SimpleContainer isolatedContainer = new SimpleContainer(2);
+        isolatedContainer.setItem(0, input);
+        isolatedContainer.setItem(1, ingredient);
+        AtomicReference<ModifierCandidate> result = new AtomicReference<>();
+
+        level.getRecipeManager().getRecipeFor(ModRecipeTypes.DEMOLITION_MODIFIER_TYPE.get(), isolatedContainer, level)
+                .ifPresentOrElse(recipe -> {
+                    String modifier = recipe.getModifierName();
+                    result.set(new ModifierCandidate(
+                            modifier, slot, ModifierPriorityManager.INSTANCE.getPriority(modifier), ingredient));
+                }, () -> {
+                    result.set(null);
                 });
 
         return result.get();

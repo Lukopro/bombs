@@ -90,8 +90,9 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
                 case "Potion":{
                     ItemStack potion = isolatedContainer.getItem(1).copy();
                     if(!potion.hasTag()){
-                        System.out.println("[BOMBS] Wtf is that potion?? Where did you get that?");
-                        return ItemStack.EMPTY;
+                        System.out.println("[BOMBS] WTF is this potion??");
+                        tag.put("Potion", StringTag.valueOf("literally_nothing"));
+                        break;
                     }
                     if(potion.getTag().contains("CustomPotionEffects")) {
                         tag.put("CustomPotionEffects",
@@ -107,7 +108,6 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
                     break;
                 }
             }
-
         }
 
         return bomb;

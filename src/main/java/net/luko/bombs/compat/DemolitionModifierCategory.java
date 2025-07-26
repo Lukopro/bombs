@@ -14,8 +14,13 @@ import net.luko.bombs.block.ModBlocks;
 import net.luko.bombs.recipe.demolition.DemolitionModifierRecipe;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class DemolitionModifierCategory implements IRecipeCategory<DemolitionModifierRecipe> {
     public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "demolition_modifier");
@@ -61,7 +66,30 @@ public class DemolitionModifierCategory implements IRecipeCategory<DemolitionMod
         builder.addSlot(RecipeIngredientRole.INPUT, 53, 25)
                 .addIngredients(recipe.getInputModifier());
 
+        List<ItemStack> inputFocuses = focuses.getFocuses(RecipeIngredientRole.INPUT)
+                .map(focus -> focus.getTypedValue().getItemStack())
+                .flatMap(Optional::stream)
+                .filter(stack -> !stack.isEmpty())
+                .toList();
+
+        List<ItemStack> possibleOutputs = new ArrayList<>();
+        for(ItemStack bomb : recipe.getInputBomb().getItems()){
+            for(ItemStack modifier : recipe.getInputModifier().getItems()){
+                boolean bombMatches = inputFocuses.isEmpty() || inputFocuses.stream().anyMatch(
+                        focused -> ItemStack.isSameItem(bomb, focused));
+                boolean modifierMatches = inputFocuses.isEmpty() || inputFocuses.stream().anyMatch(
+                        focused -> ItemStack.isSameItem(modifier, focused));
+
+                if(!bombMatches && !modifierMatches) continue;
+
+                SimpleContainer container = new SimpleContainer(2);
+                container.setItem(0, bomb);
+                container.setItem(1, modifier);
+                possibleOutputs.add(recipe.assemble(container, null));
+            }
+        }
+
         builder.addSlot(RecipeIngredientRole.OUTPUT, 87, 25)
-                .addItemStack(recipe.getResultItem(null));
+                .addItemStacks(possibleOutputs);
     }
 }

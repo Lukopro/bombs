@@ -12,26 +12,21 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 public class ThrownGrenadeEntity extends ThrownBombEntity{
-    private int fuseTime;
-
     public float lastTick = 0;
     public float lastSpin = 0;
 
     public ThrownGrenadeEntity(EntityType<? extends ThrownBombEntity> type, Level level) {
         super(type, level);
-        this.fuseTime = getFuseTime();
         this.noPhysics = false;
     }
 
     public ThrownGrenadeEntity(EntityType<? extends ThrownBombEntity> type, Level level, float explosionPower) {
         super(type, level, explosionPower);
-        this.fuseTime = getFuseTime();
         this.noPhysics = false;
     }
 
     public ThrownGrenadeEntity(EntityType<? extends ThrownBombEntity> type, Level level, LivingEntity thrower, float explosionPower) {
         super(type, level, thrower, explosionPower);
-        this.fuseTime = getFuseTime();
         this.noPhysics = false;
     }
 
@@ -41,7 +36,7 @@ public class ThrownGrenadeEntity extends ThrownBombEntity{
     }
 
     private int getFuseTime(){
-        return 100;
+        return BombModifierUtil.hasModifier(this.getItem(), "extended_fuse") ? 200 : 100;
     }
 
     public float getBaseGravity(){
@@ -60,7 +55,7 @@ public class ThrownGrenadeEntity extends ThrownBombEntity{
 
     @Override
     public void tick(){
-        if(tickCount >= fuseTime) this.explode();
+        if(!level().isClientSide && tickCount >= getFuseTime()) this.explode();
         this.updateYRot();
 
         Vec3 beforeMove = this.position();

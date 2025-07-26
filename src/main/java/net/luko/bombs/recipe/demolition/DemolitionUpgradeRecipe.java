@@ -1,7 +1,7 @@
 package net.luko.bombs.recipe.demolition;
 
 import net.luko.bombs.Bombs;
-import net.luko.bombs.item.BombItem;
+import net.luko.bombs.item.bomb.BombItem;
 import net.luko.bombs.item.ModItems;
 import net.luko.bombs.recipe.ModRecipeSerializers;
 import net.luko.bombs.recipe.ModRecipeTypes;

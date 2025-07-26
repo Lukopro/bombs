@@ -1,0 +1,13 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "bombs:item/grenade"
+  },
+  "overrides": [
+    { "predicate": { "bombs:index": 2.0 }, "model": "bombs:item/grenade_mid" },
+    { "predicate": { "bombs:index": 3.0 }, "model": "bombs:item/grenade_max" },
+    { "predicate": { "bombs:index": 4.0 }, "model": "bombs:item/soul_grenade" },
+    { "predicate": { "bombs:index": 5.0 }, "model": "bombs:item/soul_grenade_mid" },
+    { "predicate": { "bombs:index": 6.0 }, "model": "bombs:item/soul_grenade_max" }
+  ]
+}

@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class DemolitionUpgradeCategory implements IRecipeCategory<DemolitionUpgradeRecipe> {
     public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "demolition_upgrade");
@@ -61,12 +62,25 @@ public class DemolitionUpgradeCategory implements IRecipeCategory<DemolitionUpgr
     public void setRecipe(IRecipeLayoutBuilder builder, DemolitionUpgradeRecipe recipe, IFocusGroup focuses) {
         List<ItemStack> bombInputs = new ArrayList<>();
         bombInputs.add(new ItemStack(ModItems.DYNAMITE.get()));
+        bombInputs.add(new ItemStack(ModItems.GRENADE.get()));
         for(int i = 2; i <= 5; i++){
-            ItemStack bomb = new ItemStack(ModItems.DYNAMITE.get());
-            bomb.getOrCreateTag().putInt("Tier", i);
-            bombInputs.add(bomb);
+            ItemStack dynamite = new ItemStack(ModItems.DYNAMITE.get());
+            dynamite.getOrCreateTag().putInt("Tier", i);
+            bombInputs.add(dynamite);
+            ItemStack grenade = new ItemStack(ModItems.GRENADE.get());
+            grenade.getOrCreateTag().putInt("Tier", i);
+            bombInputs.add(grenade);
         }
 
+        List<ItemStack> inputFocuses = focuses.getFocuses(RecipeIngredientRole.INPUT)
+                .map(focus -> focus.getTypedValue().getItemStack())
+                .flatMap(Optional::stream)
+                .filter(stack -> !stack.isEmpty())
+                .toList();
+
+        if(!inputFocuses.isEmpty())
+            bombInputs.removeIf(input -> inputFocuses.stream()
+                    .noneMatch(focus -> ItemStack.isSameItem(input, focus)));
 
         List<ItemStack> validBombInputs = new ArrayList<>();
         List<ItemStack> outputs = new ArrayList<>();
@@ -76,9 +90,9 @@ public class DemolitionUpgradeCategory implements IRecipeCategory<DemolitionUpgr
             tempIsolatedContainer.setItem(1, recipe.getInputUpgrade().getItems()[0]);
 
             if(recipe.matches(tempIsolatedContainer, null)) {
-                validBombInputs.add(input);
                 ItemStack result = recipe.assemble(tempIsolatedContainer, null);
                 if (!result.isEmpty()) {
+                    validBombInputs.add(input);
                     outputs.add(result);
                 }
             }

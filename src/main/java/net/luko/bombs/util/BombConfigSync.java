@@ -1,7 +1,7 @@
 package net.luko.bombs.util;
 
 import net.luko.bombs.config.BombsConfig;
-import net.luko.bombs.item.BombItem;
+import net.luko.bombs.item.bomb.BombItem;
 
 public class BombConfigSync {
     public static void syncBombExplosionPowers(){

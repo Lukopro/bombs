@@ -2,10 +2,9 @@ package net.luko.bombs.screen;
 
 import net.luko.bombs.block.ModBlocks;
 import net.luko.bombs.block.entity.DemolitionTableBlockEntity;
-import net.luko.bombs.item.BombItem;
+import net.luko.bombs.item.bomb.BombItem;
 import net.luko.bombs.util.BombRecipeUtil;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -13,12 +12,10 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.SlotItemHandler;
 
-import java.util.List;
 import java.util.Map;
 
 public class DemolitionTableMenu extends AbstractContainerMenu {

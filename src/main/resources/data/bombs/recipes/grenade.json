@@ -1,0 +1,16 @@
+{
+  "type": "bombs:bomb",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:brick"
+    },
+    {
+      "item": "minecraft:gunpowder"
+    }
+  ],
+  "result": {
+    "count": 2,
+    "item": "bombs:grenade"
+  }
+}

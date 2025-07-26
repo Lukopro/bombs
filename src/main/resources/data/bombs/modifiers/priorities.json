@@ -17,6 +17,7 @@
   "shockwave": 12,
   "evaporate": 13,
   "hydrosensitive": 14,
-  "gentle": 15,
-  "dirt": 16
+  "extended_fuse": 15,
+  "gentle": 16,
+  "dirt": 17
 }

@@ -24,5 +24,4 @@
 - Config option for prospectors to attack villagers
 - Better grenade animation
 - Seperate recipe registration for upgrade recipe variants for JEI
-- Add grenade to dispensers
 - Load into crossbow

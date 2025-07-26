@@ -34,6 +34,7 @@
   "modifier.bombs.dirt": "Dirt",
   "modifier.bombs.bouncy": "Bouncy",
   "modifier.bombs.slippery": "Slippery",
+  "modifier.bombs.extended_fuse": "Extended Fuse",
 
   "modifier.bombs.flame.info": "Adds fire to explosions.",
   "modifier.bombs.light.info": "Flies farther.",
@@ -56,6 +57,7 @@
   "modifier.bombs.dirt.info": "Dirt dirt dirt.",
   "modifier.bombs.bouncy.info": "It bounces!",
   "modifier.bombs.slippery.info": "Reduces friction.",
+  "modifier.bombs.extended_fuse.info": "Takes longer to explode.",
 
   "tier.bombs.0": "Weiner %s",
   "tier.bombs.1": "%s",

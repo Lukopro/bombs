@@ -1,6 +1,7 @@
 package net.luko.bombs.entity.bomb;
 
 import net.luko.bombs.item.ModItems;
+import net.luko.bombs.util.BombModifierUtil;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
@@ -96,8 +97,8 @@ public class ThrownGrenadeEntity extends ThrownBombEntity{
     }
 
     private void applyBounce(Direction.Axis axis, Vec3 previousVelocity){
-        double bounceFactor = 0.6;
-        double frictionFactor = 0.8;
+        double bounceFactor = BombModifierUtil.hasModifier(this.getItem(), "bouncy") ? 0.8 : 0.5;
+        double frictionFactor = BombModifierUtil.hasModifier(this.getItem(), "slippery") ? 0.9 : 0.6;
 
         switch (axis){
             case X -> setDeltaMovement(-previousVelocity.x * bounceFactor, previousVelocity.y * frictionFactor, previousVelocity.z * frictionFactor);

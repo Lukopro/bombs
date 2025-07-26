@@ -1,4 +1,4 @@
-package net.luko.bombs.item;
+package net.luko.bombs.item.bomb;
 
 import net.luko.bombs.components.ModDataComponents;
 import net.luko.bombs.data.modifiers.ModifierColorManager;
@@ -31,7 +31,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.*;
 
-public class BombItem extends Item {
+public abstract class BombItem extends Item {
 
     private static Map<Integer, Float> explosionPowerMap = new HashMap<>();
     static{
@@ -59,7 +59,6 @@ public class BombItem extends Item {
         explosionPowerMap.put(tier, power);
     }
 
-    // When bomb is in hand and is right clicked, use() is called.
     // When bomb is in hand and is right clicked, use() is called.
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand){
@@ -99,21 +98,24 @@ public class BombItem extends Item {
         return UseAnim.BOW;
     }
 
-    private float getChargeFactor(int ticks){
+    protected float getChargeFactor(int ticks){
         float f = ticks / 20.0F;
         f = (f * f + f * 2.0F) / 3.0F;
         return Mth.clamp(f, 0.1F, 1.0F);
     }
 
-    public void throwBomb(Level level, Player player, ItemStack stack, float velocity){
-        ThrownBombEntity bombEntity = new ThrownBombEntity(ModEntities.THROWN_BOMB.get(), level, player, calculateExplosionPower(stack));
+    public abstract ThrownBombEntity createBombEntity(Level level, float explosionPower);
+    public abstract ThrownBombEntity createBombEntity(Level level, LivingEntity thrower, float explosionPower);
 
-        // Spawns bomb slightly in front of player.
-        Vec3 forward = player.getLookAngle();
+    public void throwBomb(Level level, Player player, ItemStack stack, float velocity){
+        ThrownBombEntity bombEntity = createBombEntity(level, player, calculateExplosionPower(stack));
+
+        // Spawns bomb slightly in front of thrower.
+        Vec3 lookAngle = player.getLookAngle();
         bombEntity.setPos(
-                player.getX() + forward.x * 0.6,
-                player.getY() + player.getEyeHeight() + forward.y * 0.6,
-                player.getZ() + forward.z * 0.6
+                player.getX() + lookAngle.x * 0.6,
+                player.getY() + player.getEyeHeight() + lookAngle.y * 0.6,
+                player.getZ() + lookAngle.z * 0.6
         );
 
         // bombEntity is given an ItemStack with an NBT tag.
@@ -125,13 +127,8 @@ public class BombItem extends Item {
                 velocity, 1.0F);
 
         // Play sound
-        SoundEvent soundEvent = SoundEvents.FIRECHARGE_USE;
-        int tier = stack.getOrDefault(ModDataComponents.TIER.get(), 1);
-        if(tier >= 4) soundEvent = SoundEvents.WITHER_SHOOT;
-        else if (tier <= 0) soundEvent = SoundEvents.EGG_THROW;
-
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                soundEvent, SoundSource.PLAYERS, 0.5F, 1.0F);
+                this.getThrowSound(stack), SoundSource.PLAYERS, 0.5F, 1.0F);
 
         // Bomb is spawned server-side
         level.addFreshEntity(bombEntity);
@@ -143,7 +140,7 @@ public class BombItem extends Item {
     }
 
     public void throwBomb(Level level, LivingEntity thrower, float pitch, float yaw, ItemStack stack, float velocity){
-        ThrownBombEntity bombEntity = new ThrownBombEntity(ModEntities.THROWN_BOMB.get(), level, thrower, calculateExplosionPower(stack));
+        ThrownBombEntity bombEntity = createBombEntity(level, thrower, calculateExplosionPower(stack));
 
         // Spawns bomb slightly in front of thrower.
         Vec3 lookAngle = Vec3.directionFromRotation(pitch, yaw);
@@ -162,13 +159,8 @@ public class BombItem extends Item {
                 velocity, 1.0F);
 
         // Play sound
-        SoundEvent soundEvent = SoundEvents.FIRECHARGE_USE;
-        int tier = stack.getOrDefault(ModDataComponents.TIER.get(), 1);
-        if(tier >= 4) soundEvent = SoundEvents.WITHER_SHOOT;
-        else if (tier <= 0) soundEvent = SoundEvents.EGG_THROW;
-
         level.playSound(null, thrower.getX(), thrower.getY(), thrower.getZ(),
-                soundEvent, SoundSource.HOSTILE, 0.5F, 1.0F);
+                this.getThrowSound(stack), SoundSource.HOSTILE, 0.5F, 1.0F);
 
         // Bomb is spawned server-side
         level.addFreshEntity(bombEntity);
@@ -177,7 +169,7 @@ public class BombItem extends Item {
     public void throwBomb(Level level, BlockSource source, ItemStack stack) {
         Direction direction = source.state().getValue(DispenserBlock.FACING);
 
-        ThrownBombEntity bombEntity = new ThrownBombEntity(ModEntities.THROWN_BOMB.get(), level, calculateExplosionPower(stack));
+        ThrownBombEntity bombEntity = createBombEntity(level, calculateExplosionPower(stack));
 
         bombEntity.setPos(source.pos().getX() + direction.getStepX() * 0.5,
                 source.pos().getY() + direction.getStepY() * 0.5,
@@ -191,14 +183,8 @@ public class BombItem extends Item {
                 getBaseVelocity(stack), 1.0F);
 
         // Play sound
-        SoundEvent soundEvent = SoundEvents.FIRECHARGE_USE;
-        int tier = stack.getOrDefault(ModDataComponents.TIER.get(), 1);
-        if(tier >= 4) soundEvent = SoundEvents.WITHER_SHOOT;
-        else if (tier <= 0) soundEvent = SoundEvents.EGG_THROW;
-
-
         level.playSound(null, source.pos(),
-                soundEvent, SoundSource.PLAYERS, 0.5F, 1.0F);
+                this.getThrowSound(stack), SoundSource.BLOCKS, 0.5F, 1.0F);
 
         // Bomb is spawned server-side
         level.addFreshEntity(bombEntity);
@@ -206,11 +192,15 @@ public class BombItem extends Item {
         stack.shrink(1);
     }
 
+    public abstract SoundEvent getThrowSound(ItemStack stack);
+
     @Override
     public Component getName(ItemStack stack){
-        int tier = (int) BombTextureUtil.getTextureIndex(stack);
-        return Component.translatable("tier.bombs." + tier);
+        int tier = (int)BombTextureUtil.getTextureIndex(stack);
+        return Component.translatable("tier.bombs." + tier, getBaseName(stack));
     }
+
+    public abstract Component getBaseName(ItemStack stack);
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag){

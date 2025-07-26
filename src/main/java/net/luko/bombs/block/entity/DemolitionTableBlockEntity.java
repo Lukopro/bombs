@@ -1,7 +1,7 @@
 package net.luko.bombs.block.entity;
 
 import net.luko.bombs.data.modifiers.ModifierPriorityManager;
-import net.luko.bombs.item.BombItem;
+import net.luko.bombs.item.bomb.BombItem;
 import net.luko.bombs.recipe.*;
 import net.luko.bombs.recipe.demolition.DemolitionModifierRecipeInput;
 import net.luko.bombs.recipe.demolition.DemolitionUpgradeRecipeInput;

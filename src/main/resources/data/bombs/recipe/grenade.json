@@ -1,0 +1,15 @@
+{
+  "type": "bombs:bomb",
+  "ingredients": [
+    {
+      "item": "minecraft:brick"
+    },
+    {
+      "item": "minecraft:gunpowder"
+    }
+  ],
+  "result": {
+    "id": "bombs:grenade",
+    "count": 2
+  }
+}

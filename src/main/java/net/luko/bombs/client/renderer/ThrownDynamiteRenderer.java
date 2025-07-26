@@ -6,6 +6,7 @@ import net.luko.bombs.Bombs;
 import net.luko.bombs.components.ModDataComponents;
 import net.luko.bombs.client.model.DynamiteModel;
 import net.luko.bombs.entity.bomb.ThrownBombEntity;
+import net.luko.bombs.entity.bomb.ThrownDynamiteEntity;
 import net.luko.bombs.util.BombTextureUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -20,8 +21,8 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.Map;
 
-public class ThrownBombRenderer extends EntityRenderer<ThrownBombEntity> {
-    private final DynamiteModel<ThrownBombEntity> model;
+public class ThrownDynamiteRenderer extends EntityRenderer<ThrownDynamiteEntity> {
+    private final DynamiteModel<ThrownDynamiteEntity> model;
 
     private static final Map<Float, ResourceLocation> TEXTURES = Map.of(
             0.0F, ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/entity/weiner_dynamite.png"),
@@ -33,13 +34,13 @@ public class ThrownBombRenderer extends EntityRenderer<ThrownBombEntity> {
             6.0F, ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/entity/soul_dynamite_max.png")
     );
 
-    public ThrownBombRenderer(EntityRendererProvider.Context context){
+    public ThrownDynamiteRenderer(EntityRendererProvider.Context context){
         super(context);
         this.model = new DynamiteModel<>(context.bakeLayer(DynamiteModel.LAYER_LOCATION));
     }
 
     @Override
-    public void render(ThrownBombEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight){
+    public void render(ThrownDynamiteEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight){
         poseStack.pushPose();
 
         poseStack.translate(0.0F, 0.0F, 0.0F);
@@ -142,7 +143,7 @@ public class ThrownBombRenderer extends EntityRenderer<ThrownBombEntity> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(ThrownBombEntity entity){
+    public ResourceLocation getTextureLocation(ThrownDynamiteEntity entity){
         return TEXTURES.getOrDefault(
                         BombTextureUtil.getTextureIndex(entity.getItem()),
                         ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "textures/entity/dynamite.png"));

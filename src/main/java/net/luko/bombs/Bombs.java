@@ -6,7 +6,7 @@ import net.luko.bombs.config.BombsConfig;
 import net.luko.bombs.components.ModDataComponents;
 import net.luko.bombs.data.ModManagers;
 import net.luko.bombs.entity.ModEntities;
-import net.luko.bombs.item.BombItem;
+import net.luko.bombs.item.bomb.BombItem;
 import net.luko.bombs.item.ModCreativeModeTabs;
 import net.luko.bombs.item.ModItems;
 import net.luko.bombs.recipe.ModRecipeSerializers;

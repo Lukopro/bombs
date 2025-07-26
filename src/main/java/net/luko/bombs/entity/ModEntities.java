@@ -2,6 +2,8 @@ package net.luko.bombs.entity;
 
 import net.luko.bombs.Bombs;
 import net.luko.bombs.entity.bomb.ThrownBombEntity;
+import net.luko.bombs.entity.bomb.ThrownDynamiteEntity;
+import net.luko.bombs.entity.bomb.ThrownGrenadeEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.neoforged.bus.api.IEventBus;
@@ -14,14 +16,21 @@ public class ModEntities {
     public static final DeferredRegister<EntityType<?>> ENTITIES =
             DeferredRegister.create(Registries.ENTITY_TYPE, Bombs.MODID);
 
-    // THROWN_BOMB encapsulates all tiers of dynamite.
-    public static final Supplier<EntityType<ThrownBombEntity>> THROWN_BOMB = ENTITIES.register(
-            "thrown_bomb",
-            () -> EntityType.Builder.<ThrownBombEntity>of(ThrownBombEntity::new, MobCategory.MISC)
+    public static final Supplier<EntityType<ThrownDynamiteEntity>> THROWN_DYNAMITE = ENTITIES.register(
+            "thrown_dynamite",
+            () -> EntityType.Builder.<ThrownDynamiteEntity>of(ThrownDynamiteEntity::new, MobCategory.MISC)
                     .sized(0.5F, 0.5F)
                     .clientTrackingRange(32)
                     .updateInterval(10)
-                    .build("thrown_bomb"));
+                    .build("thrown_dynamite"));
+
+    public static final Supplier<EntityType<ThrownGrenadeEntity>> THROWN_GRENADE = ENTITIES.register(
+            "thrown_grenade",
+            () -> EntityType.Builder.<ThrownGrenadeEntity>of(ThrownGrenadeEntity::new, MobCategory.MISC)
+                    .sized(0.3F, 0.3F)
+                    .clientTrackingRange(32)
+                    .updateInterval(10)
+                    .build("thrown_grenade"));
 
     public static final Supplier<EntityType<ProspectorEntity>> PROSPECTOR = ENTITIES.register(
             "prospector",

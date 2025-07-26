@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "bombs:item/soul_grenade_max"
+  }
+}

@@ -25,18 +25,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
 import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
 
 import java.util.Optional;
 
 
-public class ThrownBombEntity extends ThrowableItemProjectile implements IEntityWithComplexSpawn {
-    private float explosionPower;
-    private float randomSideTilt;
-    private float initialForwardTilt;
-    private float randomSpinSpeed;
+public abstract class ThrownBombEntity extends ThrowableItemProjectile implements IEntityWithComplexSpawn {
+    protected float explosionPower;
+    protected float randomSideTilt;
+    protected float initialForwardTilt;
+    protected float randomSpinSpeed;
 
     public static final float DEFAULT_POWER = 1.5F;
 
@@ -48,7 +46,7 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
     public float lastParticleTick;
     public float particlesToSpawn;
 
-    private Boolean hasHydrosensitiveModifier = null;
+    protected Boolean hasHydrosensitiveModifier = null;
 
     public ThrownBombEntity(EntityType<? extends ThrownBombEntity> type, Level level) {
         this(type, level, DEFAULT_POWER);
@@ -82,7 +80,7 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
         this.randomSpinSpeed = RANDOM_SPIN_SPEED_MIN + (RANDOM_SPIN_SPEED_MAX - RANDOM_SPIN_SPEED_MIN) * (float)Math.random();
     }
 
-    private static int getTickLife(){
+    protected static int getTickLife(){
         return BombsConfig.BOMB_TIMEOUT_TIME.get();
     }
 
@@ -105,13 +103,15 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
 
     @Override
     public double getDefaultGravity(){
-        double gravity = 0.03F;
+        float gravity = getBaseGravity();
         if(BombModifierUtil.hasModifier(getItem(), "float")) gravity /= 3;
         if(BombModifierUtil.hasModifier(getItem(), "sink")) gravity *= 3;
         return gravity;
     }
 
-    private boolean hasHydrosensitiveModifier(){
+    public abstract float getBaseGravity();
+
+    protected boolean hasHydrosensitiveModifier(){
         if(hasHydrosensitiveModifier == null){
             hasHydrosensitiveModifier = BombModifierUtil.hasModifier(getItem(), "hydrosensitive");
         }
@@ -122,7 +122,6 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
     public void tick(){
         super.tick();
         if(tickCount % 40 == 0 && tickCount >= getTickLife()) discard();
-        if(!level().isClientSide() && this.isInWaterOrBubble() && hasHydrosensitiveModifier()) explode();
     }
 
     @Override
@@ -140,25 +139,8 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
         return false;
     }
 
-    @Override
-    protected void onHitEntity(EntityHitResult result){
-        if(result.getEntity() instanceof ThrownBombEntity) return;
-        if(!level().isClientSide()){
-            explode();
-        }
-        super.onHitEntity(result);
-    }
-
-    @Override
-    protected void onHitBlock(BlockHitResult result){
-        if(!level().isClientSide()){
-            explode();
-        }
-        super.onHitBlock(result);
-    }
-
-    private void explode(){
-        CustomExplosion explosion = new CustomExplosion(
+    protected void explode(){
+        BombExplosion explosion = new BombExplosion(
                 level(),
                 this,
                 null,
@@ -175,7 +157,7 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
         discard();
     }
 
-    private Explosion.BlockInteraction getBlockInteraction(ItemStack stack){
+    protected Explosion.BlockInteraction getBlockInteraction(ItemStack stack){
         if(BombModifierUtil.hasModifier(stack, "contained")){
             return Explosion.BlockInteraction.KEEP;
         }
@@ -200,12 +182,12 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
         this.setItem(buf.readWithCodec(NbtOps.INSTANCE, ItemStack.OPTIONAL_CODEC, NbtAccounter.unlimitedHeap()));
     }
 
-    private class ModifierExplosionDamageCalculator extends ExplosionDamageCalculator{
-        private final boolean shatter;
-        private final boolean evaporate;
+    protected class ModifierExplosionDamageCalculator extends ExplosionDamageCalculator{
+        protected final boolean shatter;
+        protected final boolean evaporate;
 
-        private Object2FloatOpenHashMap<Block> cachedBlockResistanceValues;
-        private Object2FloatOpenHashMap<Fluid> cachedFluidResistanceValues;
+        protected Object2FloatOpenHashMap<Block> cachedBlockResistanceValues;
+        protected Object2FloatOpenHashMap<Fluid> cachedFluidResistanceValues;
 
         public ModifierExplosionDamageCalculator(ItemStack stack){
             this.shatter = BombModifierUtil.hasModifier(stack, "shatter");
@@ -232,7 +214,7 @@ public class ThrownBombEntity extends ThrowableItemProjectile implements IEntity
             return Optional.of(Math.max(blockResistance, fluidResistance));
         }
 
-        private static boolean hasStaticExplosionResistance(Block block){
+        protected static boolean hasStaticExplosionResistance(Block block){
             ResourceLocation id = BuiltInRegistries.BLOCK.getKey(block);
             return id.getNamespace().equals("minecraft");
         }

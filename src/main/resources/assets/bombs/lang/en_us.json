@@ -1,5 +1,7 @@
 {
   "item.bombs.dynamite": "Dynamite",
+  "item.bombs.grenade": "Grenade",
+
   "item.bombs.prospector_spawn_egg": "Prospector Spawn Egg",
   "item.bombs.honse_spawn_egg": "Honse Spawn Egg",
 
@@ -51,13 +53,13 @@
   "modifier.bombs.hydrosensitive.info": "Explodes on contact with water.",
   "modifier.bombs.dirt.info": "Dirt dirt dirt.",
 
-  "tier.bombs.0": "Weiner Dynamite",
-  "tier.bombs.1": "Dynamite",
-  "tier.bombs.2": "Dynamite II",
-  "tier.bombs.3": "Dynamite III",
-  "tier.bombs.4": "Soul Dynamite",
-  "tier.bombs.5": "Soul Dynamite II",
-  "tier.bombs.6": "Soul Dynamite III",
+  "tier.bombs.0": "Weiner %s",
+  "tier.bombs.1": "%s",
+  "tier.bombs.2": "%s II",
+  "tier.bombs.3": "%s III",
+  "tier.bombs.4": "Soul %s",
+  "tier.bombs.5": "Soul %s II",
+  "tier.bombs.6": "Soul %s III",
 
   "creativetab.bombs_tab": "Bombs Tab"
 }

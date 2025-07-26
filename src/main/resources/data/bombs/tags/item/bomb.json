@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "bombs:dynamite"
+    "bombs:dynamite",
+    "bombs:grenade"
   ]
 }

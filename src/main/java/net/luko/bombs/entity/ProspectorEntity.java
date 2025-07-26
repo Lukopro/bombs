@@ -5,7 +5,7 @@ import net.luko.bombs.config.BombsConfig;
 import net.luko.bombs.entity.ai.goal.LazyRangedAttackGoal;
 import net.luko.bombs.entity.ai.goal.MountHonseGoal;
 import net.luko.bombs.entity.ai.goal.PursueWhileMountedGoal;
-import net.luko.bombs.item.BombItem;
+import net.luko.bombs.item.bomb.BombItem;
 import net.luko.bombs.item.ModItems;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;

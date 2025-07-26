@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.luko.bombs.Bombs;
 import net.luko.bombs.entity.bomb.ThrownBombEntity;
+import net.luko.bombs.entity.bomb.ThrownDynamiteEntity;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -14,7 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 // Made with Blockbench 4.12.4
 // Exported for Minecraft version 1.17 or later with Mojang mappings
 
-public class DynamiteModel<T extends ThrownBombEntity> extends EntityModel<T> {
+public class DynamiteModel<T extends ThrownDynamiteEntity> extends EntityModel<T> {
 
         // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
         public static final ModelLayerLocation LAYER_LOCATION =
@@ -43,7 +44,7 @@ public class DynamiteModel<T extends ThrownBombEntity> extends EntityModel<T> {
         }
 
         @Override
-        public void setupAnim(ThrownBombEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        public void setupAnim(ThrownDynamiteEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 
         }
 

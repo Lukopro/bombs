@@ -15,5 +15,9 @@ public class BombsClient {
         ItemProperties.register(ModItems.DYNAMITE.get(),
                 ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "index"),
                 (pStack, pLevel, pEntity, pSeed) -> BombTextureUtil.getTextureIndex(pStack));
+
+        ItemProperties.register(ModItems.GRENADE.get(),
+                ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "index"),
+                (pStack, pLevel, pEntity, pSeed) -> BombTextureUtil.getTextureIndex(pStack));
     }
 }

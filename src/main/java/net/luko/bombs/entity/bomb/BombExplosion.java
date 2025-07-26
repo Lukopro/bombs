@@ -61,7 +61,7 @@ import org.joml.Vector3f;
 
 // Class and instance variables have an underscore _ to differentiate from super's variables.
 
-public class CustomExplosion extends Explosion {
+public class BombExplosion extends Explosion {
     private static final ExplosionDamageCalculator EXPLOSION_DAMAGE_CALCULATOR_ = new ExplosionDamageCalculator();
     private final boolean fire_;
     private final Explosion.BlockInteraction blockInteraction_;
@@ -95,7 +95,7 @@ public class CustomExplosion extends Explosion {
     private final boolean hasImbuedModifier;
     private float dropChance;
 
-    public CustomExplosion(Level pLevel, @Nullable Entity pSource, @Nullable DamageSource pDamageSource, @Nullable ExplosionDamageCalculator pDamageCalculator, double pToBlowX, double pToBlowY, double pToBlowZ, float pRadius, boolean pFire, Explosion.BlockInteraction pBlockInteraction, ItemStack stack) {
+    public BombExplosion(Level pLevel, @Nullable Entity pSource, @Nullable DamageSource pDamageSource, @Nullable ExplosionDamageCalculator pDamageCalculator, double pToBlowX, double pToBlowY, double pToBlowZ, float pRadius, boolean pFire, Explosion.BlockInteraction pBlockInteraction, ItemStack stack) {
         super(pLevel, pSource, pToBlowX, pToBlowY, pToBlowZ, pRadius, pFire, pBlockInteraction);
         this.level_ = pLevel;
         this.source_ = pSource;

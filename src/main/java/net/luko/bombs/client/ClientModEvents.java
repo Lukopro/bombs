@@ -2,11 +2,13 @@ package net.luko.bombs.client;
 
 import net.luko.bombs.Bombs;
 import net.luko.bombs.client.model.DynamiteModel;
+import net.luko.bombs.client.model.GrenadeModel;
 import net.luko.bombs.client.model.HonseModel;
 import net.luko.bombs.client.model.ProspectorModel;
 import net.luko.bombs.client.renderer.HonseRenderer;
 import net.luko.bombs.client.renderer.ProspectorRenderer;
-import net.luko.bombs.client.renderer.ThrownBombRenderer;
+import net.luko.bombs.client.renderer.ThrownDynamiteRenderer;
+import net.luko.bombs.client.renderer.ThrownGrenadeRenderer;
 import net.luko.bombs.entity.ModEntities;
 import net.luko.bombs.screen.DemolitionTableScreen;
 import net.luko.bombs.screen.ModMenuTypes;
@@ -32,15 +34,16 @@ public class ClientModEvents {
 
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event){
-        event.registerEntityRenderer(ModEntities.THROWN_BOMB.get(), ThrownBombRenderer::new);
+        event.registerEntityRenderer(ModEntities.THROWN_DYNAMITE.get(), ThrownDynamiteRenderer::new);
+        event.registerEntityRenderer(ModEntities.THROWN_GRENADE.get(), ThrownGrenadeRenderer::new);
         event.registerEntityRenderer(ModEntities.PROSPECTOR.get(), ProspectorRenderer::new);
         event.registerEntityRenderer(ModEntities.HONSE.get(), HonseRenderer::new);
-
     }
 
     @SubscribeEvent
     public static void onRegisterLayers(EntityRenderersEvent.RegisterLayerDefinitions event){
         event.registerLayerDefinition(DynamiteModel.LAYER_LOCATION, DynamiteModel::createBodyLayer);
+        event.registerLayerDefinition(GrenadeModel.LAYER_LOCATION, GrenadeModel::createBodyLayer);
         event.registerLayerDefinition(ProspectorModel.LAYER_LOCATION, ProspectorModel::createBodyLayer);
         event.registerLayerDefinition(HonseModel.LAYER_LOCATION, HonseModel::createBodyLayer);
     }

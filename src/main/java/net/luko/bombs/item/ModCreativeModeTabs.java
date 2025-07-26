@@ -30,6 +30,13 @@ public class ModCreativeModeTabs {
                             pOutput.accept(tempStack);
                         }
 
+                        pOutput.accept(ModItems.GRENADE.get());
+                        for(int i = 2; i <= 6; i++){
+                            ItemStack tempStack = new ItemStack(ModItems.GRENADE.get());
+                            tempStack.set(ModDataComponents.TIER.get(), i);
+                            pOutput.accept(tempStack);
+                        }
+
                         pOutput.accept(ModBlocks.DEMOLITION_TABLE.get());
 
                         pOutput.accept(ModItems.PROSPECTOR_SPAWN_EGG.get());

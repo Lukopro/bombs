@@ -2,7 +2,7 @@ package net.luko.bombs.screen;
 
 import net.luko.bombs.block.ModBlocks;
 import net.luko.bombs.block.entity.DemolitionTableBlockEntity;
-import net.luko.bombs.item.BombItem;
+import net.luko.bombs.item.bomb.BombItem;
 import net.luko.bombs.util.BombRecipeUtil;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;

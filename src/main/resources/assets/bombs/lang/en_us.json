@@ -32,6 +32,8 @@
   "modifier.bombs.frost": "Frost",
   "modifier.bombs.hydrosensitive": "Hydro-Sensitive",
   "modifier.bombs.dirt": "Dirt",
+  "modifier.bombs.bouncy": "Bouncy",
+  "modifier.bombs.slippery": "Slippery",
 
   "modifier.bombs.flame.info": "Adds fire to explosions.",
   "modifier.bombs.light.info": "Flies farther.",
@@ -52,6 +54,8 @@
   "modifier.bombs.frost.info": "Applies 'frost' theme and freezes nearby enemies.",
   "modifier.bombs.hydrosensitive.info": "Explodes on contact with water.",
   "modifier.bombs.dirt.info": "Dirt dirt dirt.",
+  "modifier.bombs.bouncy.info": "It bounces!",
+  "modifier.bombs.slippery.info": "Reduces friction.",
 
   "tier.bombs.0": "Weiner %s",
   "tier.bombs.1": "%s",

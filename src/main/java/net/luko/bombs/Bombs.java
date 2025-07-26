@@ -8,6 +8,8 @@ import net.luko.bombs.entity.ModEntities;
 import net.luko.bombs.item.bomb.BombItem;
 import net.luko.bombs.item.ModCreativeModeTabs;
 import net.luko.bombs.item.ModItems;
+import net.luko.bombs.item.bomb.DynamiteItem;
+import net.luko.bombs.item.bomb.GrenadeItem;
 import net.luko.bombs.recipe.ModRecipeSerializers;
 import net.luko.bombs.recipe.ModRecipeTypes;
 import net.luko.bombs.screen.ModMenuTypes;
@@ -15,6 +17,7 @@ import net.luko.bombs.util.BombConfigSync;
 import net.minecraft.core.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -59,15 +62,26 @@ public class Bombs
     private void commonSetup(final FMLCommonSetupEvent event)
     {
         event.enqueueWork(BombConfigSync::syncBombExplosionPowers);
-        event.enqueueWork(() -> DispenserBlock.registerBehavior(ModItems.DYNAMITE.get(), new DefaultDispenseItemBehavior(){
-            @Override
-            protected ItemStack execute(BlockSource source, ItemStack stack){
-                if(!(stack.getItem() instanceof BombItem bomb)) return stack;
 
-                bomb.throwBomb(source.getLevel(), source, stack);
-                return stack;
+        event.enqueueWork(() -> {
+            List<Item> bombItems = List.of(
+                    ModItems.DYNAMITE.get(),
+                    ModItems.GRENADE.get()
+            );
+
+            DefaultDispenseItemBehavior bombBehavior = new DefaultDispenseItemBehavior(){
+                @Override
+                protected ItemStack execute(BlockSource source, ItemStack stack){
+                    if(!(stack.getItem() instanceof BombItem bomb)) return stack;
+                    bomb.throwBomb(source.getLevel(), source, stack);
+                    return stack;
+                }
+            };
+
+            for(Item item : bombItems){
+                DispenserBlock.registerBehavior(item, bombBehavior);
             }
-        }));
+        });
     }
 
     @SubscribeEvent

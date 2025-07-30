@@ -1,6 +1,0 @@
-{
-  "type": "bombs:demolition_modifier",
-  "input_bomb": { "item": "bombs:grenade" },
-  "input_modifier": { "item": "minecraft:blue_ice" },
-  "modifier": "slippery"
-}

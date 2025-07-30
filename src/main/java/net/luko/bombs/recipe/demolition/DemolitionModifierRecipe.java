@@ -2,8 +2,8 @@ package net.luko.bombs.recipe.demolition;
 
 import net.luko.bombs.Bombs;
 import net.luko.bombs.config.BombsConfig;
-import net.luko.bombs.data.modifiers.ModifierIncompatibilityManager;
-import net.luko.bombs.data.modifiers.ModifierPriorityManager;
+import net.luko.bombs.data.modifiers.ModifierManager;
+import net.luko.bombs.data.modifiers.PriorityManager;
 import net.luko.bombs.recipe.ModRecipeSerializers;
 import net.luko.bombs.recipe.ModRecipeTypes;
 import net.minecraft.core.RegistryAccess;
@@ -65,7 +65,7 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
     }
 
     public boolean checkModifier(String mod, String otherMod){
-        return !mod.equals(otherMod) &&  ModifierIncompatibilityManager.INSTANCE.isCompatible(mod, otherMod);
+        return !mod.equals(otherMod) &&  ModifierManager.INSTANCE.isCompatible(mod, otherMod);
     }
 
     @Override
@@ -121,7 +121,7 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
             modifiersArray.add(modifiersTag.getString(i));
         }
 
-        Map<String, Integer> orderMap = ModifierPriorityManager.INSTANCE.getPriorities();
+        Map<String, Integer> orderMap = PriorityManager.INSTANCE.getPriorities();
 
         modifiersArray.sort((a, b) -> {
             int indexA = orderMap.getOrDefault(a, Integer.MAX_VALUE);

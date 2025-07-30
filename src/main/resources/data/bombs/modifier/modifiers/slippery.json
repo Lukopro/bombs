@@ -1,0 +1,6 @@
+{
+  "input_bomb": { "item": "bombs:grenade" },
+  "input_modifier": { "item": "minecraft:blue_ice" },
+  "incompatible_with": [],
+  "color": "#358bcc"
+}

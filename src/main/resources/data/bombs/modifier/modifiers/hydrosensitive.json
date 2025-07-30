@@ -1,0 +1,6 @@
+{
+  "input_bomb": { "tag": "bombs:bomb" },
+  "input_modifier": { "item": "minecraft:prismarine_shard" },
+  "incompatible_with": [],
+  "color": "#2d98d6"
+}

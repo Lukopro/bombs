@@ -1,0 +1,6 @@
+{
+  "input_bomb": { "tag": "bombs:bomb" },
+  "input_modifier": { "item": "minecraft:feather" },
+  "incompatible_with": [],
+  "color": "#ffffe0"
+}

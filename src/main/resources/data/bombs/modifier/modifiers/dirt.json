@@ -1,0 +1,7 @@
+{
+  "input_bomb": { "tag": "bombs:bomb" },
+  "input_modifier": { "item": "minecraft:dirt" },
+  "special_tag": "Theme",
+  "incompatible_with": ["frost"],
+  "color": "#5e452d"
+}

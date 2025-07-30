@@ -1,0 +1,6 @@
+{
+  "input_bomb": { "tag": "bombs:bomb" },
+  "input_modifier": { "item": "minecraft:fire_charge" },
+  "incompatible_with": [],
+  "color": "#ff5e00"
+}

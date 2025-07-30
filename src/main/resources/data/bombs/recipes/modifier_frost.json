@@ -1,7 +1,0 @@
-{
-  "type": "bombs:demolition_modifier",
-  "input_bomb": { "tag": "bombs:bomb" },
-  "input_modifier": { "item": "minecraft:ice" },
-  "modifier": "frost",
-  "special_tag": "Theme"
-}

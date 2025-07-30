@@ -1,0 +1,6 @@
+{
+  "input_bomb": { "tag": "bombs:bomb" },
+  "input_modifier": { "tag": "bombs:wool" },
+  "incompatible_with": ["lethal"],
+  "color": "#369c7d"
+}

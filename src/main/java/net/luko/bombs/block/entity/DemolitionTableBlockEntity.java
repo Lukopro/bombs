@@ -1,6 +1,6 @@
 package net.luko.bombs.block.entity;
 
-import net.luko.bombs.data.modifiers.ModifierPriorityManager;
+import net.luko.bombs.data.modifiers.PriorityManager;
 import net.luko.bombs.item.bomb.BombItem;
 import net.luko.bombs.recipe.ModRecipeTypes;
 import net.luko.bombs.screen.DemolitionTableMenu;
@@ -294,7 +294,7 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
                 .ifPresentOrElse(recipe -> {
                     String modifier = recipe.getModifierName();
                     result.set(new ModifierCandidate(
-                            modifier, slot, ModifierPriorityManager.INSTANCE.getPriority(modifier), ingredient));
+                            modifier, slot, PriorityManager.INSTANCE.getPriority(modifier), ingredient));
                 }, () -> {
                     result.set(null);
                 });

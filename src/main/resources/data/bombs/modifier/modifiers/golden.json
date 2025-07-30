@@ -1,0 +1,6 @@
+{
+  "input_bomb": { "tag": "bombs:bomb" },
+  "input_modifier": { "item": "minecraft:gold_ingot" },
+  "incompatible_with": [],
+  "color": "#ffe017"
+}

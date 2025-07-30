@@ -1,0 +1,6 @@
+{
+  "input_bomb": { "tag": "bombs:bomb" },
+  "input_modifier": { "item": "minecraft:flint" },
+  "incompatible_with": ["pacified"],
+  "color": "#5f9c36"
+}

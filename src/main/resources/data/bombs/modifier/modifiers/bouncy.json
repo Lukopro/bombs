@@ -1,0 +1,6 @@
+{
+  "input_bomb": { "item": "bombs:grenade" },
+  "input_modifier": { "item": "minecraft:rabbit_foot" },
+  "incompatible_with": [],
+  "color": "#952db5"
+}

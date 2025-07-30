@@ -1,7 +1,7 @@
 -~ THIS IS FOR PERSONAL USE, don't count on all of these!~-
 
 - Optimize
-- New bomb types: claymores, c4,
+- New bomb types: sticky bomb, tripmine
 - Dyes / custom effects
 - TNT -> Dynamite -> modify -> TNT (custom) -> throw it, cluster bombs
 - Forge, NeoForge, 1.20.1, 1.21.1 *
@@ -10,7 +10,7 @@
 - Beheading modifier
 - Hover modifier
 - Eraser (or another way to take off modifiers)
-- Data driven modifiers (not recipes)?
+- Resource pack driven modifier colors?
 - Item Icon next to modifiers
 - Better Theme data
 - Mobs that have dynamite will throw them
@@ -19,7 +19,6 @@
 - Shrapnel
 - Flashbang
 - Swarm, spawn bees that explode
-- Weiner bomb tier 0
 - Explosion noise
 - Config option for prospectors to attack villagers
 - Better grenade animation

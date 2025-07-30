@@ -8,20 +8,16 @@ import net.luko.bombs.entity.ModEntities;
 import net.luko.bombs.item.bomb.BombItem;
 import net.luko.bombs.item.ModCreativeModeTabs;
 import net.luko.bombs.item.ModItems;
-import net.luko.bombs.item.bomb.DynamiteItem;
-import net.luko.bombs.item.bomb.GrenadeItem;
 import net.luko.bombs.recipe.ModRecipeSerializers;
 import net.luko.bombs.recipe.ModRecipeTypes;
 import net.luko.bombs.screen.ModMenuTypes;
 import net.luko.bombs.util.BombConfigSync;
 import net.minecraft.core.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.DispenserBlock;
-import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -31,7 +27,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Mod(Bombs.MODID)
@@ -40,8 +35,7 @@ public class Bombs
     public static final String MODID = "bombs";
     public static final Logger LOGGER = LoggerFactory.getLogger("Bombs");
 
-    public Bombs(FMLJavaModLoadingContext context)
-    {
+    public Bombs(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
 
         context.registerConfig(ModConfig.Type.COMMON, BombsConfig.COMMON_CONFIG);
@@ -59,8 +53,7 @@ public class Bombs
         modEventBus.addListener(this::commonSetup);
     }
 
-    private void commonSetup(final FMLCommonSetupEvent event)
-    {
+    private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(BombConfigSync::syncBombExplosionPowers);
 
         event.enqueueWork(() -> {
@@ -82,27 +75,5 @@ public class Bombs
                 DispenserBlock.registerBehavior(item, bombBehavior);
             }
         });
-    }
-
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event)
-    {
-
-    }
-
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-    public class ModReloadListenerRegistry{
-        private static final List<PreparableReloadListener> LISTENERS = new ArrayList<>();
-
-        public static void register(PreparableReloadListener listener){
-            LISTENERS.add(listener);
-        }
-
-        @SubscribeEvent
-        public static void onReload(AddReloadListenerEvent event){
-            for(PreparableReloadListener listener : LISTENERS){
-                event.addListener(listener);
-            }
-        }
     }
 }

@@ -2,7 +2,6 @@ package net.luko.bombs.item;
 
 import net.luko.bombs.Bombs;
 import net.luko.bombs.entity.ModEntities;
-import net.luko.bombs.item.bomb.BombItem;
 import net.luko.bombs.item.bomb.DynamiteItem;
 import net.luko.bombs.item.bomb.GrenadeItem;
 import net.minecraft.world.item.Item;
@@ -15,11 +14,11 @@ import net.minecraftforge.registries.RegistryObject;
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Bombs.MODID);
 
-    public static final RegistryObject<Item> DYNAMITE = ITEMS.register("dynamite",
-            () -> new DynamiteItem(new Item.Properties()));
+    public static final RegistryObject<Item> DYNAMITE =
+            ITEMS.register("dynamite", () -> new DynamiteItem(new Item.Properties()));
 
-    public static final RegistryObject<Item> GRENADE = ITEMS.register("grenade",
-            () -> new GrenadeItem(new Item.Properties()));
+    public static final RegistryObject<Item> GRENADE =
+            ITEMS.register("grenade", () -> new GrenadeItem(new Item.Properties()));
 
     public static final RegistryObject<Item> PROSPECTOR_SPAWN_EGG = ITEMS.register("prospector_spawn_egg",
             () -> new ForgeSpawnEggItem(

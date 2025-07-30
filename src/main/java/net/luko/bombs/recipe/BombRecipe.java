@@ -7,17 +7,25 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
 public class BombRecipe extends ShapelessRecipe {
     public BombRecipe(ResourceLocation pId, String pGroup, CraftingBookCategory pCategory, ItemStack pResult, NonNullList<Ingredient> pIngredients) {
         super(pId, pGroup, pCategory, pResult, pIngredients);
+    }
+
+    @Override
+    public boolean matches(CraftingContainer container, Level level){
+        if(!BombsConfig.isBombEnabled(this.getResultItem(level.registryAccess()))) return false;
+        return super.matches(container, level);
     }
 
     @Override

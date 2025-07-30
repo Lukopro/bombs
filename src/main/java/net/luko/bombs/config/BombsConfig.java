@@ -1,5 +1,8 @@
 package net.luko.bombs.config;
 
+import net.luko.bombs.item.bomb.DynamiteItem;
+import net.luko.bombs.item.bomb.GrenadeItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.List;
@@ -20,13 +23,16 @@ public class BombsConfig {
             6, 7.0F
     );
 
-    public static ForgeConfigSpec.DoubleValue DYNAMITE_BASE_POWER;
-    public static ForgeConfigSpec.DoubleValue DYNAMITE_II_BASE_POWER;
-    public static ForgeConfigSpec.DoubleValue DYNAMITE_III_BASE_POWER;
+    public static ForgeConfigSpec.BooleanValue ENABLE_DYNAMITE;
+    public static ForgeConfigSpec.BooleanValue ENABLE_GRENADES;
 
-    public static ForgeConfigSpec.DoubleValue SOUL_DYNAMITE_BASE_POWER;
-    public static ForgeConfigSpec.DoubleValue SOUL_DYNAMITE_II_BASE_POWER;
-    public static ForgeConfigSpec.DoubleValue SOUL_DYNAMITE_III_BASE_POWER;
+    public static ForgeConfigSpec.DoubleValue BOMB_BASE_POWER;
+    public static ForgeConfigSpec.DoubleValue BOMB_II_BASE_POWER;
+    public static ForgeConfigSpec.DoubleValue BOMB_III_BASE_POWER;
+
+    public static ForgeConfigSpec.DoubleValue SOUL_BOMB_BASE_POWER;
+    public static ForgeConfigSpec.DoubleValue SOUL_BOMB_II_BASE_POWER;
+    public static ForgeConfigSpec.DoubleValue SOUL_BOMB_III_BASE_POWER;
 
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> CRAFTING_DEFAULT_MODIFIERS;
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> CRAFTING_RESTRICTED_MODIFIERS;
@@ -41,41 +47,53 @@ public class BombsConfig {
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
 
-        builder.push("Dynamite Base Damage");
+        builder.push("Enable/Disable Bombs");
 
-        DYNAMITE_BASE_POWER = builder
-                .comment("Base explosion power of basic Dynamite (default: 2.0)")
-                .defineInRange("dynamiteBasePower",
+        ENABLE_DYNAMITE = builder
+                .comment("Enable/Disable Dynamite crafting.")
+                        .define("enableDynamite", true);
+
+        ENABLE_GRENADES = builder
+                .comment("Enable/Disable Grenade crafting.")
+                .define("enableGrenades", true);
+
+        builder.pop();
+
+        builder.push("Bomb Base Damage");
+
+        BOMB_BASE_POWER = builder
+                .comment("Base explosion power of any basic Bomb (default: 2.0)")
+                .defineInRange("bombBasePower",
                         DEFAULT_POWER_VALUES.get(1),
                         POWER_MIN, POWER_MAX);
 
-        DYNAMITE_II_BASE_POWER = builder
-                .comment("Base explosion power of Dynamite II (default: 3.0)")
-                .defineInRange("dynamiteIIBasePower",
+        BOMB_II_BASE_POWER = builder
+                .comment("Base explosion power of any Bomb II (default: 3.0)")
+                .defineInRange("bombIIBasePower",
                         DEFAULT_POWER_VALUES.get(2),
                         POWER_MIN, POWER_MAX);
 
-        DYNAMITE_III_BASE_POWER = builder
-                .comment("Base explosion power of Dynamite III (default: 4.0)")
-                .defineInRange("dynamiteIIIBasePower",
+        BOMB_III_BASE_POWER = builder
+                .comment("Base explosion power of any Bomb III (default: 4.0)")
+                .defineInRange("bombIIIBasePower",
                         DEFAULT_POWER_VALUES.get(3),
                         POWER_MIN, POWER_MAX);
 
-        SOUL_DYNAMITE_BASE_POWER = builder
-                .comment("Base explosion power of Soul Dynamite (default: 5.0)")
-                .defineInRange("soulDynamiteBasePower",
+        SOUL_BOMB_BASE_POWER = builder
+                .comment("Base explosion power of any Soul Bomb (default: 5.0)")
+                .defineInRange("soulBombBasePower",
                         DEFAULT_POWER_VALUES.get(4),
                         POWER_MIN, POWER_MAX);
 
-        SOUL_DYNAMITE_II_BASE_POWER = builder
-                .comment("Base explosion power of Soul Dynamite II (default: 6.0)")
-                .defineInRange("soulDynamiteIIBasePower",
+        SOUL_BOMB_II_BASE_POWER = builder
+                .comment("Base explosion power of any Soul Bomb II (default: 6.0)")
+                .defineInRange("soulBombIIBasePower",
                         DEFAULT_POWER_VALUES.get(5),
                         POWER_MIN, POWER_MAX);
 
-        SOUL_DYNAMITE_III_BASE_POWER = builder
-                .comment("Base explosion power of Soul Dynamite III (default: 7.0)")
-                .defineInRange("soulDynamiteIIIBasePower",
+        SOUL_BOMB_III_BASE_POWER = builder
+                .comment("Base explosion power of any Soul Bomb III (default: 7.0)")
+                .defineInRange("soulBombIIIBasePower",
                         DEFAULT_POWER_VALUES.get(6),
                         POWER_MIN, POWER_MAX);
 
@@ -136,5 +154,11 @@ public class BombsConfig {
         builder.pop();
 
         COMMON_CONFIG = builder.build();
+    }
+
+    public static boolean isBombEnabled(ItemStack bomb){
+        if(bomb.getItem() instanceof DynamiteItem && !ENABLE_DYNAMITE.get()) return false;
+        if(bomb.getItem() instanceof GrenadeItem && !ENABLE_GRENADES.get()) return false;
+        return true;
     }
 }

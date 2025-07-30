@@ -1,0 +1,7 @@
+{
+  "input_bomb": { "tag": "bombs:bomb" },
+  "input_modifier": { "tag": "bombs:potion" },
+  "special_tag": "Potion",
+  "incompatible_with": ["imbued"],
+  "color": "#000000"
+}

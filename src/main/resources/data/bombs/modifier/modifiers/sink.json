@@ -1,0 +1,6 @@
+{
+  "input_bomb": { "tag": "bombs:bomb" },
+  "input_modifier": { "item": "minecraft:cobbled_deepslate" },
+  "incompatible_with": [],
+  "color": "#3d372e"
+}

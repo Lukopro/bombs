@@ -1,0 +1,6 @@
+{
+  "input_bomb": { "tag": "bombs:bomb" },
+  "input_modifier": { "item": "minecraft:slime_ball" },
+  "incompatible_with": ["dampened"],
+  "color": "#5f9c36"
+}

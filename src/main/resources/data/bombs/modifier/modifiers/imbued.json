@@ -1,0 +1,7 @@
+{
+  "input_bomb": { "tag": "bombs:bomb" },
+  "input_modifier": { "item": "minecraft:lingering_potion" },
+  "special_tag": "Potion",
+  "incompatible_with": ["laden"],
+  "color": "#000000"
+}

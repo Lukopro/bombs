@@ -1,0 +1,6 @@
+{
+  "input_bomb": { "tag": "bombs:bomb" },
+  "input_modifier": { "item": "minecraft:end_stone" },
+  "incompatible_with": [],
+  "color": "#cbcf9b"
+}

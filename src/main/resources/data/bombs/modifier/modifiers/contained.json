@@ -1,0 +1,6 @@
+{
+  "input_bomb": { "tag": "bombs:bomb" },
+  "input_modifier": { "item": "minecraft:iron_ingot" },
+  "incompatible_with": ["shatter"],
+  "color": "#369c7d"
+}

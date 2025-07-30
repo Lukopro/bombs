@@ -1,0 +1,6 @@
+{
+  "input_bomb": { "tag": "bombs:bomb" },
+  "input_modifier": { "item": "minecraft:lapis_lazuli" },
+  "incompatible_with": [],
+  "color": "#369c98"
+}

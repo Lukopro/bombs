@@ -3,8 +3,8 @@ package net.luko.bombs.recipe.demolition;
 import net.luko.bombs.Bombs;
 import net.luko.bombs.components.ModDataComponents;
 import net.luko.bombs.config.BombsConfig;
-import net.luko.bombs.data.modifiers.ModifierIncompatibilityManager;
-import net.luko.bombs.data.modifiers.ModifierPriorityManager;
+import net.luko.bombs.data.modifiers.ModifierManager;
+import net.luko.bombs.data.modifiers.PriorityManager;
 import net.luko.bombs.recipe.ModRecipeSerializers;
 import net.luko.bombs.recipe.ModRecipeTypes;
 import net.minecraft.core.HolderLookup;
@@ -51,7 +51,7 @@ public record DemolitionModifierRecipe(Ingredient inputBomb, Ingredient inputMod
     }
 
     public boolean checkModifier(String mod, String otherMod){
-        return !mod.equals(otherMod) &&  ModifierIncompatibilityManager.INSTANCE.isCompatible(mod, otherMod);
+        return !mod.equals(otherMod) &&  ModifierManager.INSTANCE.isCompatible(mod, otherMod);
     }
 
     @Override
@@ -85,7 +85,7 @@ public record DemolitionModifierRecipe(Ingredient inputBomb, Ingredient inputMod
 
     private List<String> sortedModifiers(List<String> modifiers){
         // Sort modifiersArray using a preset order
-        Map<String, Integer> orderMap = ModifierPriorityManager.INSTANCE.getPriorities();
+        Map<String, Integer> orderMap = PriorityManager.INSTANCE.getPriorities();
 
         List<String> sortedModifiers = new ArrayList<>(modifiers);
 

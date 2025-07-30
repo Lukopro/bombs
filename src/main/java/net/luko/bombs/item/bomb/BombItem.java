@@ -1,8 +1,7 @@
 package net.luko.bombs.item.bomb;
 
 import net.luko.bombs.components.ModDataComponents;
-import net.luko.bombs.data.modifiers.ModifierColorManager;
-import net.luko.bombs.entity.ModEntities;
+import net.luko.bombs.data.modifiers.ModifierManager;
 import net.luko.bombs.entity.bomb.ThrownBombEntity;
 import net.luko.bombs.util.BombModifierUtil;
 import net.luko.bombs.util.BombPotionUtil;
@@ -17,7 +16,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -231,7 +229,7 @@ public abstract class BombItem extends Item {
                             .append(Component.literal(")"))
                             .withStyle(Style.EMPTY.withColor(potionColor));
                 } else {
-                    modifierComponent.withStyle(Style.EMPTY.withColor(ModifierColorManager.INSTANCE.getColor(mod)));
+                    modifierComponent.withStyle(Style.EMPTY.withColor(ModifierManager.INSTANCE.getColor(mod)));
                 }
 
                 tooltip.add(modifierComponent);

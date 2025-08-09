@@ -16,7 +16,9 @@ import net.luko.bombs.screen.ModMenuTypes;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
+import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -24,6 +26,11 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 @Mod.EventBusSubscriber(modid = Bombs.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientModEvents {
+
+    @SubscribeEvent
+    public static void registerTooltipFactories(RegisterClientTooltipComponentFactoriesEvent event){
+        event.register(BombTooltipItemIcons.ModifierTooltipComponent.class, BombTooltipItemIcons.ClientModifierTooltipComponent::new);
+    }
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event)

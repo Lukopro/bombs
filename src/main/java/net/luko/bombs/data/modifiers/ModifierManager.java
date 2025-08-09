@@ -67,6 +67,12 @@ public class ModifierManager{
         Bombs.LOGGER.info("Loaded {} modifiers.", modifiers.size());
     }
 
+    public Ingredient getModifierItem(String mod){
+        Modifier modifier = modifiers.get(mod);
+        assert modifier != null;
+        return modifier.modifierItem();
+    }
+
     public Map<ResourceLocation, Recipe<?>> getRecipes(){
         Map<ResourceLocation, Recipe<?>> recipes = new HashMap<>();
 

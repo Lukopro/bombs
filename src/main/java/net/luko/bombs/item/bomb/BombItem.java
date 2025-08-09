@@ -210,58 +210,7 @@ public abstract class BombItem extends Item {
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag){
         super.appendHoverText(stack, level, tooltip, flag);
 
-        if(!stack.hasTag()){
-            tooltip.add(Component.literal("No modifiers"));
-            return;
-        }
 
-        if(stack.getTag().contains("Modifiers")){
-            ListTag modifiers = stack.getTag().getList("Modifiers", Tag.TAG_STRING);
-
-            tooltip.add(Component.empty());
-            tooltip.add(Component.literal("Modifiers:")
-                    .withStyle(Style.EMPTY
-                            .withColor(TextColor.fromRgb(0xdddddd)))
-                    .withStyle(ChatFormatting.BOLD));
-
-            for(int i = 0; i < modifiers.size(); i++){
-                String mod = modifiers.getString(i);
-
-                MutableComponent modifierComponent = Component.literal("- ")
-                        .append(Component.translatable("modifier.bombs." + mod));
-
-                if(mod.equals("laden") || mod.equals("imbued")){
-                    int potionColor = PotionUtils.getColor(
-                            PotionUtils.getMobEffects(stack));
-
-                    String potionDescriptionId = BombPotionUtil.getDescriptionId(stack);
-
-                    modifierComponent.append(Component.literal(" ("))
-                            .append(Component.translatable(potionDescriptionId))
-                            .append(Component.literal(")"))
-                            .withStyle(Style.EMPTY.withColor(potionColor));
-                } else {
-                    modifierComponent.withStyle(Style.EMPTY.withColor(ModifierManager.INSTANCE.getColor(mod)));
-                }
-
-                tooltip.add(modifierComponent);
-
-                if(Screen.hasShiftDown()){
-                    tooltip.add(Component.translatable("modifier.bombs." + mod + ".info")
-                            .withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY));
-
-                    tooltip.add(Component.empty());
-                }
-            }
-
-            if(!Screen.hasShiftDown()){
-                tooltip.add(Component.empty());
-                tooltip.add(Component.literal("SHIFT for descriptions"));
-            }
-
-        } else {
-            tooltip.add(Component.literal("No modifiers"));
-        }
     }
 
     public float getBaseVelocity(ItemStack stack){

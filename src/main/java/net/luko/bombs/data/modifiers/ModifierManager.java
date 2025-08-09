@@ -74,6 +74,12 @@ public class ModifierManager{
         Bombs.LOGGER.info("Loaded {} modifiers.", modifiers.size());
     }
 
+    public Ingredient getModifierItem(String mod){
+        Modifier modifier = modifiers.get(mod);
+        assert modifier != null;
+        return modifier.modifierItem();
+    }
+
     public Pair<Multimap<RecipeType<?>, RecipeHolder<?>>, Map<ResourceLocation, RecipeHolder<?>>> generateRecipes(){
         Multimap<RecipeType<?>, RecipeHolder<?>> byType = ArrayListMultimap.create();
         Map<ResourceLocation, RecipeHolder<?>> byName = new HashMap<>();

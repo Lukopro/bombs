@@ -204,52 +204,7 @@ public abstract class BombItem extends Item {
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag){
         super.appendHoverText(stack, context, tooltip, flag);
 
-        if(stack.has(ModDataComponents.MODIFIERS.get()) && !stack.getOrDefault(ModDataComponents.MODIFIERS.get(), List.of()).isEmpty()){
-            List<String> modifiers = stack.get(ModDataComponents.MODIFIERS.get());
 
-            tooltip.add(Component.empty());
-            tooltip.add(Component.literal("Modifiers:")
-                    .withStyle(Style.EMPTY
-                            .withColor(TextColor.fromRgb(0xdddddd)))
-                    .withStyle(ChatFormatting.BOLD));
-
-            for(String mod : modifiers){
-                MutableComponent modifierComponent = Component.literal("- ")
-                        .append(Component.translatable("modifier.bombs." + mod));
-
-                if(mod.equals("laden") || mod.equals("imbued")){
-                    int potionColor = stack.get(DataComponents.POTION_CONTENTS) == null
-                            ? 0x385dc6
-                            : stack.get(DataComponents.POTION_CONTENTS).getColor();
-
-                    String potionDescriptionId = BombPotionUtil.getDescriptionId(stack);
-
-                    modifierComponent.append(Component.literal(" ("))
-                            .append(Component.translatable(potionDescriptionId))
-                            .append(Component.literal(")"))
-                            .withStyle(Style.EMPTY.withColor(potionColor));
-                } else {
-                    modifierComponent.withStyle(Style.EMPTY.withColor(ModifierManager.INSTANCE.getColor(mod)));
-                }
-
-                tooltip.add(modifierComponent);
-
-                if(Screen.hasShiftDown()){
-                    tooltip.add(Component.translatable("modifier.bombs." + mod + ".info")
-                            .withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY));
-
-                    tooltip.add(Component.empty());
-                }
-            }
-
-            if(!Screen.hasShiftDown()){
-                tooltip.add(Component.empty());
-                tooltip.add(Component.literal("SHIFT for descriptions"));
-            }
-
-        } else {
-            tooltip.add(Component.literal("No modifiers"));
-        }
     }
 
     public float getBaseVelocity(ItemStack stack){

@@ -17,10 +17,16 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
 @EventBusSubscriber(modid = Bombs.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientModEvents {
+
+    @SubscribeEvent
+    public static void registerTooltipFactories(RegisterClientTooltipComponentFactoriesEvent event){
+        event.register(BombTooltipItemIcons.ModifierTooltipComponent.class, BombTooltipItemIcons.ClientModifierTooltipComponent::new);
+    }
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {

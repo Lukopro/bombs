@@ -16,7 +16,6 @@ import net.luko.bombs.recipe.demolition.DemolitionUpgradeRecipe;
 import net.luko.bombs.recipe.demolition.DemolitionUpgradeRecipeInput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,13 +23,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class DemolitionUpgradeCategory implements IRecipeCategory<DemolitionUpgradeRecipe> {
+public class DemolitionUpgradeCategory implements IRecipeCategory<JEIBombsPlugin.UpgradeRecipeDisplay> {
     public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(Bombs.MODID, "demolition_upgrade");
     public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Bombs.MODID,
             "textures/gui/demolition_jei_recipe.png");
 
-    public static final RecipeType<DemolitionUpgradeRecipe> DEMOLITION_UPGRADE_TYPE =
-            new RecipeType<>(UID, DemolitionUpgradeRecipe.class);
+    public static final RecipeType<JEIBombsPlugin.UpgradeRecipeDisplay> DEMOLITION_UPGRADE_TYPE =
+            new RecipeType<>(UID, JEIBombsPlugin.UpgradeRecipeDisplay.class);
 
     private final IDrawable background;
     private final IDrawable icon;
@@ -41,7 +40,7 @@ public class DemolitionUpgradeCategory implements IRecipeCategory<DemolitionUpgr
     }
 
     @Override
-    public RecipeType<DemolitionUpgradeRecipe> getRecipeType() {
+    public RecipeType<JEIBombsPlugin.UpgradeRecipeDisplay> getRecipeType() {
         return DEMOLITION_UPGRADE_TYPE;
     }
 
@@ -61,51 +60,15 @@ public class DemolitionUpgradeCategory implements IRecipeCategory<DemolitionUpgr
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, DemolitionUpgradeRecipe recipe, IFocusGroup focuses) {
-        List<ItemStack> bombInputs = new ArrayList<>();
-        bombInputs.add(new ItemStack(ModItems.DYNAMITE.get()));
-        bombInputs.add(new ItemStack(ModItems.GRENADE.get()));
-        for(int i = 2; i <= 5; i++){
-            ItemStack dynamite = new ItemStack(ModItems.DYNAMITE.get());
-            dynamite.set(ModDataComponents.TIER.get(), i);
-            bombInputs.add(dynamite);
-            ItemStack grenade = new ItemStack(ModItems.GRENADE.get());
-            grenade.set(ModDataComponents.TIER.get(), i);
-            bombInputs.add(grenade);
-        }
-
-        List<ItemStack> inputFocuses = focuses.getFocuses(RecipeIngredientRole.INPUT)
-                .map(focus -> focus.getTypedValue().getItemStack())
-                .flatMap(Optional::stream)
-                .filter(stack -> !stack.isEmpty())
-                .toList();
-
-        if(!inputFocuses.isEmpty())
-            bombInputs.removeIf(input -> inputFocuses.stream()
-                    .noneMatch(focus -> ItemStack.isSameItem(input, focus)));
-
-        List<ItemStack> validBombInputs = new ArrayList<>();
-        List<ItemStack> outputs = new ArrayList<>();
-        for(ItemStack input : bombInputs){
-            DemolitionUpgradeRecipeInput recipeInput =
-                    new DemolitionUpgradeRecipeInput(input, recipe.inputUpgrade().getItems()[0]);
-
-            if(recipe.matches(recipeInput, null)) {
-                ItemStack result = recipe.assemble(recipeInput, null);
-                if (!result.isEmpty()) {
-                    validBombInputs.add(input);
-                    outputs.add(result);
-                }
-            }
-        }
+    public void setRecipe(IRecipeLayoutBuilder builder, JEIBombsPlugin.UpgradeRecipeDisplay recipe, IFocusGroup focuses) {
 
         builder.addSlot(RecipeIngredientRole.INPUT, 19, 25)
-                .addItemStacks(validBombInputs);
+                .addItemStack(recipe.bomb());
 
         builder.addSlot(RecipeIngredientRole.INPUT, 53, 25)
-                .addIngredients(recipe.inputUpgrade());
+                .addIngredients(recipe.upgrade());
 
         builder.addSlot(RecipeIngredientRole.OUTPUT, 87, 25)
-                .addItemStacks(outputs);
+                .addItemStack(recipe.output());
     }
 }

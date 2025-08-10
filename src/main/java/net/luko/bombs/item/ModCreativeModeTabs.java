@@ -2,6 +2,7 @@ package net.luko.bombs.item;
 
 import net.luko.bombs.Bombs;
 import net.luko.bombs.block.ModBlocks;
+import net.luko.bombs.util.BombRecipeUtil;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -19,20 +20,10 @@ public class ModCreativeModeTabs {
                     .icon(() -> new ItemStack(ModItems.DYNAMITE.get()))
                     .title(Component.translatable("creativetab.bombs_tab"))
                     .displayItems((pParameters, pOutput) -> {
+
                         /* Add items to Bombs creative mode tab */
-
-                        pOutput.accept(ModItems.DYNAMITE.get());
-                        for(int i = 2; i <= 6; i++){
-                            ItemStack tempStack = new ItemStack(ModItems.DYNAMITE.get());
-                            tempStack.getOrCreateTag().putInt("Tier", i);
-                            pOutput.accept(tempStack);
-                        }
-
-                        pOutput.accept(ModItems.GRENADE.get());
-                        for(int i = 2; i <= 6; i++){
-                            ItemStack tempStack = new ItemStack(ModItems.GRENADE.get());
-                            tempStack.getOrCreateTag().putInt("Tier", i);
-                            pOutput.accept(tempStack);
+                        for(ItemStack stack : BombRecipeUtil.allBombsAllTiers()){
+                            pOutput.accept(stack);
                         }
 
                         pOutput.accept(ModBlocks.DEMOLITION_TABLE.get());

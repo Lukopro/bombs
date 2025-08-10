@@ -11,7 +11,6 @@
 - Hover modifier
 - Eraser (or another way to take off modifiers)
 - Resource pack driven modifier colors?
-- Item Icon next to modifiers
 - Better Theme data
 - Mobs that have dynamite will throw them
 - Redstone modifier (powers redstone upon explosion)

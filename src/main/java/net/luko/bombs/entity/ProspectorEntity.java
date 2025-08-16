@@ -19,10 +19,12 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -50,6 +52,9 @@ public class ProspectorEntity extends PathfinderMob implements RangedAttackMob {
 
     @Override
     protected void registerGoals(){
+        this.getNavigation().setCanFloat(true);
+
+        this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new PursueWhileMountedGoal(this, DISMOUNT_RANGE));
         this.goalSelector.addGoal(2, new MountHonseGoal(this, REMOUNT_RANGE, DISMOUNT_RANGE));
         this.goalSelector.addGoal(3, new LazyRangedAttackGoal(this, 1.0, 40, ATTACK_RANGE, REMOUNT_RANGE));

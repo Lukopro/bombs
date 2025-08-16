@@ -104,6 +104,9 @@ public class HonseEntity extends AbstractHorse {
 
     @Override
     protected void registerGoals(){
+        this.getNavigation().setCanFloat(true);
+
+        this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new FollowProspectorGoal(this, 1.0, 64.0F, 32.0F, 24.0F));
         this.goalSelector.addGoal(2, new FloatGoal(this));
         this.goalSelector.addGoal(3, new RandomStrollGoal(this, 1.0));

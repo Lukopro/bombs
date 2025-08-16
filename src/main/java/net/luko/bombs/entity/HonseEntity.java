@@ -148,10 +148,12 @@ public class HonseEntity extends AbstractHorse {
                 this.setTamed(true);
                 this.level().broadcastEntityEvent(this, (byte)7);
                 return InteractionResult.sidedSuccess(this.level().isClientSide());
-            } else {
-                player.startRiding(this);
-                return InteractionResult.sidedSuccess(this.level().isClientSide());
             }
+        }
+
+        if(this.canAddPassenger(player) && !player.isPassenger()){
+            player.startRiding(this);
+            return InteractionResult.sidedSuccess(this.level().isClientSide());
         }
 
         return super.mobInteract(player, hand);

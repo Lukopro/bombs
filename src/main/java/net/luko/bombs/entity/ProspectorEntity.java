@@ -4,6 +4,7 @@ import net.luko.bombs.config.BombsConfig;
 import net.luko.bombs.entity.ai.goal.LazyRangedAttackGoal;
 import net.luko.bombs.entity.ai.goal.MountHonseGoal;
 import net.luko.bombs.entity.ai.goal.PursueWhileMountedGoal;
+import net.luko.bombs.entity.ai.goal.target.FarAttackTargetGoal;
 import net.luko.bombs.item.bomb.BombItem;
 import net.luko.bombs.item.ModItems;
 import net.minecraft.nbt.IntTag;
@@ -56,8 +57,12 @@ public class ProspectorEntity extends PathfinderMob implements RangedAttackMob {
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, 10, false, false,
+        if(BombsConfig.PROSPECTOR_AGGRESSION.get() >= 1) this.targetSelector.addGoal(1, new FarAttackTargetGoal<>(this, Player.class, 10, false, false,
                 entity -> entity instanceof Player player && !player.isCreative() && !player.isSpectator()));
+        if(BombsConfig.PROSPECTOR_AGGRESSION.get() >= 2) this.targetSelector.addGoal(2, new FarAttackTargetGoal<>(this, LivingEntity.class, 10, false, false,
+                entity -> entity.getType() == EntityType.VILLAGER || entity.getType() == EntityType.IRON_GOLEM));
+        if(BombsConfig.PROSPECTOR_AGGRESSION.get() >= 3) this.targetSelector.addGoal(3, new FarAttackTargetGoal<>(this, LivingEntity.class, 10, false, false,
+                entity -> entity instanceof LivingEntity && !(entity instanceof ProspectorEntity) && !(entity instanceof HonseEntity)));
     }
 
     @Override

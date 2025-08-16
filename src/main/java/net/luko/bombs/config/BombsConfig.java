@@ -43,6 +43,7 @@ public class BombsConfig {
     public static ForgeConfigSpec.IntValue PROSPECTOR_GROUP_MIN;
     public static ForgeConfigSpec.IntValue PROSPECTOR_GROUP_MAX;
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> PROSPECTOR_DEFAULT_MODIFIERS;
+    public static ForgeConfigSpec.IntValue PROSPECTOR_AGGRESSION;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -125,7 +126,7 @@ public class BombsConfig {
 
         builder.pop();
 
-        builder.push("Mob Spawning");
+        builder.push("Mobs");
 
         PROSPECTOR_SPAWN_CHANCE = builder
                 .comment("What is the chance for prospectors and honses to spawn per minute? (default: 0.001)")
@@ -146,10 +147,15 @@ public class BombsConfig {
                         0, Integer.MAX_VALUE);
 
         PROSPECTOR_DEFAULT_MODIFIERS = builder
-                .comment("List of modifiers applied to prospector's dynamite on spawn")
+                .comment("List of modifiers applied to prospector's dynamite on spawn (default: ['contained'])")
                 .defineList("prospectorDefaultModifiers",
                         List.of("contained"),
                         obj -> obj instanceof String);
+
+        PROSPECTOR_AGGRESSION = builder
+                .comment("How aggressive should Prospectors be? (default: false)")
+                .comment("0 = no targetting, 1 = targets players, 2 = targets players + villagers + iron golems, 3 = targets almost everything")
+                .defineInRange("prospectorAggression", 1, 0, 3);
 
         builder.pop();
 

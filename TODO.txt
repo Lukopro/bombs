@@ -21,5 +21,4 @@
 - Explosion noise
 - Config option for prospectors to attack villagers
 - Better grenade animation
-- Seperate recipe registration for upgrade recipe variants for JEI
 - Load into crossbow

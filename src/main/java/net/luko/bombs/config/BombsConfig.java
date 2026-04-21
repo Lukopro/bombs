@@ -131,9 +131,9 @@ public class BombsConfig {
         builder.push("Mobs");
 
         PROSPECTOR_SPAWN_CHANCE = builder
-                .comment("What is the chance for prospectors and honses to spawn per minute? (default: 0.001)")
+                .comment("(Experimental) What is the chance for prospectors and honses to spawn per minute? (default: 0.0)")
                 .defineInRange("prospectorSpawnChance",
-                        0.001,
+                        0.0,
                         0.0, 1.0);
 
         PROSPECTOR_GROUP_MIN = builder

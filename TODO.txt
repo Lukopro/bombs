@@ -19,6 +19,5 @@
 - Flashbang
 - Swarm, spawn bees that explode
 - Explosion noise
-- Config option for prospectors to attack villagers
 - Better grenade animation
 - Load into crossbow

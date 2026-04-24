@@ -5,14 +5,20 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.luko.bombs.Bombs;
+import net.luko.bombs.network.ModPackets;
+import net.luko.bombs.network.ModifiersPacket;
 import net.luko.bombs.recipe.demolition.DemolitionModifierRecipe;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.*;
 
@@ -67,12 +73,6 @@ public class ModifierManager{
         Bombs.LOGGER.info("Loaded {} modifiers.", modifiers.size());
     }
 
-    public Ingredient getModifierItem(String mod){
-        Modifier modifier = modifiers.get(mod);
-        assert modifier != null;
-        return modifier.modifierItem();
-    }
-
     public Map<ResourceLocation, Recipe<?>> getRecipes(){
         Map<ResourceLocation, Recipe<?>> recipes = new HashMap<>();
 
@@ -104,8 +104,18 @@ public class ModifierManager{
         return !mod1Incompatible.contains(mod2) && !mod2Incompatible.contains(mod1);
     }
 
-    public TextColor getColor(String mod){
-        Modifier modifier = modifiers.get(mod);
-        return modifier == null ? TextColor.fromRgb(0x3d372e) : TextColor.fromRgb(modifier.color());
+    public void syncToPlayer(ServerPlayer player) {
+        ModPackets.CHANNEL.send(
+                PacketDistributor.PLAYER.with(() -> player),
+                new ModifiersPacket(this.modifiers)
+        );
+    }
+
+    public void syncToAll(MinecraftServer server) {
+        for (ServerLevel level : server.getAllLevels()) {
+            for (ServerPlayer player : level.players()) {
+                syncToPlayer(player);
+            }
+        }
     }
 }

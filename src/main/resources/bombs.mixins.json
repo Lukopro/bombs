@@ -4,6 +4,7 @@
   "package": "net.luko.bombs.mixin",
   "refmap": "bombs.refmap.json",
   "mixins": [
+    "MinecraftServerMixin",
     "RecipeManagerMixin"
   ],
   "injectors": {

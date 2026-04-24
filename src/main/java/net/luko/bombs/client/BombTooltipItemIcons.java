@@ -3,6 +3,7 @@ package net.luko.bombs.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
 import net.luko.bombs.Bombs;
+import net.luko.bombs.client.data.ClientModifierStore;
 import net.luko.bombs.components.ModDataComponents;
 import net.luko.bombs.data.modifiers.ModifierManager;
 import net.luko.bombs.item.bomb.BombItem;
@@ -44,7 +45,7 @@ public class BombTooltipItemIcons {
             for(String mod : modifiers){
                 MutableComponent modifierComponent = Component.literal("- ")
                         .append(Component.translatable("modifier.bombs." + mod));
-                ItemStack iconStack = ModifierManager.INSTANCE.getModifierItem(mod).getItems()[0];
+                ItemStack iconStack = ClientModifierStore.getModifierItem(mod).getItems()[0];
 
                 if(mod.equals("laden") || mod.equals("imbued")){
                     int potionColor = stack.get(DataComponents.POTION_CONTENTS) == null
@@ -61,7 +62,7 @@ public class BombTooltipItemIcons {
                     if(stack.has(DataComponents.POTION_CONTENTS))
                         iconStack.set(DataComponents.POTION_CONTENTS, stack.get(DataComponents.POTION_CONTENTS));
                 } else {
-                    modifierComponent.withStyle(Style.EMPTY.withColor(ModifierManager.INSTANCE.getColor(mod)));
+                    modifierComponent.withStyle(Style.EMPTY.withColor(ClientModifierStore.getColor(mod)));
                 }
 
                 tooltip.add(Either.right(new ModifierTooltipComponent(iconStack, modifierComponent)));

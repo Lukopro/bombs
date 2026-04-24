@@ -5,10 +5,14 @@ import com.google.common.collect.Multimap;
 import com.google.gson.*;
 import com.mojang.serialization.JsonOps;
 import net.luko.bombs.Bombs;
+import net.luko.bombs.network.ModifiersPacket;
 import net.luko.bombs.recipe.ModRecipeTypes;
 import net.luko.bombs.recipe.demolition.DemolitionModifierRecipe;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.GsonHelper;
@@ -16,6 +20,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.antlr.v4.runtime.misc.Pair;
 
 import java.util.*;
@@ -74,12 +79,6 @@ public class ModifierManager{
         Bombs.LOGGER.info("Loaded {} modifiers.", modifiers.size());
     }
 
-    public Ingredient getModifierItem(String mod){
-        Modifier modifier = modifiers.get(mod);
-        assert modifier != null;
-        return modifier.modifierItem();
-    }
-
     public Pair<Multimap<RecipeType<?>, RecipeHolder<?>>, Map<ResourceLocation, RecipeHolder<?>>> generateRecipes(){
         Multimap<RecipeType<?>, RecipeHolder<?>> byType = ArrayListMultimap.create();
         Map<ResourceLocation, RecipeHolder<?>> byName = new HashMap<>();
@@ -115,12 +114,15 @@ public class ModifierManager{
         return !mod1Incompatible.contains(mod2) && !mod2Incompatible.contains(mod1);
     }
 
-    public Map<String, Modifier> getAllModifiers(){
-        return Collections.unmodifiableMap(modifiers);
+    public void syncToPlayer(ServerPlayer player) {
+        PacketDistributor.sendToPlayer(player, new ModifiersPacket(this.modifiers));
     }
 
-    public TextColor getColor(String mod){
-        Modifier modifier = modifiers.get(mod);
-        return modifier == null ? TextColor.fromRgb(0x3d372e) : TextColor.fromRgb(modifier.color());
+    public void syncToAll(MinecraftServer server) {
+        for (ServerLevel level : server.getAllLevels()) {
+            for (ServerPlayer player : level.players()) {
+                syncToPlayer(player);
+            }
+        }
     }
 }

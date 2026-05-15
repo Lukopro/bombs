@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.longs.Long2FloatMap;
 import it.unimi.dsi.fastutil.longs.Long2FloatOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
@@ -152,6 +153,8 @@ public class BombExplosion extends Explosion {
 
         int gridSize = 4 + (int)Math.floor(Math.pow(this.radius_, 1.4));
 
+        Long2ObjectOpenHashMap<CachedVoxel> voxelCache = new Long2ObjectOpenHashMap<>();
+
         for(int j = 0; j < gridSize; ++j) {
             for(int k = 0; k < gridSize; ++k) {
                 for(int l = 0; l < gridSize; ++l) {
@@ -165,44 +168,90 @@ public class BombExplosion extends Explosion {
                     d2 /= d3;
 
                     float f = this.radius_ * (0.7F + this.level_.random.nextFloat() * 0.6F);
-                    double d4 = this.x_;
-                    double d6 = this.y_;
-                    double d8 = this.z_;
+                    int voxelX = Mth.floor(this.x_);
+                    int voxelY = Mth.floor(this.y_);
+                    int voxelZ = Mth.floor(this.z_);
 
-                    double stepd4 = d0 * 0.3D;
-                    double stepd6 = d1 * 0.3D;
-                    double stepd8 = d2 * 0.3D;
+                    // axis-aligned rays should not step, so step = 0 is not required
+                    int stepX = d0 > 0 ? 1 : -1;
+                    int stepY = d1 > 0 ? 1 : -1;
+                    int stepZ = d2 > 0 ? 1 : -1;
 
-                    for(; f > -this.themeStrength / 3.0F; f -= 0.22500001F) {
-                        blockpos.set(d4, d6, d8);
+                    double tDeltaX = d0 == 0 ? Double.MAX_VALUE : Math.abs(1.0D / d0);
+                    double tDeltaY = d1 == 0 ? Double.MAX_VALUE : Math.abs(1.0D / d1);
+                    double tDeltaZ = d2 == 0 ? Double.MAX_VALUE : Math.abs(1.0D / d2);
+
+                    double nextBoundaryX = stepX > 0 ? voxelX + 1.0D : voxelX;
+                    double nextBoundaryY = stepY > 0 ? voxelY + 1.0D : voxelY;
+                    double nextBoundaryZ = stepZ > 0 ? voxelZ + 1.0D : voxelZ;
+
+                    double tMaxX = d0 == 0 ? Double.MAX_VALUE : (nextBoundaryX - this.x_) / d0;
+                    double tMaxY = d1 == 0 ? Double.MAX_VALUE : (nextBoundaryY - this.y_) / d1;
+                    double tMaxZ = d2 == 0 ? Double.MAX_VALUE : (nextBoundaryZ - this.z_) / d2;
+
+                    float currentT = 0F;
+                    float lastStepTraveledDistance;
+
+                    for(; f > -this.themeStrength / 3.0F; f -= 0.75F * lastStepTraveledDistance) {
+                        blockpos.set(voxelX, voxelY, voxelZ);
+                        long longpos = blockpos.asLong();
 
                         if (!this.level_.isInWorldBounds(blockpos)) break;
 
-                        d4 += stepd4;
-                        d6 += stepd6;
-                        d8 += stepd8;
-
-                        BlockState blockstate;
-                        FluidState fluidstate = this.level_.getFluidState(blockpos);
-
-                        if (this.hasEvaporateModifier && fluidstate.is(FluidTags.WATER)) {
-                            blockstate = Blocks.AIR.defaultBlockState();
+                        // Advance voxel
+                        float nextT;
+                        if (tMaxX < tMaxY) {
+                            if (tMaxX < tMaxZ) {
+                                nextT = (float) tMaxX;
+                                voxelX += stepX;
+                                tMaxX += tDeltaX;
+                            } else {
+                                nextT = (float) tMaxZ;
+                                voxelZ += stepZ;
+                                tMaxZ += tDeltaZ;
+                            }
                         } else {
-                            blockstate = this.level_.getBlockState(blockpos);
+                            if (tMaxY < tMaxZ) {
+                                nextT = (float) tMaxY;
+                                voxelY += stepY;
+                                tMaxY += tDeltaY;
+                            } else {
+                                nextT = (float) tMaxZ;
+                                voxelZ += stepZ;
+                                tMaxZ += tDeltaZ;
+                            }
                         }
 
-                        Optional<Float> optional = this.damageCalculator_.getBlockExplosionResistance(this, this.level_, blockpos, blockstate, fluidstate);
-                        if (optional.isPresent()) {
-                            f -= (optional.get() + 0.3F) * 0.3F;
+                        lastStepTraveledDistance = nextT - currentT;
+                        currentT = nextT;
+
+                        CachedVoxel voxelData = voxelCache.get(longpos);
+
+                        if (voxelData == null) {
+                            BlockState blockstate;
+                            FluidState fluidstate = this.level_.getFluidState(blockpos);
+
+                            if (this.hasEvaporateModifier && fluidstate.is(FluidTags.WATER)) {
+                                blockstate = Blocks.AIR.defaultBlockState();
+                            } else {
+                                blockstate = this.level_.getBlockState(blockpos);
+                            }
+
+                            float resistance = this.damageCalculator_.getBlockExplosionResistance(
+                                    this, this.level_, blockpos, blockstate, fluidstate).orElse(0.0F);
+
+                            voxelData = new CachedVoxel(blockstate, resistance);
+                            voxelCache.put(longpos, voxelData);
                         }
 
-                        if (f > 0.0F && this.damageCalculator_.shouldBlockExplode(this, this.level_, blockpos, blockstate, f)) {
-                            toBlow_.add(blockpos.asLong());
+                        f -= (voxelData.resistance + 0.3F) * lastStepTraveledDistance;
+
+                        if (f > 0.0F && this.damageCalculator_.shouldBlockExplode(this, this.level_, blockpos, voxelData.blockstate, f)) {
+                            toBlow_.add(longpos);
                             continue;
                         }
-                        if (!this.hasTheme || f <= -this.themeStrength || blockstate.isAir()) continue;
-                        long pos = blockpos.asLong();
-                        if (f > almostBroke.get(pos)) almostBroke.put(pos, f);
+                        if (!this.hasTheme || f <= -this.themeStrength || voxelData.blockstate.isAir()) continue;
+                        if (f > almostBroke.get(longpos)) almostBroke.put(longpos, f);
                     }
                 }
             }
@@ -477,4 +526,6 @@ public class BombExplosion extends Explosion {
 
         pDropPositionArray.add(Pair.of(pStack, pPos));
     }
+
+    private record CachedVoxel (BlockState blockstate, float resistance) {}
 }

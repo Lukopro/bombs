@@ -155,47 +155,54 @@ public class BombExplosion extends Explosion {
         for(int j = 0; j < gridSize; ++j) {
             for(int k = 0; k < gridSize; ++k) {
                 for(int l = 0; l < gridSize; ++l) {
-                    if (j == 0 || j == gridSize - 1 || k == 0 || k == gridSize - 1 || l == 0 || l == gridSize - 1) {
-                        double d0 = (float)j / (float)(gridSize - 1) * 2.0F - 1.0F;
-                        double d1 = (float)k / (float)(gridSize - 1) * 2.0F - 1.0F;
-                        double d2 = (float)l / (float)(gridSize - 1) * 2.0F - 1.0F;
-                        double d3 = Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2);
-                        d0 /= d3;
-                        d1 /= d3;
-                        d2 /= d3;
+                    if (!(j == 0 || j == gridSize - 1 || k == 0 || k == gridSize - 1 || l == 0 || l == gridSize - 1)) continue;
+                    double d0 = (float)j / (float)(gridSize - 1) * 2.0F - 1.0F;
+                    double d1 = (float)k / (float)(gridSize - 1) * 2.0F - 1.0F;
+                    double d2 = (float)l / (float)(gridSize - 1) * 2.0F - 1.0F;
+                    double d3 = Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2);
+                    d0 /= d3;
+                    d1 /= d3;
+                    d2 /= d3;
 
-                        float f = this.radius_ * (0.7F + this.level_.random.nextFloat() * 0.6F);
-                        double d4 = this.x_;
-                        double d6 = this.y_;
-                        double d8 = this.z_;
+                    float f = this.radius_ * (0.7F + this.level_.random.nextFloat() * 0.6F);
+                    double d4 = this.x_;
+                    double d6 = this.y_;
+                    double d8 = this.z_;
 
-                        for(; f > -this.themeStrength / 3.0F; f -= 0.22500001F) {
-                            blockpos.set(d4, d6, d8);
+                    double stepd4 = d0 * 0.3D;
+                    double stepd6 = d1 * 0.3D;
+                    double stepd8 = d2 * 0.3D;
 
-                            d4 += d0 * (double)0.3F;
-                            d6 += d1 * (double)0.3F;
-                            d8 += d2 * (double)0.3F;
+                    for(; f > -this.themeStrength / 3.0F; f -= 0.22500001F) {
+                        blockpos.set(d4, d6, d8);
 
-                            if (!this.level_.isInWorldBounds(blockpos)) break;
+                        if (!this.level_.isInWorldBounds(blockpos)) break;
 
-                            BlockState blockstate = this.level_.getBlockState(blockpos);
-                            FluidState fluidstate = this.level_.getFluidState(blockpos);
+                        d4 += stepd4;
+                        d6 += stepd6;
+                        d8 += stepd8;
 
-                            if (this.hasEvaporateModifier && fluidstate.is(FluidTags.WATER)) {
-                                blockstate = Blocks.AIR.defaultBlockState();
-                            }
+                        BlockState blockstate;
+                        FluidState fluidstate = this.level_.getFluidState(blockpos);
 
-                            Optional<Float> optional = this.damageCalculator_.getBlockExplosionResistance(this, this.level_, blockpos, blockstate, fluidstate);
-                            if (optional.isPresent()) {
-                                f -= (optional.get() + 0.3F) * 0.3F;
-                            }
-
-                            if (f > 0.0F && this.damageCalculator_.shouldBlockExplode(this, this.level_, blockpos, blockstate, f)) {
-                                toBlow_.add(blockpos.asLong());
-                            } else if (this.hasTheme && f > -this.themeStrength){
-                                if(!blockstate.isAir()) almostBroke.merge(blockpos.asLong(), f, Math::max);
-                            }
+                        if (this.hasEvaporateModifier && fluidstate.is(FluidTags.WATER)) {
+                            blockstate = Blocks.AIR.defaultBlockState();
+                        } else {
+                            blockstate = this.level_.getBlockState(blockpos);
                         }
+
+                        Optional<Float> optional = this.damageCalculator_.getBlockExplosionResistance(this, this.level_, blockpos, blockstate, fluidstate);
+                        if (optional.isPresent()) {
+                            f -= (optional.get() + 0.3F) * 0.3F;
+                        }
+
+                        if (f > 0.0F && this.damageCalculator_.shouldBlockExplode(this, this.level_, blockpos, blockstate, f)) {
+                            toBlow_.add(blockpos.asLong());
+                            continue;
+                        }
+                        if (!this.hasTheme || f <= -this.themeStrength || blockstate.isAir()) continue;
+                        long pos = blockpos.asLong();
+                        if (f > almostBroke.get(pos)) almostBroke.put(pos, f);
                     }
                 }
             }
@@ -213,79 +220,76 @@ public class BombExplosion extends Explosion {
         Vec3 vec3 = new Vec3(this.x_, this.y_, this.z_);
 
         for (Entity entity : list) {
-            if (!entity.ignoreExplosion()) {
-                double d12 = Math.sqrt(entity.distanceToSqr(vec3)) / (double) f2;
-                if (d12 <= 1.0D) {
-                    double d5 = entity.getX() - this.x_;
-                    double d7 = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - this.y_;
-                    double d9 = entity.getZ() - this.z_;
-                    double d13 = Math.sqrt(d5 * d5 + d7 * d7 + d9 * d9);
-                    if (d13 != 0.0D) {
-                        d5 /= d13;
-                        d7 /= d13;
-                        d9 /= d13;
-                        double d14 = (double) getSeenPercent(vec3, entity);
-                        double d10 = (1.0D - d12) * d14;
+            if (entity.ignoreExplosion()) continue;
+            double d12 = Math.sqrt(entity.distanceToSqr(vec3)) / (double) f2;
 
-                        // Modifier adaptation
-                        float damageAmount = (float) ((int) ((d10 * d10 + d10) / 2.0D * 7.0D * (double) f2 + 1.0D));
-                        if (!this.hasLethalModifier) {
-                            damageAmount *= 0.5F;
-                        }
+            if (d12 > 1.0D) continue;
+            double d5 = entity.getX() - this.x_;
+            double d7 = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - this.y_;
+            double d9 = entity.getZ() - this.z_;
+            double d13 = Math.sqrt(d5 * d5 + d7 * d7 + d9 * d9);
 
-                        if ((entity instanceof ItemEntity || entity instanceof AbstractMinecart || entity instanceof Boat)) {
-                            if (!this.hasGentleModifier) {
-                                entity.hurt(this.getDamageSource(), damageAmount);
-                            }
-                        } else if (!this.hasPacifiedModifier) {
-                            entity.hurt(this.getDamageSource(), damageAmount);
-                        }
+            if (d13 == 0.0D) continue;
+            d5 /= d13;
+            d7 /= d13;
+            d9 /= d13;
+            double d14 = (double) getSeenPercent(vec3, entity);
+            double d10 = (1.0D - d12) * d14;
 
-                        double d11;
-                        if (entity instanceof LivingEntity livingEntity) {
-                            d11 = ProtectionEnchantment.getExplosionKnockbackAfterDampener(livingEntity, d10);
+            // Modifier adaptation
+            float damageAmount = (float) ((int) ((d10 * d10 + d10) / 2.0D * 7.0D * (double) f2 + 1.0D));
+            if (!this.hasLethalModifier) {
+                damageAmount *= 0.5F;
+            }
 
-                            if (this.stack.hasTag() && (this.stack.getTag().contains("Potion") || this.stack.getTag().contains("CustomPotionEffects"))) {
-                                if (this.hasLadenModifier) {
-                                    for (MobEffectInstance baseEffect : PotionUtils.getMobEffects(this.stack)) {
-                                        livingEntity.addEffect(new MobEffectInstance(
-                                                baseEffect.getEffect(),
-                                                (int)(baseEffect.getDuration() * (d10)),
-                                                baseEffect.getAmplifier(),
-                                                baseEffect.isAmbient(),
-                                                baseEffect.isVisible()
-                                        ));
-                                    }
-                                }
-                            }
+            if ((entity instanceof ItemEntity || entity instanceof AbstractMinecart || entity instanceof Boat)) {
+                if (!this.hasGentleModifier) {
+                    entity.hurt(this.getDamageSource(), damageAmount);
+                }
+            } else if (!this.hasPacifiedModifier) {
+                entity.hurt(this.getDamageSource(), damageAmount);
+            }
 
-                            if (this.hasFrostModifier) {
-                                livingEntity.setTicksFrozen(livingEntity.getTicksFrozen() + (int) (30.0F * this.radius_ * d10));
-                            }
+            double d11;
+            if (entity instanceof LivingEntity livingEntity) {
+                d11 = ProtectionEnchantment.getExplosionKnockbackAfterDampener(livingEntity, d10);
 
-                        } else {
-                            d11 = d10;
-                        }
-
-                        d5 *= d11;
-                        d7 *= d11;
-                        d9 *= d11;
-                        Vec3 vec31 = new Vec3(d5, d7, d9);
-
-                        // Modifier adaptation
-                        if (!this.hasDampenedModifier) {
-                            if (this.hasShockwaveModifier) {
-                                vec31 = vec31.scale(2.0);
-                            }
-                            entity.setDeltaMovement(entity.getDeltaMovement().add(vec31));
-                        }
-
-                        if (entity instanceof Player player) {
-                            if (!player.isSpectator() && (!player.isCreative() || !player.getAbilities().flying)) {
-                                this.hitPlayers_.put(player, vec31);
-                            }
-                        }
+                if (this.hasLadenModifier) {
+                    for (MobEffectInstance baseEffect : PotionUtils.getMobEffects(this.stack)) {
+                        livingEntity.addEffect(new MobEffectInstance(
+                                baseEffect.getEffect(),
+                                (int)(baseEffect.getDuration() * (d10)),
+                                baseEffect.getAmplifier(),
+                                baseEffect.isAmbient(),
+                                baseEffect.isVisible()
+                        ));
                     }
+                }
+
+                if (this.hasFrostModifier) {
+                    livingEntity.setTicksFrozen(livingEntity.getTicksFrozen() + (int) (30.0F * this.radius_ * d10));
+                }
+
+            } else {
+                d11 = d10;
+            }
+
+            d5 *= d11;
+            d7 *= d11;
+            d9 *= d11;
+            Vec3 vec31 = new Vec3(d5, d7, d9);
+
+            // Modifier adaptation
+            if (!this.hasDampenedModifier) {
+                if (this.hasShockwaveModifier) {
+                    vec31 = vec31.scale(2.0);
+                }
+                entity.setDeltaMovement(entity.getDeltaMovement().add(vec31));
+            }
+
+            if (entity instanceof Player player) {
+                if (!player.isSpectator() && (!player.isCreative() || !player.getAbilities().flying)) {
+                    this.hitPlayers_.put(player, vec31);
                 }
             }
         }
@@ -297,35 +301,34 @@ public class BombExplosion extends Explosion {
             }
         }
 
-        if(this.hasImbuedModifier){
-            List<MobEffectInstance> effects = PotionUtils.getMobEffects(stack);
-            if(!effects.isEmpty()){
-                AreaEffectCloud cloud = new AreaEffectCloud(
-                        this.level_, this.x_, this.y_, this.z_);
+        if(!this.hasImbuedModifier) return;
+        List<MobEffectInstance> effects = PotionUtils.getMobEffects(stack);
 
-                cloud.setRadius(this.radius_ - 0.5F);
-                cloud.setRadiusOnUse(-0.2F);
-                cloud.setWaitTime(10);
-                cloud.setDuration(100 * (int)radius_);
-                cloud.setRadiusPerTick(-cloud.getRadius() / cloud.getDuration());
+        if(effects.isEmpty()) return;
+        AreaEffectCloud cloud = new AreaEffectCloud(
+                this.level_, this.x_, this.y_, this.z_);
 
-                if(this.stack.hasTag() && this.stack.getTag().contains("CustomPotionEffects")){
-                    for(MobEffectInstance effect : effects){
-                        cloud.addEffect(new MobEffectInstance(
-                                effect.getEffect(),
-                                effect.getDuration() / 4,
-                                effect.getAmplifier(),
-                                effect.isAmbient(),
-                                effect.isVisible()
-                        ));
-                    }
-                } else {
-                    cloud.setPotion(PotionUtils.getPotion(stack));
-                }
+        cloud.setRadius(this.radius_ - 0.5F);
+        cloud.setRadiusOnUse(-0.2F);
+        cloud.setWaitTime(10);
+        cloud.setDuration(100 * (int) radius_);
+        cloud.setRadiusPerTick(-cloud.getRadius() / cloud.getDuration());
 
-                this.level_.addFreshEntity(cloud);
+        if (this.stack.getTag().contains("CustomPotionEffects")) {
+            for (MobEffectInstance effect : effects) {
+                cloud.addEffect(new MobEffectInstance(
+                        effect.getEffect(),
+                        effect.getDuration() / 4,
+                        effect.getAmplifier(),
+                        effect.isAmbient(),
+                        effect.isVisible()
+                ));
             }
+        } else {
+            cloud.setPotion(PotionUtils.getPotion(stack));
         }
+
+        this.level_.addFreshEntity(cloud);
     }
 
     /**

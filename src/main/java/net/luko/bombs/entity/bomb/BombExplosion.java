@@ -4,10 +4,7 @@ import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.floats.Float2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.longs.Long2FloatMap;
-import it.unimi.dsi.fastutil.longs.Long2FloatOpenHashMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.longs.*;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.util.*;
@@ -57,6 +54,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
@@ -77,13 +75,12 @@ public class BombExplosion extends Explosion {
     @Nullable
     private final Entity source_;
     private final float radius_;
-    private final DamageSource damageSource_;
+    private final int estimatedCubicSize;
     private final ExplosionDamageCalculator damageCalculator_;
-    private final LongOpenHashSet toBlow_ = new LongOpenHashSet();
-    private final Long2FloatOpenHashMap almostBroke = new Long2FloatOpenHashMap();
+    private final LongOpenHashSet toBlow_;
+    private final Long2FloatOpenHashMap almostBroke;
 
     private final Map<Player, Vec3> hitPlayers_ = Maps.newHashMap();
-    private final Vec3 position_;
     private final ItemStack stack;
     private final ThemeData themeData;
     private final float themeStrength;
@@ -98,7 +95,7 @@ public class BombExplosion extends Explosion {
     private final boolean hasDampenedModifier;
     private final boolean hasShockwaveModifier;
     private final boolean hasImbuedModifier;
-    private float dropChance;
+    private final float dropChance;
 
     public BombExplosion(Level pLevel, @Nullable Entity pSource, @Nullable DamageSource pDamageSource, @Nullable ExplosionDamageCalculator pDamageCalculator, double pToBlowX, double pToBlowY, double pToBlowZ, float pRadius, boolean pFire, Explosion.BlockInteraction pBlockInteraction, ItemStack stack) {
         super(pLevel, pSource, pDamageSource, pDamageCalculator, pToBlowX, pToBlowY, pToBlowZ, pRadius, pFire, pBlockInteraction);
@@ -110,11 +107,9 @@ public class BombExplosion extends Explosion {
         this.z_ = pToBlowZ;
         this.fire_ = pFire;
         this.blockInteraction_ = pBlockInteraction;
-        this.damageSource_ = pDamageSource == null ? pLevel.damageSources().explosion(this) : pDamageSource;
         this.damageCalculator_ = pDamageCalculator == null
                 ? (pSource == null ? EXPLOSION_DAMAGE_CALCULATOR_ : new EntityBasedExplosionDamageCalculator(pSource))
                 : pDamageCalculator;
-        this.position_ = new Vec3(this.x_, this.y_, this.z_);
 
         this.stack = stack;
 
@@ -139,6 +134,10 @@ public class BombExplosion extends Explosion {
         this.hasImbuedModifier = BombModifierUtil.hasModifier(stack, "imbued");
         this.dropChance = Math.min(1.0F, 10.0F / radius_);
 
+        estimatedCubicSize = (int)(radius_ * radius_ * radius_ * 2);
+        toBlow_ = new LongOpenHashSet(estimatedCubicSize);
+        almostBroke = new Long2FloatOpenHashMap(estimatedCubicSize);
+
         almostBroke.defaultReturnValue(Float.NEGATIVE_INFINITY);
     }
 
@@ -151,7 +150,7 @@ public class BombExplosion extends Explosion {
 
         BlockPos.MutableBlockPos blockpos = new BlockPos.MutableBlockPos();
 
-        Long2ObjectOpenHashMap<CachedVoxel> voxelCache = new Long2ObjectOpenHashMap<>();
+        Long2ObjectOpenHashMap<CachedVoxel> voxelCache = new Long2ObjectOpenHashMap<>(estimatedCubicSize);
 
         int gridSize = 4 + (int)Math.floor(Math.pow(this.radius_, 1.4));
         int rayCount = gridSize * gridSize;
@@ -397,18 +396,18 @@ public class BombExplosion extends Explosion {
                 pitch
         );
 
-        boolean flag = this.interactsWithBlocks();
-
         // Restructured particle spawning
         if (this.level_ instanceof ServerLevel serverLevel) {
             spawnParticles(serverLevel);
         }
 
-        if (flag) {
+        if (this.interactsWithBlocks()) {
             ObjectArrayList<Pair<ItemStack, BlockPos>> objectarraylist = new ObjectArrayList<>();
             boolean flag1 = this.getIndirectSourceEntity() instanceof Player;
 
-            for(BlockPos blockpos : this.toBlow_.longStream().mapToObj(BlockPos::of).toList()) {
+            LongIterator iterator = this.toBlow_.iterator();
+            while (iterator.hasNext()) {
+                BlockPos blockpos = BlockPos.of(iterator.nextLong());
                 BlockState blockstate = this.level_.getBlockState(blockpos);
                 if (!blockstate.isAir()) {
                     BlockPos blockpos1 = blockpos.immutable();

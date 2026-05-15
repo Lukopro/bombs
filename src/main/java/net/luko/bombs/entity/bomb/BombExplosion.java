@@ -2,6 +2,8 @@ package net.luko.bombs.entity.bomb;
 
 import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Pair;
+import it.unimi.dsi.fastutil.floats.Float2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2FloatMap;
 import it.unimi.dsi.fastutil.longs.Long2FloatOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
@@ -109,7 +111,9 @@ public class BombExplosion extends Explosion {
         this.fire_ = pFire;
         this.blockInteraction_ = pBlockInteraction;
         this.damageSource_ = pDamageSource == null ? pLevel.damageSources().explosion(this) : pDamageSource;
-        this.damageCalculator_ = pDamageCalculator == null ? this.makeDamageCalculator(pSource) : pDamageCalculator;
+        this.damageCalculator_ = pDamageCalculator == null
+                ? (pSource == null ? EXPLOSION_DAMAGE_CALCULATOR_ : new EntityBasedExplosionDamageCalculator(pSource))
+                : pDamageCalculator;
         this.position_ = new Vec3(this.x_, this.y_, this.z_);
 
         this.stack = stack;
@@ -138,10 +142,6 @@ public class BombExplosion extends Explosion {
         almostBroke.defaultReturnValue(Float.NEGATIVE_INFINITY);
     }
 
-    private ExplosionDamageCalculator makeDamageCalculator(@Nullable Entity pEntity) {
-        return (ExplosionDamageCalculator)(pEntity == null ? EXPLOSION_DAMAGE_CALCULATOR_ : new EntityBasedExplosionDamageCalculator(pEntity));
-    }
-
     /**
      * Does the first part of the explosion (destroy blocks)
      */
@@ -151,109 +151,106 @@ public class BombExplosion extends Explosion {
 
         BlockPos.MutableBlockPos blockpos = new BlockPos.MutableBlockPos();
 
-        int gridSize = 4 + (int)Math.floor(Math.pow(this.radius_, 1.4));
-
         Long2ObjectOpenHashMap<CachedVoxel> voxelCache = new Long2ObjectOpenHashMap<>();
 
-        for(int j = 0; j < gridSize; ++j) {
-            for(int k = 0; k < gridSize; ++k) {
-                for(int l = 0; l < gridSize; ++l) {
-                    if (!(j == 0 || j == gridSize - 1 || k == 0 || k == gridSize - 1 || l == 0 || l == gridSize - 1)) continue;
-                    double d0 = (float)j / (float)(gridSize - 1) * 2.0F - 1.0F;
-                    double d1 = (float)k / (float)(gridSize - 1) * 2.0F - 1.0F;
-                    double d2 = (float)l / (float)(gridSize - 1) * 2.0F - 1.0F;
-                    double d3 = Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2);
-                    d0 /= d3;
-                    d1 /= d3;
-                    d2 /= d3;
+        int gridSize = 4 + (int)Math.floor(Math.pow(this.radius_, 1.4));
+        int rayCount = gridSize * gridSize;
 
-                    float f = this.radius_ * (0.7F + this.level_.random.nextFloat() * 0.6F);
-                    int voxelX = Mth.floor(this.x_);
-                    int voxelY = Mth.floor(this.y_);
-                    int voxelZ = Mth.floor(this.z_);
+        double goldenAngle = Math.PI * (3.0D - Math.sqrt(5.0D));
 
-                    // axis-aligned rays should not step, so step = 0 is not required
-                    int stepX = d0 > 0 ? 1 : -1;
-                    int stepY = d1 > 0 ? 1 : -1;
-                    int stepZ = d2 > 0 ? 1 : -1;
+        for (int ray = 0; ray < rayCount; ray++) {
+            double d1 = 1.0D - (2.0D * ray) / (rayCount - 1);
+            double radial = Math.sqrt(1.0D - d1 * d1);
+            double theta = goldenAngle * ray;
 
-                    double tDeltaX = d0 == 0 ? Double.MAX_VALUE : Math.abs(1.0D / d0);
-                    double tDeltaY = d1 == 0 ? Double.MAX_VALUE : Math.abs(1.0D / d1);
-                    double tDeltaZ = d2 == 0 ? Double.MAX_VALUE : Math.abs(1.0D / d2);
+            double d0 = Math.cos(theta) * radial;
+            double d2 = Math.sin(theta) * radial;
 
-                    double nextBoundaryX = stepX > 0 ? voxelX + 1.0D : voxelX;
-                    double nextBoundaryY = stepY > 0 ? voxelY + 1.0D : voxelY;
-                    double nextBoundaryZ = stepZ > 0 ? voxelZ + 1.0D : voxelZ;
+            // axis-aligned rays should not step, so step = 0 is not required
+            int stepX = d0 > 0 ? 1 : -1;
+            int stepY = d1 > 0 ? 1 : -1;
+            int stepZ = d2 > 0 ? 1 : -1;
 
-                    double tMaxX = d0 == 0 ? Double.MAX_VALUE : (nextBoundaryX - this.x_) / d0;
-                    double tMaxY = d1 == 0 ? Double.MAX_VALUE : (nextBoundaryY - this.y_) / d1;
-                    double tMaxZ = d2 == 0 ? Double.MAX_VALUE : (nextBoundaryZ - this.z_) / d2;
+            double tDeltaX = d0 == 0 ? Double.MAX_VALUE : Math.abs(1.0D / d0);
+            double tDeltaY = d1 == 0 ? Double.MAX_VALUE : Math.abs(1.0D / d1);
+            double tDeltaZ = d2 == 0 ? Double.MAX_VALUE : Math.abs(1.0D / d2);
 
-                    float currentT = 0F;
-                    float lastStepTraveledDistance;
+            float f = this.radius_ * (0.7F + this.level_.random.nextFloat() * 0.6F);
+            int voxelX = Mth.floor(this.x_);
+            int voxelY = Mth.floor(this.y_);
+            int voxelZ = Mth.floor(this.z_);
 
-                    for(; f > -this.themeStrength / 3.0F; f -= 0.75F * lastStepTraveledDistance) {
-                        blockpos.set(voxelX, voxelY, voxelZ);
-                        long longpos = blockpos.asLong();
+            double nextBoundaryX = stepX > 0 ? voxelX + 1.0D : voxelX;
+            double nextBoundaryY = stepY > 0 ? voxelY + 1.0D : voxelY;
+            double nextBoundaryZ = stepZ > 0 ? voxelZ + 1.0D : voxelZ;
 
-                        if (!this.level_.isInWorldBounds(blockpos)) break;
+            double tMaxX = d0 == 0 ? Double.MAX_VALUE : (nextBoundaryX - this.x_) / d0;
+            double tMaxY = d1 == 0 ? Double.MAX_VALUE : (nextBoundaryY - this.y_) / d1;
+            double tMaxZ = d2 == 0 ? Double.MAX_VALUE : (nextBoundaryZ - this.z_) / d2;
 
-                        // Advance voxel
-                        float nextT;
-                        if (tMaxX < tMaxY) {
-                            if (tMaxX < tMaxZ) {
-                                nextT = (float) tMaxX;
-                                voxelX += stepX;
-                                tMaxX += tDeltaX;
-                            } else {
-                                nextT = (float) tMaxZ;
-                                voxelZ += stepZ;
-                                tMaxZ += tDeltaZ;
-                            }
-                        } else {
-                            if (tMaxY < tMaxZ) {
-                                nextT = (float) tMaxY;
-                                voxelY += stepY;
-                                tMaxY += tDeltaY;
-                            } else {
-                                nextT = (float) tMaxZ;
-                                voxelZ += stepZ;
-                                tMaxZ += tDeltaZ;
-                            }
-                        }
+            float currentT = 0F;
+            float lastStepTraveledDistance;
 
-                        lastStepTraveledDistance = nextT - currentT;
-                        currentT = nextT;
+            for(; f > -this.themeStrength / 3.0F; f -= 0.75F * lastStepTraveledDistance) {
+                blockpos.set(voxelX, voxelY, voxelZ);
+                long longpos = blockpos.asLong();
 
-                        CachedVoxel voxelData = voxelCache.get(longpos);
+                if (!this.level_.isInWorldBounds(blockpos)) break;
 
-                        if (voxelData == null) {
-                            BlockState blockstate;
-                            FluidState fluidstate = this.level_.getFluidState(blockpos);
-
-                            if (this.hasEvaporateModifier && fluidstate.is(FluidTags.WATER)) {
-                                blockstate = Blocks.AIR.defaultBlockState();
-                            } else {
-                                blockstate = this.level_.getBlockState(blockpos);
-                            }
-
-                            float resistance = this.damageCalculator_.getBlockExplosionResistance(
-                                    this, this.level_, blockpos, blockstate, fluidstate).orElse(0.0F);
-
-                            voxelData = new CachedVoxel(blockstate, resistance);
-                            voxelCache.put(longpos, voxelData);
-                        }
-
-                        f -= (voxelData.resistance + 0.3F) * lastStepTraveledDistance;
-
-                        if (f > 0.0F && this.damageCalculator_.shouldBlockExplode(this, this.level_, blockpos, voxelData.blockstate, f)) {
-                            toBlow_.add(longpos);
-                            continue;
-                        }
-                        if (!this.hasTheme || f <= -this.themeStrength || voxelData.blockstate.isAir()) continue;
-                        if (f > almostBroke.get(longpos)) almostBroke.put(longpos, f);
+                // Advance voxel
+                float nextT;
+                if (tMaxX < tMaxY) {
+                    if (tMaxX < tMaxZ) {
+                        nextT = (float) tMaxX;
+                        voxelX += stepX;
+                        tMaxX += tDeltaX;
+                    } else {
+                        nextT = (float) tMaxZ;
+                        voxelZ += stepZ;
+                        tMaxZ += tDeltaZ;
+                    }
+                } else {
+                    if (tMaxY < tMaxZ) {
+                        nextT = (float) tMaxY;
+                        voxelY += stepY;
+                        tMaxY += tDeltaY;
+                    } else {
+                        nextT = (float) tMaxZ;
+                        voxelZ += stepZ;
+                        tMaxZ += tDeltaZ;
                     }
                 }
+
+                lastStepTraveledDistance = nextT - currentT;
+                currentT = nextT;
+
+                CachedVoxel voxelData = voxelCache.getOrDefault(longpos, null);
+
+                if (voxelData == null) {
+                    BlockState blockstate;
+                    FluidState fluidstate = this.level_.getFluidState(blockpos);
+
+                    if (this.hasEvaporateModifier && fluidstate.is(FluidTags.WATER)) {
+                        blockstate = Blocks.AIR.defaultBlockState();
+                    } else {
+                        blockstate = this.level_.getBlockState(blockpos);
+                    }
+
+                    float resistance = this.damageCalculator_.getBlockExplosionResistance(
+                            this, this.level_, blockpos, blockstate, fluidstate).orElse(0.0F);
+
+                    voxelData = new CachedVoxel(blockstate.isAir(), resistance);
+                    voxelCache.put(longpos, voxelData);
+                }
+
+                f -= (voxelData.resistance + 0.3F) * lastStepTraveledDistance;
+
+                if (f > 0.0F) {
+                    toBlow_.add(longpos);
+                    continue;
+                }
+                if (!this.hasTheme || f <= -this.themeStrength || voxelData.isAir) continue;
+                if (f > almostBroke.get(longpos)) almostBroke.put(longpos, f);
             }
         }
 
@@ -527,5 +524,5 @@ public class BombExplosion extends Explosion {
         pDropPositionArray.add(Pair.of(pStack, pPos));
     }
 
-    private record CachedVoxel (BlockState blockstate, float resistance) {}
+    private record CachedVoxel (boolean isAir, float resistance) {}
 }

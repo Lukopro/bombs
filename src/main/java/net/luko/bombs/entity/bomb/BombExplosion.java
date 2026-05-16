@@ -332,16 +332,14 @@ public class BombExplosion extends Explosion {
                 lastStepTraveledDistance = nextT - currentT;
                 currentT = nextT;
 
-                CachedVoxel voxelData = voxelCache.getOrDefault(longpos, null);
+                CachedVoxel voxelData = voxelCache.get(longpos);
 
                 if (voxelData == null) {
-                    BlockState blockstate;
-                    FluidState fluidstate = this.level_.getFluidState(blockpos);
+                    BlockState blockstate = this.level_.getBlockState(blockpos);
+                    FluidState fluidstate = blockstate.getFluidState();
 
                     if (this.hasEvaporateModifier && fluidstate.is(FluidTags.WATER)) {
                         blockstate = Blocks.AIR.defaultBlockState();
-                    } else {
-                        blockstate = this.level_.getBlockState(blockpos);
                     }
 
                     float resistance = this.damageCalculator_.getBlockExplosionResistance(
@@ -518,62 +516,66 @@ public class BombExplosion extends Explosion {
             while (iterator.hasNext()) {
                 BlockPos blockpos = BlockPos.of(iterator.nextLong());
                 BlockState blockstate = this.level_.getBlockState(blockpos);
-                if (!blockstate.isAir()) {
-                    BlockPos blockpos1 = blockpos.immutable();
-                    if (blockstate.canDropFromExplosion(this.level_, blockpos, this)) {
-                        if (this.level_ instanceof ServerLevel serverlevel) {
-                            BlockEntity blockentity = blockstate.hasBlockEntity() ? this.level_.getBlockEntity(blockpos) : null;
 
-                            LootParams.Builder lootparams$builder = (new LootParams.Builder(serverlevel))
-                                    .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(blockpos))
-                                    .withParameter(LootContextParams.TOOL, ItemStack.EMPTY)
-                                    .withOptionalParameter(LootContextParams.BLOCK_ENTITY, blockentity)
-                                    .withOptionalParameter(LootContextParams.THIS_ENTITY, this.source_);
+                if (blockstate.isAir()) continue;
+                if (blockstate.canDropFromExplosion(this.level_, blockpos, this)) {
+                    if (this.level_ instanceof ServerLevel serverlevel) {
+                        BlockEntity blockentity = blockstate.hasBlockEntity() ? this.level_.getBlockEntity(blockpos) : null;
 
-                            if (this.blockInteraction_ == Explosion.BlockInteraction.DESTROY_WITH_DECAY) {
-                                lootparams$builder.withParameter(LootContextParams.EXPLOSION_RADIUS, this.radius_);
-                            }
+                        LootParams.Builder lootparams$builder = (new LootParams.Builder(serverlevel))
+                                .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(blockpos))
+                                .withParameter(LootContextParams.TOOL, ItemStack.EMPTY)
+                                .withOptionalParameter(LootContextParams.BLOCK_ENTITY, blockentity)
+                                .withOptionalParameter(LootContextParams.THIS_ENTITY, this.source_);
 
-                            blockstate.spawnAfterBreak(serverlevel, blockpos, ItemStack.EMPTY, flag1);
-                            blockstate.getDrops(lootparams$builder).forEach((p_46074_) -> {
-                                if (random_.nextFloat() < this.dropChance) addBlockDrops(objectarraylist, p_46074_, blockpos1);
-                            });
+                        if (this.blockInteraction_ == Explosion.BlockInteraction.DESTROY_WITH_DECAY) {
+                            lootparams$builder.withParameter(LootContextParams.EXPLOSION_RADIUS, this.radius_);
                         }
-                    }
 
-                    blockstate.onBlockExploded(this.level_, blockpos, this);
+                        blockstate.spawnAfterBreak(serverlevel, blockpos, ItemStack.EMPTY, flag1);
+                        blockstate.getDrops(lootparams$builder).forEach((p_46074_) -> {
+                            if (random_.nextFloat() < this.dropChance) addBlockDrops(objectarraylist, p_46074_, blockpos);
+                        });
+                    }
                 }
+
+                blockstate.onBlockExploded(this.level_, blockpos, this);
             }
 
             if(this.hasTheme){
                 for(Long2FloatMap.Entry entry : this.almostBroke.long2FloatEntrySet()){
                     BlockPos pos = BlockPos.of(entry.getLongKey());
-                    if(this.toBlow_.contains(pos.asLong())) continue;
                     float f = entry.getFloatValue();
+
+                    if(f > 0) continue;
 
                     BlockState replacement = this.themeData.getReplacementBlock(f);
                     if(replacement == null || replacement == Blocks.AIR.defaultBlockState()) continue;
 
-                    BlockState oldState = this.level_.getBlockState(pos);
                     BlockEntity blockEntity = this.level_.getBlockEntity(pos);
 
-                    if (blockEntity != null) {
-                        if(blockEntity instanceof Container container){
-                            Containers.dropContents(this.level_, pos, container);
-                        } else {
-                            LazyOptional<IItemHandler> capability = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER);
-
-                            if(capability.isPresent()){
-                                IItemHandler handler = capability.orElseThrow(() -> new IllegalStateException("Expected IItemHandler not found for block at " + pos));
-                                for(int i = 0; i < handler.getSlots(); i++){
-                                    ItemStack stack  = handler.getStackInSlot(i);
-                                    if (!stack.isEmpty()) Block.popResource(level_, pos, stack);
-                                }
-                            }
-                        }
-                        oldState.onRemove(this.level_, pos, oldState, false);
+                    if (blockEntity == null) {
+                        this.level_.setBlockAndUpdate(pos, replacement);
+                        continue;
                     }
 
+                    BlockState oldState = this.level_.getBlockState(pos);
+
+                    if(blockEntity instanceof Container container){
+                        Containers.dropContents(this.level_, pos, container);
+                    } else {
+                        LazyOptional<IItemHandler> capability = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER);
+
+                        if(capability.isPresent()){
+                            IItemHandler handler = capability.orElseThrow(() -> new IllegalStateException("Expected IItemHandler not found for block at " + pos));
+                            for(int i = 0; i < handler.getSlots(); i++){
+                                ItemStack stack  = handler.getStackInSlot(i);
+                                if (!stack.isEmpty()) Block.popResource(level_, pos, stack);
+                            }
+                        }
+                    }
+
+                    oldState.onRemove(this.level_, pos, replacement, false);
                     this.level_.setBlockAndUpdate(pos, replacement);
                 }
             }
@@ -585,9 +587,12 @@ public class BombExplosion extends Explosion {
         }
 
         if (this.fire_) {
-            for(BlockPos blockpos2 : this.toBlow_.longStream().mapToObj(BlockPos::of).toList()) {
-                if (this.random_.nextInt(3) == 0 && this.level_.getBlockState(blockpos2).isAir() && this.level_.getBlockState(blockpos2.below()).isSolidRender(this.level_, blockpos2.below())) {
-                    this.level_.setBlockAndUpdate(blockpos2, BaseFireBlock.getState(this.level_, blockpos2));
+            LongIterator iterator = this.toBlow_.iterator();
+            while (iterator.hasNext()) {
+                BlockPos pos = BlockPos.of(iterator.nextLong());
+
+                if (this.random_.nextInt(3) == 0 && this.level_.getBlockState(pos).isAir() && this.level_.getBlockState(pos.below()).isSolidRender(this.level_, pos.below())) {
+                    this.level_.setBlockAndUpdate(pos, BaseFireBlock.getState(this.level_, pos));
                 }
             }
         }
@@ -618,13 +623,12 @@ public class BombExplosion extends Explosion {
         for(int j = 0; j < i; ++j) {
             Pair<ItemStack, BlockPos> pair = pDropPositionArray.get(j);
             ItemStack itemstack = pair.getFirst();
-            if (ItemEntity.areMergable(itemstack, pStack)) {
-                ItemStack itemstack1 = ItemEntity.merge(itemstack, pStack, 16);
-                pDropPositionArray.set(j, Pair.of(itemstack1, pair.getSecond()));
-                if (pStack.isEmpty()) {
-                    return;
-                }
-            }
+
+            if (!ItemEntity.areMergable(itemstack, pStack)) continue;
+            ItemStack itemstack1 = ItemEntity.merge(itemstack, pStack, 16);
+            pDropPositionArray.set(j, Pair.of(itemstack1, pair.getSecond()));
+
+            if (pStack.isEmpty()) return;
         }
 
         pDropPositionArray.add(Pair.of(pStack, pPos));

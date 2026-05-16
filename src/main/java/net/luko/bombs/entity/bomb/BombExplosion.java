@@ -54,8 +54,10 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
@@ -141,6 +143,113 @@ public class BombExplosion extends Explosion {
         almostBroke.defaultReturnValue(Float.NEGATIVE_INFINITY);
     }
 
+    // Find clips directly, avoids overhead from built-in functions
+    public static float getSeenPercent(Vec3 pExplosionVector, Entity pEntity) {
+        AABB aabb = pEntity.getBoundingBox();
+        double d0 = 1.0D / ((aabb.maxX - aabb.minX) * 2.0D + 1.0D);
+        double d1 = 1.0D / ((aabb.maxY - aabb.minY) * 2.0D + 1.0D);
+        double d2 = 1.0D / ((aabb.maxZ - aabb.minZ) * 2.0D + 1.0D);
+        if (d0 < 0D || d1 < 0D || d2 < 0D) return 0.0F;
+        double d3 = (1.0D - Math.floor(1.0D / d0) * d0) / 2.0D;
+        double d4 = (1.0D - Math.floor(1.0D / d2) * d2) / 2.0D;
+        int i = 0;
+        int j = 0;
+
+        for(double d5 = 0.0D; d5 <= 1.0D; d5 += d0) {
+            for(double d6 = 0.0D; d6 <= 1.0D; d6 += d1) {
+                for(double d7 = 0.0D; d7 <= 1.0D; d7 += d2) {
+                    double d8 = Mth.lerp(d5, aabb.minX, aabb.maxX);
+                    double d9 = Mth.lerp(d6, aabb.minY, aabb.maxY);
+                    double d10 = Mth.lerp(d7, aabb.minZ, aabb.maxZ);
+                    Vec3 vec3 = new Vec3(d8 + d3, d9, d10 + d4);
+                    if (isUnobstructed(vec3, pExplosionVector, pEntity.level())) {
+                        ++i;
+                    }
+
+                    ++j;
+                }
+            }
+        }
+
+        return (float)i / (float)j;
+    }
+
+    private static boolean isUnobstructed(Vec3 from, Vec3 to, Level level) {
+        if (from.equals(to)) return true;
+
+        double dx = to.x - from.x;
+        double dy = to.y - from.y;
+        double dz = to.z - from.z;
+
+        int x = Mth.floor(from.x);
+        int y = Mth.floor(from.y);
+        int z = Mth.floor(from.z);
+
+        int endX = Mth.floor(to.x);
+        int endY = Mth.floor(to.y);
+        int endZ = Mth.floor(to.z);
+
+        int stepX = endX > x ? 1 : -1;
+        int stepY = endY > y ? 1 : -1;
+        int stepZ = endZ > z ? 1 : -1;
+
+        double tDeltaX = Math.abs(1D / dx);
+        double tDeltaY = Math.abs(1D / dy);
+        double tDeltaZ = Math.abs(1D / dz);
+
+        double nextBoundaryX = stepX > 0 ? (x + 1D) : x;
+        double nextBoundaryY = stepY > 0 ? (y + 1D) : y;
+        double nextBoundaryZ = stepZ > 0 ? (z + 1D) : z;
+
+        double tMaxX = (nextBoundaryX - from.x) / dx;
+        double tMaxY = (nextBoundaryY - from.y) / dy;
+        double tMaxZ = (nextBoundaryZ - from.z) / dz;
+
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+
+        double currentT = 0D;
+
+        while (currentT <= 1.0) {
+            pos.set(x, y, z);
+
+            // step
+            if (tMaxX < tMaxY) {
+                if (tMaxX < tMaxZ) {
+                    x += stepX;
+                    currentT = tMaxX;
+                    tMaxX += tDeltaX;
+                } else {
+                    z += stepZ;
+                    currentT = tMaxZ;
+                    tMaxZ += tDeltaZ;
+                }
+            } else {
+                if (tMaxY < tMaxZ) {
+                    y += stepY;
+                    currentT = tMaxY;
+                    tMaxY += tDeltaY;
+                } else {
+                    z += stepZ;
+                    currentT = tMaxZ;
+                    tMaxZ += tDeltaZ;
+                }
+            }
+
+            BlockState state = level.getBlockState(pos);
+
+            if (state.isAir()) continue;
+
+            if (state.isCollisionShapeFullBlock(level, pos)) return false;
+
+            VoxelShape shape = state.getCollisionShape(level, pos);
+
+            BlockHitResult hit = shape.clip(from, to, pos);
+            if (hit != null && hit.getType() != HitResult.Type.MISS) return false;
+        }
+
+        return true;
+    }
+
     /**
      * Does the first part of the explosion (destroy blocks)
      */
@@ -152,7 +261,7 @@ public class BombExplosion extends Explosion {
 
         Long2ObjectOpenHashMap<CachedVoxel> voxelCache = new Long2ObjectOpenHashMap<>(estimatedCubicSize);
 
-        int gridSize = 4 + (int)Math.floor(Math.pow(this.radius_, 1.4));
+        int gridSize = 4 + (int)Math.floor(Math.pow(this.radius_, 1.45));
         int rayCount = gridSize * gridSize;
 
         double goldenAngle = Math.PI * (3.0D - Math.sqrt(5.0D));
@@ -278,7 +387,7 @@ public class BombExplosion extends Explosion {
             d5 /= d13;
             d7 /= d13;
             d9 /= d13;
-            double d14 = (double) getSeenPercent(vec3, entity);
+            double d14 = (double) BombExplosion.getSeenPercent(vec3, entity);
             double d10 = (1.0D - d12) * d14;
 
             // Modifier adaptation
@@ -411,7 +520,6 @@ public class BombExplosion extends Explosion {
                 BlockState blockstate = this.level_.getBlockState(blockpos);
                 if (!blockstate.isAir()) {
                     BlockPos blockpos1 = blockpos.immutable();
-                    this.level_.getProfiler().push("explosion_blocks");
                     if (blockstate.canDropFromExplosion(this.level_, blockpos, this)) {
                         if (this.level_ instanceof ServerLevel serverlevel) {
                             BlockEntity blockentity = blockstate.hasBlockEntity() ? this.level_.getBlockEntity(blockpos) : null;
@@ -434,7 +542,6 @@ public class BombExplosion extends Explosion {
                     }
 
                     blockstate.onBlockExploded(this.level_, blockpos, this);
-                    this.level_.getProfiler().pop();
                 }
             }
 

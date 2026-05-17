@@ -5,6 +5,8 @@ import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.floats.Float2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.*;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.util.*;
@@ -17,6 +19,7 @@ import net.luko.bombs.util.BombModifierUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.resources.ResourceLocation;
@@ -40,6 +43,7 @@ import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.enchantment.ProtectionEnchantment;
@@ -98,6 +102,7 @@ public class BombExplosion extends Explosion {
     private final boolean hasShockwaveModifier;
     private final boolean hasImbuedModifier;
     private final float dropChance;
+    private final int maxDropStackSize;
 
     public BombExplosion(Level pLevel, @Nullable Entity pSource, @Nullable DamageSource pDamageSource, @Nullable ExplosionDamageCalculator pDamageCalculator, double pToBlowX, double pToBlowY, double pToBlowZ, float pRadius, boolean pFire, Explosion.BlockInteraction pBlockInteraction, ItemStack stack) {
         super(pLevel, pSource, pDamageSource, pDamageCalculator, pToBlowX, pToBlowY, pToBlowZ, pRadius, pFire, pBlockInteraction);
@@ -134,7 +139,8 @@ public class BombExplosion extends Explosion {
         this.hasDampenedModifier = BombModifierUtil.hasModifier(stack, "dampened");
         this.hasShockwaveModifier = BombModifierUtil.hasModifier(stack, "shockwave");
         this.hasImbuedModifier = BombModifierUtil.hasModifier(stack, "imbued");
-        this.dropChance = Math.min(1.0F, 10.0F / radius_);
+        this.dropChance = Math.min(1.0F, (float) Math.pow(0.95, (radius_ * 0.9) - 9));
+        this.maxDropStackSize = 12 + 2 * Math.min(26, (int) radius_); // min 12, max 64
 
         estimatedCubicSize = (int)(radius_ * radius_ * radius_ * 2);
         toBlow_ = new LongOpenHashSet(estimatedCubicSize);
@@ -509,7 +515,8 @@ public class BombExplosion extends Explosion {
         }
 
         if (this.interactsWithBlocks()) {
-            ObjectArrayList<Pair<ItemStack, BlockPos>> objectarraylist = new ObjectArrayList<>();
+            Object2ObjectOpenHashMap<ItemMergeKey, ObjectArrayList<Drop>> drops
+                    = new Object2ObjectOpenHashMap<>((int)(this.radius_));
             boolean flag1 = this.getIndirectSourceEntity() instanceof Player;
 
             LongIterator iterator = this.toBlow_.iterator();
@@ -528,13 +535,13 @@ public class BombExplosion extends Explosion {
                                 .withOptionalParameter(LootContextParams.BLOCK_ENTITY, blockentity)
                                 .withOptionalParameter(LootContextParams.THIS_ENTITY, this.source_);
 
-                        if (this.blockInteraction_ == Explosion.BlockInteraction.DESTROY_WITH_DECAY) {
+                        if (this.blockInteraction_ == BlockInteraction.DESTROY_WITH_DECAY) {
                             lootparams$builder.withParameter(LootContextParams.EXPLOSION_RADIUS, this.radius_);
                         }
 
                         blockstate.spawnAfterBreak(serverlevel, blockpos, ItemStack.EMPTY, flag1);
                         blockstate.getDrops(lootparams$builder).forEach((p_46074_) -> {
-                            if (random_.nextFloat() < this.dropChance) addBlockDrops(objectarraylist, p_46074_, blockpos);
+                            if (random_.nextFloat() < this.dropChance) addBlockDrops(drops, p_46074_, blockpos, maxDropStackSize);
                         });
                     }
                 }
@@ -580,9 +587,10 @@ public class BombExplosion extends Explosion {
                 }
             }
 
-
-            for(Pair<ItemStack, BlockPos> pair : objectarraylist) {
-                Block.popResource(this.level_, pair.getSecond(), pair.getFirst());
+            for (ObjectArrayList<Drop> dropList : drops.values()) {
+                for(Drop drop : dropList) {
+                    Block.popResource(this.level_, drop.pos, drop.stack);
+                }
             }
         }
 
@@ -617,22 +625,35 @@ public class BombExplosion extends Explosion {
         }
     }
 
-    private static void addBlockDrops(ObjectArrayList<Pair<ItemStack, BlockPos>> pDropPositionArray, ItemStack pStack, BlockPos pPos) {
-        int i = pDropPositionArray.size();
+    private static void addBlockDrops(Object2ObjectOpenHashMap<ItemMergeKey, ObjectArrayList<Drop>> drops,
+                                      ItemStack stack, BlockPos pos, int maxDropStackSize) {
+        if (stack.isEmpty()) return;
 
-        for(int j = 0; j < i; ++j) {
-            Pair<ItemStack, BlockPos> pair = pDropPositionArray.get(j);
-            ItemStack itemstack = pair.getFirst();
+        ItemMergeKey key = new ItemMergeKey(stack.getItem(), stack.getTag());
 
-            if (!ItemEntity.areMergable(itemstack, pStack)) continue;
-            ItemStack itemstack1 = ItemEntity.merge(itemstack, pStack, 16);
-            pDropPositionArray.set(j, Pair.of(itemstack1, pair.getSecond()));
+        ObjectArrayList<Drop> list = drops.computeIfAbsent(key, k -> new ObjectArrayList<>());
 
-            if (pStack.isEmpty()) return;
+        int maxStackSize = Math.min(stack.getMaxStackSize(), maxDropStackSize);
+
+        for (Drop drop : list) {
+            ItemStack existing = drop.stack;
+
+            int transferable = Math.min(
+                    maxStackSize - existing.getCount(),
+                    stack.getCount()
+            );
+
+            if (transferable <= 0) continue;
+            existing.grow(transferable);
+            stack.shrink(transferable);
+
+            if (stack.isEmpty()) return;
         }
 
-        pDropPositionArray.add(Pair.of(pStack, pPos));
+        list.add(new Drop(stack, pos));
     }
 
     private record CachedVoxel (boolean isAir, float resistance) {}
+    private record ItemMergeKey (Item item, CompoundTag tag) {}
+    private record Drop (ItemStack stack, BlockPos pos) {}
 }

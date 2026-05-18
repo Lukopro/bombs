@@ -72,6 +72,7 @@ import org.joml.Vector3f;
 public class BombExplosion extends Explosion {
     private static final ExplosionDamageCalculator EXPLOSION_DAMAGE_CALCULATOR_ = new ExplosionDamageCalculator();
     private final boolean fire_;
+    private static final float FIRE_THRESHOLD = 5.0F;
     private final Explosion.BlockInteraction blockInteraction_;
     private final RandomSource random_ = RandomSource.create();
     private final Level level_;
@@ -83,8 +84,9 @@ public class BombExplosion extends Explosion {
     private final float radius_;
     private final int estimatedCubicSize;
     private final ExplosionDamageCalculator damageCalculator_;
-    private final LongOpenHashSet toBlow_;
+    private final LongOpenHashSet mayIgnite;
     private final Long2FloatOpenHashMap almostBroke;
+    Object2ObjectOpenHashMap<ItemMergeKey, ObjectArrayList<Drop>> drops;
 
     private final Map<Player, Vec3> hitPlayers_ = Maps.newHashMap();
     private final ItemStack stack;
@@ -143,8 +145,9 @@ public class BombExplosion extends Explosion {
         this.maxDropStackSize = 12 + 2 * Math.min(26, (int) radius_); // min 12, max 64
 
         estimatedCubicSize = (int)(radius_ * radius_ * radius_ * 2);
-        toBlow_ = new LongOpenHashSet(estimatedCubicSize);
+        mayIgnite = new LongOpenHashSet((int)(radius_ * radius_ * 2));
         almostBroke = new Long2FloatOpenHashMap(estimatedCubicSize);
+        drops = new Object2ObjectOpenHashMap<>((int)(this.radius_));
 
         almostBroke.defaultReturnValue(Float.NEGATIVE_INFINITY);
     }
@@ -263,109 +266,18 @@ public class BombExplosion extends Explosion {
     public void explode() {
         this.level_.gameEvent(this.source_, GameEvent.EXPLODE, new Vec3(this.x_, this.y_, this.z_));
 
-        BlockPos.MutableBlockPos blockpos = new BlockPos.MutableBlockPos();
+        this.affectEntities();
+        this.affectBlocks();
 
-        Long2ObjectOpenHashMap<CachedVoxel> voxelCache = new Long2ObjectOpenHashMap<>(estimatedCubicSize);
-
-        int gridSize = 4 + (int)Math.floor(Math.pow(this.radius_, 1.45));
-        int rayCount = gridSize * gridSize;
-
-        double goldenAngle = Math.PI * (3.0D - Math.sqrt(5.0D));
-
-        for (int ray = 0; ray < rayCount; ray++) {
-            double d1 = 1.0D - (2.0D * ray) / (rayCount - 1);
-            double radial = Math.sqrt(1.0D - d1 * d1);
-            double theta = goldenAngle * ray;
-
-            double d0 = Math.cos(theta) * radial;
-            double d2 = Math.sin(theta) * radial;
-
-            // axis-aligned rays should not step, so step = 0 is not required
-            int stepX = d0 > 0 ? 1 : -1;
-            int stepY = d1 > 0 ? 1 : -1;
-            int stepZ = d2 > 0 ? 1 : -1;
-
-            double tDeltaX = d0 == 0 ? Double.MAX_VALUE : Math.abs(1.0D / d0);
-            double tDeltaY = d1 == 0 ? Double.MAX_VALUE : Math.abs(1.0D / d1);
-            double tDeltaZ = d2 == 0 ? Double.MAX_VALUE : Math.abs(1.0D / d2);
-
-            float f = this.radius_ * (0.7F + this.level_.random.nextFloat() * 0.6F);
-            int voxelX = Mth.floor(this.x_);
-            int voxelY = Mth.floor(this.y_);
-            int voxelZ = Mth.floor(this.z_);
-
-            double nextBoundaryX = stepX > 0 ? voxelX + 1.0D : voxelX;
-            double nextBoundaryY = stepY > 0 ? voxelY + 1.0D : voxelY;
-            double nextBoundaryZ = stepZ > 0 ? voxelZ + 1.0D : voxelZ;
-
-            double tMaxX = d0 == 0 ? Double.MAX_VALUE : (nextBoundaryX - this.x_) / d0;
-            double tMaxY = d1 == 0 ? Double.MAX_VALUE : (nextBoundaryY - this.y_) / d1;
-            double tMaxZ = d2 == 0 ? Double.MAX_VALUE : (nextBoundaryZ - this.z_) / d2;
-
-            float currentT = 0F;
-            float lastStepTraveledDistance;
-
-            for(; f > -this.themeStrength / 3.0F; f -= 0.75F * lastStepTraveledDistance) {
-                blockpos.set(voxelX, voxelY, voxelZ);
-                long longpos = blockpos.asLong();
-
-                if (!this.level_.isInWorldBounds(blockpos)) break;
-
-                // Advance voxel
-                float nextT;
-                if (tMaxX < tMaxY) {
-                    if (tMaxX < tMaxZ) {
-                        nextT = (float) tMaxX;
-                        voxelX += stepX;
-                        tMaxX += tDeltaX;
-                    } else {
-                        nextT = (float) tMaxZ;
-                        voxelZ += stepZ;
-                        tMaxZ += tDeltaZ;
-                    }
-                } else {
-                    if (tMaxY < tMaxZ) {
-                        nextT = (float) tMaxY;
-                        voxelY += stepY;
-                        tMaxY += tDeltaY;
-                    } else {
-                        nextT = (float) tMaxZ;
-                        voxelZ += stepZ;
-                        tMaxZ += tDeltaZ;
-                    }
-                }
-
-                lastStepTraveledDistance = nextT - currentT;
-                currentT = nextT;
-
-                CachedVoxel voxelData = voxelCache.get(longpos);
-
-                if (voxelData == null) {
-                    BlockState blockstate = this.level_.getBlockState(blockpos);
-                    FluidState fluidstate = blockstate.getFluidState();
-
-                    if (this.hasEvaporateModifier && fluidstate.is(FluidTags.WATER)) {
-                        blockstate = Blocks.AIR.defaultBlockState();
-                    }
-
-                    float resistance = this.damageCalculator_.getBlockExplosionResistance(
-                            this, this.level_, blockpos, blockstate, fluidstate).orElse(0.0F);
-
-                    voxelData = new CachedVoxel(blockstate.isAir(), resistance);
-                    voxelCache.put(longpos, voxelData);
-                }
-
-                f -= (voxelData.resistance + 0.3F) * lastStepTraveledDistance;
-
-                if (f > 0.0F) {
-                    toBlow_.add(longpos);
-                    continue;
-                }
-                if (!this.hasTheme || f <= -this.themeStrength || voxelData.isAir) continue;
-                if (f > almostBroke.get(longpos)) almostBroke.put(longpos, f);
+        for (Map.Entry<Player, Vec3> entry : this.hitPlayers_.entrySet()){
+            Player player = entry.getKey();
+            if(player instanceof ServerPlayer serverPlayer) {
+                serverPlayer.connection.send(new ClientboundSetEntityMotionPacket(player));
             }
         }
+    }
 
+    private void affectEntities() {
         float f2 = this.radius_ * 2.0F;
         int k1 = Mth.floor(this.x_ - (double)f2 - 1.0D);
         int l1 = Mth.floor(this.x_ + (double)f2 + 1.0D);
@@ -451,12 +363,254 @@ public class BombExplosion extends Explosion {
                 }
             }
         }
+    }
 
-        for (Map.Entry<Player, Vec3> entry : this.hitPlayers_.entrySet()){
-            Player player = entry.getKey();
-            if(player instanceof ServerPlayer serverPlayer) {
-                serverPlayer.connection.send(new ClientboundSetEntityMotionPacket(player));
+    private void breakBlock(BlockState blockstate, BlockPos blockpos, boolean playerIndirectSourceEntityFlag) {
+        if (blockstate.isAir()) return;
+        if (blockstate.canDropFromExplosion(this.level_, blockpos, this)) {
+            if (this.level_ instanceof ServerLevel serverlevel) {
+                BlockEntity blockentity = blockstate.hasBlockEntity() ? this.level_.getBlockEntity(blockpos) : null;
+
+                LootParams.Builder lootparams$builder = (new LootParams.Builder(serverlevel))
+                        .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(blockpos))
+                        .withParameter(LootContextParams.TOOL, ItemStack.EMPTY)
+                        .withOptionalParameter(LootContextParams.BLOCK_ENTITY, blockentity)
+                        .withOptionalParameter(LootContextParams.THIS_ENTITY, this.source_);
+
+                if (this.blockInteraction_ == BlockInteraction.DESTROY_WITH_DECAY) {
+                    lootparams$builder.withParameter(LootContextParams.EXPLOSION_RADIUS, this.radius_);
+                }
+
+                blockstate.spawnAfterBreak(serverlevel, blockpos, ItemStack.EMPTY, playerIndirectSourceEntityFlag);
+                blockstate.getDrops(lootparams$builder).forEach((p_46074_) -> {
+                    if (random_.nextFloat() < this.dropChance) addBlockDrops(drops, p_46074_, blockpos.immutable(), maxDropStackSize);
+                });
             }
+        }
+
+        blockstate.onBlockExploded(this.level_, blockpos, this);
+    }
+
+    private void affectBlocks() {
+        boolean interactsWithBlocksFlag = this.interactsWithBlocks();
+        boolean playerIndirectSourceEntityFlag = this.getIndirectSourceEntity() instanceof Player;
+        BlockPos.MutableBlockPos blockpos = new BlockPos.MutableBlockPos();
+
+        // store temporary voxel data as longs
+        // bit 0 = true if the block was originally air
+        // bit 1 = true if the block was broken earlier in ray traversal
+        // bits 2-33 = float resistance value of block
+        Long2LongOpenHashMap voxelCache = new Long2LongOpenHashMap(estimatedCubicSize);
+        voxelCache.defaultReturnValue(Long.MIN_VALUE);
+
+
+        // will likely refactor rays to split during traversal, notes are here for my future reference
+        // d(r) = r * sqrt(4pi) * sqrt(1/N)
+        // d(r) = 0.5
+        // sqrt(1/N) = d(r) / (r * sqrt(4pi))
+        // N = 1 / (0.5 / (r * sqrt(4pi)))^2
+        int gridSize = 4 + (int)Math.floor(Math.pow(this.radius_, 1.45));
+        int rayCount = gridSize * gridSize;
+        double goldenAngle = Math.PI * (3.0D - Math.sqrt(5.0D));
+
+        for (int ray = 0; ray < rayCount; ray++) {
+            double d1 = 1.0D - (2.0D * ray) / (rayCount - 1);
+            double radial = Math.sqrt(1.0D - d1 * d1);
+            double theta = goldenAngle * ray;
+
+            double d0 = Math.cos(theta) * radial;
+            double d2 = Math.sin(theta) * radial;
+
+            // axis-aligned rays should not step, so step = 0 is not required
+            int stepX = d0 > 0 ? 1 : -1;
+            int stepY = d1 > 0 ? 1 : -1;
+            int stepZ = d2 > 0 ? 1 : -1;
+
+            double tDeltaX = d0 == 0 ? Double.MAX_VALUE : Math.abs(1.0D / d0);
+            double tDeltaY = d1 == 0 ? Double.MAX_VALUE : Math.abs(1.0D / d1);
+            double tDeltaZ = d2 == 0 ? Double.MAX_VALUE : Math.abs(1.0D / d2);
+
+            float f = this.radius_;// * (0.7F + this.level_.random.nextFloat() * 0.6F);
+            int voxelX = Mth.floor(this.x_);
+            int voxelY = Mth.floor(this.y_);
+            int voxelZ = Mth.floor(this.z_);
+
+            double nextBoundaryX = stepX > 0 ? voxelX + 1.0D : voxelX;
+            double nextBoundaryY = stepY > 0 ? voxelY + 1.0D : voxelY;
+            double nextBoundaryZ = stepZ > 0 ? voxelZ + 1.0D : voxelZ;
+
+            double tMaxX = d0 == 0 ? Double.MAX_VALUE : (nextBoundaryX - this.x_) / d0;
+            double tMaxY = d1 == 0 ? Double.MAX_VALUE : (nextBoundaryY - this.y_) / d1;
+            double tMaxZ = d2 == 0 ? Double.MAX_VALUE : (nextBoundaryZ - this.z_) / d2;
+
+            float currentT = 0F;
+            float lastStepTraveledDistance;
+
+            for(; f > -this.themeStrength / 3.0F; f -= 0.75F * lastStepTraveledDistance) {
+                blockpos.set(voxelX, voxelY, voxelZ);
+                long longpos = blockpos.asLong();
+
+                if (!this.level_.isInWorldBounds(blockpos)) break;
+
+                // Advance voxel
+                float nextT;
+                if (tMaxX < tMaxY) {
+                    if (tMaxX < tMaxZ) {
+                        nextT = (float) tMaxX;
+                        voxelX += stepX;
+                        tMaxX += tDeltaX;
+                    } else {
+                        nextT = (float) tMaxZ;
+                        voxelZ += stepZ;
+                        tMaxZ += tDeltaZ;
+                    }
+                } else {
+                    if (tMaxY < tMaxZ) {
+                        nextT = (float) tMaxY;
+                        voxelY += stepY;
+                        tMaxY += tDeltaY;
+                    } else {
+                        nextT = (float) tMaxZ;
+                        voxelZ += stepZ;
+                        tMaxZ += tDeltaZ;
+                    }
+                }
+
+                lastStepTraveledDistance = nextT - currentT;
+                currentT = nextT;
+
+                long voxelData = voxelCache.get(longpos);
+
+                if (voxelData == Long.MIN_VALUE) {
+                    BlockState blockstate = this.level_.getBlockState(blockpos);
+                    FluidState fluidstate = blockstate.getFluidState();
+
+                    boolean isWaterToIgnore = this.hasEvaporateModifier && fluidstate.is(FluidTags.WATER);
+
+                    float resistance = isWaterToIgnore
+                            ? this.damageCalculator_.getBlockExplosionResistance(
+                            this, this.level_, blockpos, Blocks.AIR.defaultBlockState(), fluidstate).orElse(0.0F)
+                            : this.damageCalculator_.getBlockExplosionResistance(
+                            this, this.level_, blockpos, blockstate, fluidstate).orElse(0.0F);
+
+                    f -= (resistance + 0.3F) * lastStepTraveledDistance;
+
+                    if (f > 0.0F) {
+                        if (!interactsWithBlocksFlag) continue;
+
+                        breakBlock(blockstate, blockpos, playerIndirectSourceEntityFlag);
+
+
+                        voxelCache.put(longpos, packVoxelData(blockstate.isAir() || isWaterToIgnore, true, resistance));
+                        if (this.fire_ && f < FIRE_THRESHOLD) mayIgnite.add(longpos);
+                        continue;
+                    }
+
+                    voxelData = packVoxelData(blockstate.isAir() || isWaterToIgnore, false, resistance);
+                    voxelCache.put(longpos, voxelData);
+                } else {
+                    f -= (resistanceFromLong(voxelData) + 0.3F) * lastStepTraveledDistance;
+
+                    if (brokeFromLong(voxelData)) continue;
+
+                    if (f > 0.0F) {
+                        if (!interactsWithBlocksFlag) continue;
+
+                        breakBlock(this.level_.getBlockState(blockpos), blockpos, playerIndirectSourceEntityFlag);
+
+
+                        voxelCache.put(longpos, setBroke(voxelData));
+                        if (this.fire_ && f < FIRE_THRESHOLD) mayIgnite.add(longpos);
+                        continue;
+                    }
+                }
+
+                if (!this.hasTheme || f <= -this.themeStrength || isAirFromLong(voxelData)) continue;
+                if (f > almostBroke.get(longpos)) almostBroke.put(longpos, f);
+            }
+        }
+
+        if(this.hasTheme){
+            for(Long2FloatMap.Entry entry : this.almostBroke.long2FloatEntrySet()){
+                BlockPos pos = BlockPos.of(entry.getLongKey());
+                float f = entry.getFloatValue();
+
+                if(f > 0) continue;
+
+                BlockState replacement = this.themeData.getReplacementBlock(f);
+                if(replacement == null || replacement == Blocks.AIR.defaultBlockState()) continue;
+
+                BlockEntity blockEntity = this.level_.getBlockEntity(pos);
+
+                if (blockEntity == null) {
+                    this.level_.setBlockAndUpdate(pos, replacement);
+                    continue;
+                }
+
+                BlockState oldState = this.level_.getBlockState(pos);
+
+                if(blockEntity instanceof Container container){
+                    Containers.dropContents(this.level_, pos, container);
+                } else {
+                    LazyOptional<IItemHandler> capability = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER);
+
+                    if(capability.isPresent()){
+                        IItemHandler handler = capability.orElseThrow(() -> new IllegalStateException("Expected IItemHandler not found for block at " + pos));
+                        for(int i = 0; i < handler.getSlots(); i++){
+                            ItemStack stack  = handler.getStackInSlot(i);
+                            if (!stack.isEmpty()) Block.popResource(level_, pos, stack);
+                        }
+                    }
+                }
+
+                oldState.onRemove(this.level_, pos, replacement, false);
+                this.level_.setBlockAndUpdate(pos, replacement);
+            }
+        }
+
+        for (ObjectArrayList<Drop> dropList : drops.values()) {
+            for(Drop drop : dropList) {
+                Block.popResource(this.level_, drop.pos, drop.stack);
+            }
+        }
+
+        if (this.fire_) {
+            LongIterator iterator = this.mayIgnite.iterator();
+            while (iterator.hasNext()) {
+                long longpos = iterator.nextLong();
+                BlockPos pos = BlockPos.of(longpos);
+
+                if (!(this.random_.nextInt(3) == 0)) continue;
+                long voxelData = voxelCache.get(longpos);
+                if ((longpos != Long.MIN_VALUE && (isAirFromLong(voxelData)) || this.level_.getBlockState(pos).isAir())
+                        && this.level_.getBlockState(pos.below()).isSolidRender(this.level_, pos.below())) {
+                    this.level_.setBlockAndUpdate(pos, BaseFireBlock.getState(this.level_, pos));
+                }
+            }
+        }
+    }
+
+    /**
+     * Does the second part of the explosion (sound, particles, potions)
+     */
+    @Override
+    public void finalizeExplosion(boolean pSpawnParticles) {
+        // Random pitch between 0.63F and 0.77F
+        float pitch = (1.0F + (this.level_.random.nextFloat() - this.level_.random.nextFloat()) * 0.2F) * 0.7F;
+        SoundEvent soundEvent = BombModifierUtil.getTier(stack) > 0
+                ? SoundEvents.GENERIC_EXPLODE
+                : SoundEvents.PUFFER_FISH_FLOP;
+        this.level_.playSound(
+                null,
+                this.x_, this.y_, this.z_,
+                soundEvent,
+                SoundSource.BLOCKS,
+                this.radius_,
+                pitch
+        );
+
+        if (this.level_ instanceof ServerLevel serverLevel) {
+            spawnParticles(serverLevel);
         }
 
         if(!this.hasImbuedModifier) return;
@@ -487,123 +641,6 @@ public class BombExplosion extends Explosion {
         }
 
         this.level_.addFreshEntity(cloud);
-    }
-
-    /**
-     * Does the second part of the explosion (sound, particles, drop spawn)
-     */
-    @Override
-    public void finalizeExplosion(boolean pSpawnParticles) {
-        // Replaced the sound emitter to be server-side.
-        // Random pitch between 0.63F and 0.77F
-        float pitch = (1.0F + (this.level_.random.nextFloat() - this.level_.random.nextFloat()) * 0.2F) * 0.7F;
-        SoundEvent soundEvent = BombModifierUtil.getTier(stack) > 0
-                ? SoundEvents.GENERIC_EXPLODE
-                : SoundEvents.PUFFER_FISH_FLOP;
-        this.level_.playSound(
-                null,
-                this.x_, this.y_, this.z_,
-                soundEvent,
-                SoundSource.BLOCKS,
-                this.radius_,
-                pitch
-        );
-
-        // Restructured particle spawning
-        if (this.level_ instanceof ServerLevel serverLevel) {
-            spawnParticles(serverLevel);
-        }
-
-        if (this.interactsWithBlocks()) {
-            Object2ObjectOpenHashMap<ItemMergeKey, ObjectArrayList<Drop>> drops
-                    = new Object2ObjectOpenHashMap<>((int)(this.radius_));
-            boolean flag1 = this.getIndirectSourceEntity() instanceof Player;
-
-            LongIterator iterator = this.toBlow_.iterator();
-            while (iterator.hasNext()) {
-                BlockPos blockpos = BlockPos.of(iterator.nextLong());
-                BlockState blockstate = this.level_.getBlockState(blockpos);
-
-                if (blockstate.isAir()) continue;
-                if (blockstate.canDropFromExplosion(this.level_, blockpos, this)) {
-                    if (this.level_ instanceof ServerLevel serverlevel) {
-                        BlockEntity blockentity = blockstate.hasBlockEntity() ? this.level_.getBlockEntity(blockpos) : null;
-
-                        LootParams.Builder lootparams$builder = (new LootParams.Builder(serverlevel))
-                                .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(blockpos))
-                                .withParameter(LootContextParams.TOOL, ItemStack.EMPTY)
-                                .withOptionalParameter(LootContextParams.BLOCK_ENTITY, blockentity)
-                                .withOptionalParameter(LootContextParams.THIS_ENTITY, this.source_);
-
-                        if (this.blockInteraction_ == BlockInteraction.DESTROY_WITH_DECAY) {
-                            lootparams$builder.withParameter(LootContextParams.EXPLOSION_RADIUS, this.radius_);
-                        }
-
-                        blockstate.spawnAfterBreak(serverlevel, blockpos, ItemStack.EMPTY, flag1);
-                        blockstate.getDrops(lootparams$builder).forEach((p_46074_) -> {
-                            if (random_.nextFloat() < this.dropChance) addBlockDrops(drops, p_46074_, blockpos, maxDropStackSize);
-                        });
-                    }
-                }
-
-                blockstate.onBlockExploded(this.level_, blockpos, this);
-            }
-
-            if(this.hasTheme){
-                for(Long2FloatMap.Entry entry : this.almostBroke.long2FloatEntrySet()){
-                    BlockPos pos = BlockPos.of(entry.getLongKey());
-                    float f = entry.getFloatValue();
-
-                    if(f > 0) continue;
-
-                    BlockState replacement = this.themeData.getReplacementBlock(f);
-                    if(replacement == null || replacement == Blocks.AIR.defaultBlockState()) continue;
-
-                    BlockEntity blockEntity = this.level_.getBlockEntity(pos);
-
-                    if (blockEntity == null) {
-                        this.level_.setBlockAndUpdate(pos, replacement);
-                        continue;
-                    }
-
-                    BlockState oldState = this.level_.getBlockState(pos);
-
-                    if(blockEntity instanceof Container container){
-                        Containers.dropContents(this.level_, pos, container);
-                    } else {
-                        LazyOptional<IItemHandler> capability = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER);
-
-                        if(capability.isPresent()){
-                            IItemHandler handler = capability.orElseThrow(() -> new IllegalStateException("Expected IItemHandler not found for block at " + pos));
-                            for(int i = 0; i < handler.getSlots(); i++){
-                                ItemStack stack  = handler.getStackInSlot(i);
-                                if (!stack.isEmpty()) Block.popResource(level_, pos, stack);
-                            }
-                        }
-                    }
-
-                    oldState.onRemove(this.level_, pos, replacement, false);
-                    this.level_.setBlockAndUpdate(pos, replacement);
-                }
-            }
-
-            for (ObjectArrayList<Drop> dropList : drops.values()) {
-                for(Drop drop : dropList) {
-                    Block.popResource(this.level_, drop.pos, drop.stack);
-                }
-            }
-        }
-
-        if (this.fire_) {
-            LongIterator iterator = this.toBlow_.iterator();
-            while (iterator.hasNext()) {
-                BlockPos pos = BlockPos.of(iterator.nextLong());
-
-                if (this.random_.nextInt(3) == 0 && this.level_.getBlockState(pos).isAir() && this.level_.getBlockState(pos.below()).isSolidRender(this.level_, pos.below())) {
-                    this.level_.setBlockAndUpdate(pos, BaseFireBlock.getState(this.level_, pos));
-                }
-            }
-        }
     }
 
     private void spawnParticles(ServerLevel serverLevel){
@@ -653,7 +690,29 @@ public class BombExplosion extends Explosion {
         list.add(new Drop(stack, pos));
     }
 
-    private record CachedVoxel (boolean isAir, float resistance) {}
+    private static long packVoxelData(boolean air, boolean broke, float resistance) {
+        int resistanceBits = Float.floatToRawIntBits(resistance);
+        return ((long) resistanceBits << 2)
+             | (air ? 1L : 0L)
+             | (broke ? 2L : 0L);
+    }
+
+    private static boolean isAirFromLong(long l) {
+        return (l & 1L) != 0;
+    }
+
+    private static boolean brokeFromLong(long l) {
+        return (l & 2L) != 0;
+    }
+
+    private static float resistanceFromLong(long l) {
+        return Float.intBitsToFloat((int)(l >>> 2));
+    }
+
+    private static long setBroke(long l) {
+        return l | 2L;
+    }
+
     private record ItemMergeKey (Item item, CompoundTag tag) {}
     private record Drop (ItemStack stack, BlockPos pos) {}
 }

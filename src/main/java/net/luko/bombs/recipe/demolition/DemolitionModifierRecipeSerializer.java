@@ -39,7 +39,8 @@ public class DemolitionModifierRecipeSerializer implements RecipeSerializer<Demo
         Ingredient inputModifier = Ingredient.fromNetwork(buf);
         String modifierName = buf.readUtf();
         List<String> incompatibleWith = new ArrayList<>();
-        for (int i = 0; i < buf.readInt(); i++) {
+        int size = buf.readInt();
+        for (int i = 0; i < size; i++) {
             incompatibleWith.add(buf.readUtf());
         }
 

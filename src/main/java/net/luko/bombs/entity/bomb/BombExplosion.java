@@ -1,17 +1,15 @@
 package net.luko.bombs.entity.bomb;
 
 import com.google.common.collect.Maps;
-import com.mojang.datafixers.util.Pair;
-import it.unimi.dsi.fastutil.floats.Float2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.bytes.Byte2FloatOpenHashMap;
 import it.unimi.dsi.fastutil.longs.*;
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.util.*;
 import javax.annotation.Nullable;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.luko.bombs.Bombs;
 import net.luko.bombs.data.themes.ThemeData;
 import net.luko.bombs.data.themes.ThemeManager;
@@ -83,6 +81,19 @@ public class BombExplosion extends Explosion {
     private final Entity source_;
     private final float radius_;
     private final int estimatedCubicSize;
+    /*private final Stack<RayFrame> remainingRays;
+    private static final int INITIAL_RAY_COUNT = 128;
+    private static final int RAY_SPLIT_COUNT = 6; // rays to create, keeps host ray, means each split leaves RAY_SPLIT_COUNT + 1 rays
+    private static final Byte2FloatOpenHashMap RAY_SPLIT_THRESHOLDS = new Byte2FloatOpenHashMap(255);
+    private static final float MAX_AVERAGE_DISTANCE_BETWEEN_RAYS = 0.5F;
+    private static final ObjectOpenHashSet<RayFrame> INITIAL_RAYS = new ObjectOpenHashSet<>(128);
+
+    static {
+        for (int i = 0; i < 255; i++) {
+
+        }
+    }*/
+    
     private final ExplosionDamageCalculator damageCalculator_;
     private final LongOpenHashSet mayIgnite;
     private final Long2FloatOpenHashMap almostBroke;
@@ -148,6 +159,8 @@ public class BombExplosion extends Explosion {
         mayIgnite = new LongOpenHashSet((int)(radius_ * radius_ * 2));
         almostBroke = new Long2FloatOpenHashMap(estimatedCubicSize);
         drops = new Object2ObjectOpenHashMap<>((int)(this.radius_));
+        //remainingRays = new Stack<>();
+        //remainingRays.addAll(INITIAL_RAYS);
 
         almostBroke.defaultReturnValue(Float.NEGATIVE_INFINITY);
     }
@@ -713,6 +726,7 @@ public class BombExplosion extends Explosion {
         return l | 2L;
     }
 
+    private record RayFrame () {}
     private record ItemMergeKey (Item item, CompoundTag tag) {}
     private record Drop (ItemStack stack, BlockPos pos) {}
 }

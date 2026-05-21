@@ -1,0 +1,8 @@
+{
+  "type": "bombs:demolition_modifier",
+  "input_bomb": { "tag": "bombs:bomb" },
+  "input_modifier": { "tag": "bombs:potion" },
+  "modifier": "laden",
+  "incompatible_with": ["imbued"],
+  "special_tag": "Potion"
+}

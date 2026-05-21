@@ -3,7 +3,6 @@ package net.luko.bombs.recipe.demolition;
 import net.luko.bombs.Bombs;
 import net.luko.bombs.components.ModDataComponents;
 import net.luko.bombs.config.BombsConfig;
-import net.luko.bombs.data.modifiers.ModifierManager;
 import net.luko.bombs.data.modifiers.PriorityManager;
 import net.luko.bombs.recipe.ModRecipeSerializers;
 import net.luko.bombs.recipe.ModRecipeTypes;
@@ -19,7 +18,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public record DemolitionModifierRecipe(Ingredient inputBomb, Ingredient inputModifier, String modifierName, @Nullable String specialTag) implements Recipe<DemolitionModifierRecipeInput> {
+public record DemolitionModifierRecipe(Ingredient inputBomb, Ingredient inputModifier, String modifierName,
+                                       List<String> incompatibleWith, @Nullable String specialTag) implements Recipe<DemolitionModifierRecipeInput> {
 
     public DemolitionModifierRecipe{
         if(specialTag == null)
@@ -46,12 +46,8 @@ public record DemolitionModifierRecipe(Ingredient inputBomb, Ingredient inputMod
         return true;
     }
 
-    private boolean checkModifier(String otherMod) {
-        return this.checkModifier(this.modifierName, otherMod);
-    }
-
-    public boolean checkModifier(String mod, String otherMod){
-        return !mod.equals(otherMod) &&  ModifierManager.INSTANCE.isCompatible(mod, otherMod);
+    public boolean checkModifier(String otherMod){
+        return !this.modifierName.equals(otherMod) &&  !this.incompatibleWith.contains(otherMod);
     }
 
     @Override

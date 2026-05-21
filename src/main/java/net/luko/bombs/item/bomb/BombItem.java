@@ -1,20 +1,12 @@
 package net.luko.bombs.item.bomb;
 
 import net.luko.bombs.components.ModDataComponents;
-import net.luko.bombs.data.modifiers.ModifierManager;
 import net.luko.bombs.entity.bomb.ThrownBombEntity;
 import net.luko.bombs.util.BombModifierUtil;
-import net.luko.bombs.util.BombPotionUtil;
 import net.luko.bombs.util.BombTextureUtil;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;

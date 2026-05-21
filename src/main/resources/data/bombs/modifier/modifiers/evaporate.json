@@ -1,6 +1,0 @@
-{
-  "input_bomb": { "tag": "bombs:bomb" },
-  "input_modifier": { "item": "minecraft:coal" },
-  "incompatible_with": [],
-  "color": "#9aa9b5"
-}

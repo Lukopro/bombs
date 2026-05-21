@@ -18,9 +18,10 @@ public class DemolitionModifierRecipeSerializer implements RecipeSerializer<Demo
                     Ingredient.CODEC.fieldOf("input_bomb").forGetter(DemolitionModifierRecipe::inputBomb),
                     Ingredient.CODEC.fieldOf("input_modifier").forGetter(DemolitionModifierRecipe::inputModifier),
                     Codec.STRING.fieldOf("modifier").forGetter(DemolitionModifierRecipe::modifierName),
+                    Codec.list(Codec.STRING).fieldOf("incompatible_with").forGetter(DemolitionModifierRecipe::incompatibleWith),
                     Codec.STRING.optionalFieldOf("special_tag").forGetter(r -> Optional.ofNullable(r.specialTag()))
-            ).apply(instance, (bomb, modifier, modName, optionalTag) ->
-        new DemolitionModifierRecipe(bomb, modifier, modName, optionalTag.orElse(null)))
+            ).apply(instance, (bomb, modifier, modName, incompatibleWith, optionalTag) ->
+        new DemolitionModifierRecipe(bomb, modifier, modName, incompatibleWith, optionalTag.orElse(null)))
     );
 
     public static final StreamCodec<RegistryFriendlyByteBuf, DemolitionModifierRecipe> STREAM_CODEC =
@@ -28,8 +29,9 @@ public class DemolitionModifierRecipeSerializer implements RecipeSerializer<Demo
                     Ingredient.CONTENTS_STREAM_CODEC, DemolitionModifierRecipe::inputBomb,
                     Ingredient.CONTENTS_STREAM_CODEC, DemolitionModifierRecipe::inputModifier,
                     ByteBufCodecs.STRING_UTF8, DemolitionModifierRecipe::modifierName,
+                    ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs.list()), DemolitionModifierRecipe::incompatibleWith,
                     ByteBufCodecs.optional(ByteBufCodecs.STRING_UTF8), r -> Optional.ofNullable(r.specialTag()),
-                    (bomb, mod, name, special) -> new DemolitionModifierRecipe(bomb, mod, name, special.orElse(null))
+                    (bomb, mod, name, incompatibleWith, special) -> new DemolitionModifierRecipe(bomb, mod, name, incompatibleWith, special.orElse(null))
             );
 
     @Override

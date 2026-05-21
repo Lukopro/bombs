@@ -726,7 +726,7 @@ public class BombExplosion extends Explosion {
         return l | 2L;
     }
 
-    private record RayFrame () {}
+    //private record RayFrame () {}
     private record ItemMergeKey (Item item, CompoundTag tag) {}
     private record Drop (ItemStack stack, BlockPos pos) {}
 }

@@ -1,5 +1,7 @@
 package net.luko.bombs.recipe.demolition;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -8,6 +10,9 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DemolitionModifierRecipeSerializer implements RecipeSerializer<DemolitionModifierRecipe> {
     @Override
     public DemolitionModifierRecipe fromJson(ResourceLocation id, JsonObject json){
@@ -15,9 +20,17 @@ public class DemolitionModifierRecipeSerializer implements RecipeSerializer<Demo
         Ingredient inputModifier = Ingredient.fromJson(GsonHelper.getAsJsonObject(json, "input_modifier"));
         String modifierName = GsonHelper.getAsString(json, "modifier");
 
+        List<String> incompatibleWith = new ArrayList<>();
+
+        JsonArray array = GsonHelper.getAsJsonArray(json, "incompatible_with");
+
+        for (JsonElement element : array) {
+            incompatibleWith.add(element.getAsString());
+        }
+
         String specialTag = json.has("special_tag") ? GsonHelper.getAsString(json, "special_tag") : null;
 
-        return new DemolitionModifierRecipe(id, inputBomb, inputModifier, modifierName, specialTag);
+        return new DemolitionModifierRecipe(id, inputBomb, inputModifier, modifierName, incompatibleWith, specialTag);
     }
 
     @Override
@@ -25,10 +38,14 @@ public class DemolitionModifierRecipeSerializer implements RecipeSerializer<Demo
         Ingredient inputBomb = Ingredient.fromNetwork(buf);
         Ingredient inputModifier = Ingredient.fromNetwork(buf);
         String modifierName = buf.readUtf();
+        List<String> incompatibleWith = new ArrayList<>();
+        for (int i = 0; i < buf.readInt(); i++) {
+            incompatibleWith.add(buf.readUtf());
+        }
 
         String specialTag = buf.readBoolean() ? buf.readUtf() : null;
 
-        return new DemolitionModifierRecipe(id, inputBomb, inputModifier, modifierName, specialTag);
+        return new DemolitionModifierRecipe(id, inputBomb, inputModifier, modifierName, incompatibleWith, specialTag);
     }
 
     @Override
@@ -36,6 +53,11 @@ public class DemolitionModifierRecipeSerializer implements RecipeSerializer<Demo
         recipe.getInputBomb().toNetwork(buf);
         recipe.getInputModifier().toNetwork(buf);
         buf.writeUtf(recipe.getModifierName());
+
+        buf.writeInt(recipe.getIncompatibleWith().size());
+        for (String mod : recipe.getIncompatibleWith()) {
+            buf.writeUtf(mod);
+        }
 
         if(recipe.getSpecialTag() != null){
             buf.writeBoolean(true);

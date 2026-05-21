@@ -2,7 +2,6 @@ package net.luko.bombs.recipe.demolition;
 
 import net.luko.bombs.Bombs;
 import net.luko.bombs.config.BombsConfig;
-import net.luko.bombs.data.modifiers.ModifierManager;
 import net.luko.bombs.data.modifiers.PriorityManager;
 import net.luko.bombs.recipe.ModRecipeSerializers;
 import net.luko.bombs.recipe.ModRecipeTypes;
@@ -14,10 +13,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 
 import java.util.*;
@@ -27,13 +23,16 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
     private final Ingredient inputBomb;
     private final Ingredient inputModifier;
     private final String modifierName;
+    private final List<String> incompatibleWith;
     private final String specialTag;
 
-    public DemolitionModifierRecipe(ResourceLocation id, Ingredient inputBomb, Ingredient inputModifier, String modifierName, String specialTag){
+    public DemolitionModifierRecipe(ResourceLocation id, Ingredient inputBomb, Ingredient inputModifier,
+                                    String modifierName, List<String> incompatibleWith, String specialTag){
         this.id = id;
         this.inputBomb = inputBomb;
         this.inputModifier = inputModifier;
         this.modifierName = modifierName;
+        this.incompatibleWith = incompatibleWith;
         this.specialTag = specialTag;
         if(specialTag == null)
             Bombs.LOGGER.debug(String.format("Modifier recipe registered for %s + %s gives '%s' with no special tag.",
@@ -61,11 +60,7 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
     }
 
     private boolean checkModifier(String otherMod) {
-        return this.checkModifier(this.modifierName, otherMod);
-    }
-
-    public boolean checkModifier(String mod, String otherMod){
-        return !mod.equals(otherMod) &&  ModifierManager.INSTANCE.isCompatible(mod, otherMod);
+        return !this.modifierName.equals(otherMod) && !this.incompatibleWith.contains(otherMod);
     }
 
     @Override
@@ -177,6 +172,10 @@ public class DemolitionModifierRecipe implements Recipe<Container> {
 
     public String getModifierName(){
         return modifierName;
+    }
+
+    public List<String> getIncompatibleWith() {
+        return incompatibleWith;
     }
 
     public String getSpecialTag(){

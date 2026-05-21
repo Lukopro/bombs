@@ -1,6 +1,8 @@
 package net.luko.bombs.data;
 
 import net.luko.bombs.Bombs;
+import net.luko.bombs.data.modifiers.ColorManager;
+import net.luko.bombs.data.modifiers.IconManager;
 import net.luko.bombs.data.modifiers.PriorityManager;
 import net.luko.bombs.data.themes.ThemeManager;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -13,6 +15,8 @@ import java.util.List;
 
 public class ModManagers {
     public static void init(){
+        ModReloadListenerRegistry.register(ColorManager.INSTANCE);
+        ModReloadListenerRegistry.register(IconManager.INSTANCE);
         ModReloadListenerRegistry.register(ThemeManager.INSTANCE);
         ModReloadListenerRegistry.register(PriorityManager.INSTANCE);
     }

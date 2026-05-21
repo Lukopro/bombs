@@ -29,7 +29,12 @@ public class PriorityManager extends SimpleJsonResourceReloadListener {
     protected void apply(Map<ResourceLocation, JsonElement> jsonMap, ResourceManager resourceManager, ProfilerFiller profiler) {
         priorities.clear();
 
-        for(var entry : jsonMap.entrySet()) {
+        var jsonEntries = jsonMap.entrySet();
+        if (jsonEntries.isEmpty()) {
+            Bombs.LOGGER.warn("PriorityManager did not find any data in {}", DIRECTORY);
+        }
+
+        for(var entry : jsonEntries) {
             try {
                 JsonObject json = GsonHelper.convertToJsonObject(entry.getValue(), "modifier_priorities");
 

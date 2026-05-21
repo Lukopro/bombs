@@ -3,8 +3,8 @@ package net.luko.bombs.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
 import net.luko.bombs.Bombs;
-import net.luko.bombs.client.data.ClientModifierStore;
-import net.luko.bombs.data.modifiers.ModifierManager;
+import net.luko.bombs.data.modifiers.ColorManager;
+import net.luko.bombs.data.modifiers.IconManager;
 import net.luko.bombs.item.bomb.BombItem;
 import net.luko.bombs.util.BombPotionUtil;
 import net.minecraft.ChatFormatting;
@@ -53,7 +53,7 @@ public class BombTooltipItemIcons {
 
                 MutableComponent modifierComponent = Component.literal("")
                         .append(Component.translatable("modifier.bombs." + mod));
-                ItemStack iconStack = ClientModifierStore.getModifierItem(mod).getItems()[0];
+                ItemStack iconStack = IconManager.INSTANCE.getIconItemStack(mod);
 
                 if(mod.equals("laden") || mod.equals("imbued")){
                     int potionColor = PotionUtils.getColor(
@@ -72,7 +72,7 @@ public class BombTooltipItemIcons {
                         iconStack.getOrCreateTag().put("CustomPotionEffects", stack.getTag().get("CustomPotionEffects"));
                     }
                 } else {
-                    modifierComponent.withStyle(Style.EMPTY.withColor(ClientModifierStore.getColor(mod)));
+                    modifierComponent.withStyle(Style.EMPTY.withColor(ColorManager.INSTANCE.getColor(mod)));
                 }
 
                 tooltip.add(Either.right(new ModifierTooltipComponent(iconStack, modifierComponent)));

@@ -8,7 +8,6 @@ import net.luko.bombs.entity.ModEntities;
 import net.luko.bombs.item.bomb.BombItem;
 import net.luko.bombs.item.ModCreativeModeTabs;
 import net.luko.bombs.item.ModItems;
-import net.luko.bombs.network.ModPackets;
 import net.luko.bombs.recipe.ModRecipeSerializers;
 import net.luko.bombs.recipe.ModRecipeTypes;
 import net.luko.bombs.screen.ModMenuTypes;
@@ -53,7 +52,6 @@ public class Bombs
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        ModPackets.register();
         event.enqueueWork(BombConfigSync::syncBombExplosionPowers);
 
         event.enqueueWork(() -> {

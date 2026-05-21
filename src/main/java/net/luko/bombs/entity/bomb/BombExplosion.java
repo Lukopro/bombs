@@ -1,7 +1,6 @@
 package net.luko.bombs.entity.bomb;
 
 import com.google.common.collect.Maps;
-import it.unimi.dsi.fastutil.bytes.Byte2FloatOpenHashMap;
 import it.unimi.dsi.fastutil.longs.*;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -9,7 +8,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.*;
 import javax.annotation.Nullable;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.luko.bombs.Bombs;
 import net.luko.bombs.data.themes.ThemeData;
 import net.luko.bombs.data.themes.ThemeManager;
@@ -63,6 +61,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
 // Class and instance variables have an underscore _ to differentiate from super's variables.
@@ -166,7 +165,7 @@ public class BombExplosion extends Explosion {
     }
 
     // Find clips directly, avoids overhead from built-in functions
-    public static float getSeenPercent(Vec3 pExplosionVector, Entity pEntity) {
+    public static float getSeenPercent(@NotNull Vec3 pExplosionVector, Entity pEntity) {
         AABB aabb = pEntity.getBoundingBox();
         double d0 = 1.0D / ((aabb.maxX - aabb.minX) * 2.0D + 1.0D);
         double d1 = 1.0D / ((aabb.maxY - aabb.minY) * 2.0D + 1.0D);
@@ -223,9 +222,9 @@ public class BombExplosion extends Explosion {
         double nextBoundaryY = stepY > 0 ? (y + 1D) : y;
         double nextBoundaryZ = stepZ > 0 ? (z + 1D) : z;
 
-        double tMaxX = (nextBoundaryX - from.x) / dx;
-        double tMaxY = (nextBoundaryY - from.y) / dy;
-        double tMaxZ = (nextBoundaryZ - from.z) / dz;
+        double tMaxX = dx == 0 ? Double.MAX_VALUE : (nextBoundaryX - from.x) / dx;
+        double tMaxY = dy == 0 ? Double.MAX_VALUE : (nextBoundaryY - from.y) / dy;
+        double tMaxZ = dz == 0 ? Double.MAX_VALUE : (nextBoundaryZ - from.z) / dz;
 
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 

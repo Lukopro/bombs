@@ -60,6 +60,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.event.EventHooks;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
 // Class and instance variables have an underscore _ to differentiate from super's variables.
@@ -100,7 +101,7 @@ public class BombExplosion extends Explosion {
     private final boolean hasDampenedModifier;
     private final boolean hasShockwaveModifier;
     private final boolean hasImbuedModifier;
-    private float dropChance;
+    private final float dropChance;
     private final int maxDropStackSize;
 
     public BombExplosion(Level pLevel, @Nullable Entity pSource, @Nullable DamageSource pDamageSource, @Nullable ExplosionDamageCalculator pDamageCalculator, double pToBlowX, double pToBlowY, double pToBlowZ, float pRadius, boolean pFire, Explosion.BlockInteraction pBlockInteraction, ItemStack stack) {
@@ -154,7 +155,7 @@ public class BombExplosion extends Explosion {
     }
 
     // Find clips directly, avoids overhead from built-in functions
-    public static float getSeenPercent(Vec3 pExplosionVector, Entity pEntity) {
+    public static float getSeenPercent(@NotNull Vec3 pExplosionVector, Entity pEntity) {
         AABB aabb = pEntity.getBoundingBox();
         double d0 = 1.0D / ((aabb.maxX - aabb.minX) * 2.0D + 1.0D);
         double d1 = 1.0D / ((aabb.maxY - aabb.minY) * 2.0D + 1.0D);

@@ -442,7 +442,7 @@ public class BombExplosion extends Explosion {
             double tDeltaY = d1 == 0 ? Double.MAX_VALUE : Math.abs(1.0D / d1);
             double tDeltaZ = d2 == 0 ? Double.MAX_VALUE : Math.abs(1.0D / d2);
 
-            float f = this.radius_;// * (0.7F + this.level_.random.nextFloat() * 0.6F);
+            float f = this.radius_ * (0.7F + this.level_.random.nextFloat() * 0.6F);
             int voxelX = Mth.floor(this.x_);
             int voxelY = Mth.floor(this.y_);
             int voxelZ = Mth.floor(this.z_);

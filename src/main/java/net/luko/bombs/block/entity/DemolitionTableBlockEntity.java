@@ -214,19 +214,7 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
         return result;
     }
 
-    private static class ModifierCandidate {
-        final String modifier;
-        final int slot;
-        final int priority;
-        final ItemStack ingredient;
-
-        ModifierCandidate(String modifier, int slot, int priority, ItemStack ingredient){
-            this.modifier = modifier;
-            this.slot = slot;
-            this.priority = priority;
-            this.ingredient = ingredient;
-        }
-    }
+    private record ModifierCandidate(String modifier, int slot, int priority, ItemStack ingredient) {}
 
     private List<Integer> getSortedModifierCandidateSlots(SimpleContainer container){
         ItemStack inputBomb = container.getItem(INPUT_SLOT);
@@ -304,31 +292,18 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
 
     private void markValidSlot(int slot){
         validRecipeSlots.add(slot);
-        if(level != null && !level.isClientSide()) {
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
-        }
     }
 
     private void markInvalidSlot(int slot){
         invalidRecipeSlots.add(slot);
-        if(level != null && !level.isClientSide()) {
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
-        }
     }
 
     private void clearValidRecipeSlots(){
         validRecipeSlots.clear();
-        if(level != null && !level.isClientSide()) {
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
-        }
     }
 
     private void clearInvalidRecipeSlots(){
         invalidRecipeSlots.clear();
-        if(level != null && !level.isClientSide()) {
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
-        }
-
     }
 
     public List<Integer> getInvalidRecipeSlots(){
@@ -340,9 +315,12 @@ public class DemolitionTableBlockEntity extends BlockEntity implements MenuProvi
         for(int slot : validRecipeSlots){
             itemHandler.getStackInSlot(slot).shrink(amount);
         }
-
         clearValidRecipeSlots();
         clearInvalidRecipeSlots();
+
+        if(level != null && !level.isClientSide()) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        }
     }
 
     public int smallestValidSlotItemCount(){

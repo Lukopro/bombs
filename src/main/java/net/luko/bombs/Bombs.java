@@ -5,6 +5,8 @@ import net.luko.bombs.block.entity.ModBlockEntities;
 import net.luko.bombs.config.BombsConfig;
 import net.luko.bombs.data.ModManagers;
 import net.luko.bombs.entity.ModEntities;
+import net.luko.bombs.entity.villager.ModPoiTypes;
+import net.luko.bombs.entity.villager.ModVillagerProfessions;
 import net.luko.bombs.item.bomb.BombItem;
 import net.luko.bombs.item.ModCreativeModeTabs;
 import net.luko.bombs.item.ModItems;
@@ -14,6 +16,7 @@ import net.luko.bombs.screen.ModMenuTypes;
 import net.luko.bombs.util.BombConfigSync;
 import net.minecraft.core.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.world.entity.ai.village.poi.PoiTypes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.DispenserBlock;
@@ -45,6 +48,8 @@ public class Bombs
         ModMenuTypes.register(modEventBus);
         ModRecipeTypes.register(modEventBus);
         ModRecipeSerializers.register(modEventBus);
+        ModPoiTypes.register(modEventBus);
+        ModVillagerProfessions.register(modEventBus);
 
         ModManagers.init();
 
@@ -52,6 +57,11 @@ public class Bombs
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+            ModVillagerProfessions.DEMOLITIONIST.get();
+            ModPoiTypes.DEMOLITION_TABLE_POI.get();
+        });
+
         event.enqueueWork(BombConfigSync::syncBombExplosionPowers);
 
         event.enqueueWork(() -> {

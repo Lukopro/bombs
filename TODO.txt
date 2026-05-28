@@ -5,7 +5,6 @@
 - Dyes / custom effects
 - TNT -> Dynamite -> modify -> TNT (custom) -> throw it, cluster bombs
 - Forge, NeoForge, 1.20.1, 1.21.1 *
-- Villager profession
 - Dynamite launcher
 - Beheading modifier
 - Hover modifier

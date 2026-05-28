@@ -7,20 +7,25 @@ import net.luko.bombs.item.ModItems;
 import net.luko.bombs.recipe.ModRecipeTypes;
 import net.luko.bombs.recipe.demolition.DemolitionModifierRecipe;
 import net.luko.bombs.util.BombRecipeUtil;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.village.VillagerTradesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -200,6 +205,20 @@ public class ModVillagerTrades {
         for (String mod : modifiers) modifiersTag.add(StringTag.valueOf(mod));
 
         tag.put("Modifiers", modifiersTag);
+
+        if (!(modifiers.contains("imbued") || modifiers.contains("laden")
+        || defaultModifiers.contains("imbued") || defaultModifiers.contains("laden"))) return stack;
+
+        List<Potion> validPotions = ForgeRegistries.POTIONS.getValues().stream()
+                .filter(p -> !p.getEffects().isEmpty())
+                .filter(p -> p != Potions.EMPTY)
+                .filter(p -> p != Potions.WATER)
+                .toList();
+
+        Potion randomPotion = validPotions.get(random.nextInt(validPotions.size()));
+
+        ResourceLocation potionId = ForgeRegistries.POTIONS.getKey(randomPotion);
+        if (potionId != null) tag.putString("Potion", potionId.toString());
 
         return stack;
     }

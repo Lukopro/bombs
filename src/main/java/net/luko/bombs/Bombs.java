@@ -57,11 +57,6 @@ public class Bombs
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> {
-            ModVillagerProfessions.DEMOLITIONIST.get();
-            ModPoiTypes.DEMOLITION_TABLE_POI.get();
-        });
-
         event.enqueueWork(BombConfigSync::syncBombExplosionPowers);
 
         event.enqueueWork(() -> {

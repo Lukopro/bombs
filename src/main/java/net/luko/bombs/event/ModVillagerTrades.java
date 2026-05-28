@@ -1,6 +1,7 @@
 package net.luko.bombs.event;
 
 import net.luko.bombs.Bombs;
+import net.luko.bombs.config.BombsConfig;
 import net.luko.bombs.entity.villager.ModVillagerProfessions;
 import net.luko.bombs.item.ModItems;
 import net.luko.bombs.recipe.ModRecipeTypes;
@@ -154,12 +155,22 @@ public class ModVillagerTrades {
         CompoundTag tag = stack.getOrCreateTag();
         tag.putInt("Tier", tier);
 
+        List<String> defaultModifiers = new ArrayList<>(BombsConfig.CRAFTING_DEFAULT_MODIFIERS.get());
+
+        ListTag modifiersTag = new ListTag();
+        for (String defaultModifier : defaultModifiers) {
+            modifiersTag.add(StringTag.valueOf(defaultModifier));
+        }
+        tag.put("Modifiers", modifiersTag);
+
         if (numModifiers < 1) return stack;
 
         Map<String, List<String>> allModifiers = level.getRecipeManager()
                 .getAllRecipesFor(ModRecipeTypes.DEMOLITION_MODIFIER_TYPE.get())
                 .stream()
                 .filter(recipe -> recipe.getInputBomb().test(stack))
+                .filter(recipe -> !BombsConfig.CRAFTING_RESTRICTED_MODIFIERS.get().contains(recipe.getModifierName()))
+                .filter(recipe -> !defaultModifiers.contains(recipe.getModifierName()))
                 .collect(Collectors.toMap(
                         DemolitionModifierRecipe::getModifierName,
                         DemolitionModifierRecipe::getIncompatibleWith,
@@ -174,7 +185,7 @@ public class ModVillagerTrades {
                 String mod = new ArrayList<>(tempModifiers.keySet()).get(random.nextInt(tempModifiers.size()));
                 List<String> incompatible = tempModifiers.get(mod);
 
-                if (modifiers.stream().anyMatch(incompatible::contains)) {
+                if (modifiers.stream().anyMatch(incompatible::contains) || defaultModifiers.stream().anyMatch(incompatible::contains)) {
                     tempModifiers.remove(mod);
                 } else {
                     modifiers.add(mod);
@@ -186,7 +197,6 @@ public class ModVillagerTrades {
             if (tempModifiers.isEmpty()) break;
         }
 
-        ListTag modifiersTag = new ListTag();
         for (String mod : modifiers) modifiersTag.add(StringTag.valueOf(mod));
 
         tag.put("Modifiers", modifiersTag);

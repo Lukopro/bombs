@@ -6,6 +6,8 @@ import net.luko.bombs.config.BombsConfig;
 import net.luko.bombs.components.ModDataComponents;
 import net.luko.bombs.data.ModManagers;
 import net.luko.bombs.entity.ModEntities;
+import net.luko.bombs.entity.villager.ModPoiTypes;
+import net.luko.bombs.entity.villager.ModVillagerProfessions;
 import net.luko.bombs.item.bomb.BombItem;
 import net.luko.bombs.item.ModCreativeModeTabs;
 import net.luko.bombs.item.ModItems;
@@ -45,6 +47,8 @@ public class Bombs
         ModRecipeTypes.register(modEventBus);
         ModRecipeSerializers.register(modEventBus);
         ModDataComponents.register(modEventBus);
+        ModPoiTypes.register(modEventBus);
+        ModVillagerProfessions.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
 

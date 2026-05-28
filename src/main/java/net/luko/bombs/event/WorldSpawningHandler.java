@@ -1,7 +1,10 @@
-package net.luko.bombs.entity;
+package net.luko.bombs.event;
 
 import net.luko.bombs.Bombs;
 import net.luko.bombs.config.BombsConfig;
+import net.luko.bombs.entity.HonseEntity;
+import net.luko.bombs.entity.ModEntities;
+import net.luko.bombs.entity.ProspectorEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;

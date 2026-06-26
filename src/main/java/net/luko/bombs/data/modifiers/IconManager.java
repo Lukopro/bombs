@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.luko.bombs.Bombs;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -15,6 +15,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +28,15 @@ public class IconManager extends SimpleJsonResourceReloadListener {
 
     public IconManager(){
         super(GSON, DIRECTORY);
+    }
+
+    public Map<String, ResourceLocation> getIcons() {
+        return Collections.unmodifiableMap(icons);
+    }
+
+    public void set(Map<String, ResourceLocation> data) {
+        this.icons.clear();
+        this.icons.putAll(data);
     }
 
     @Override
@@ -72,5 +82,24 @@ public class IconManager extends SimpleJsonResourceReloadListener {
         }
 
         return new ItemStack(item);
+    }
+
+    public static class Serializer {
+        public static void encode(Map<String, ResourceLocation> data, FriendlyByteBuf buf) {
+            buf.writeVarInt(data.size());
+            for (var entry : data.entrySet()) {
+                buf.writeUtf(entry.getKey());
+                buf.writeResourceLocation(entry.getValue());
+            }
+        }
+
+        public static Map<String, ResourceLocation> decode(FriendlyByteBuf buf) {
+            int size = buf.readVarInt();
+            Map<String, ResourceLocation> data = new HashMap<>(size);
+            for (int i = 0; i < size; i++) {
+                data.put(buf.readUtf(), buf.readResourceLocation());
+            }
+            return data;
+        }
     }
 }

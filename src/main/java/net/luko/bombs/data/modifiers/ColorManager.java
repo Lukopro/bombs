@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.luko.bombs.Bombs;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -11,6 +12,7 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +25,15 @@ public class ColorManager extends SimpleJsonResourceReloadListener {
 
     public ColorManager(){
         super(GSON, DIRECTORY);
+    }
+
+    public Map<String, TextColor> getColors() {
+        return Collections.unmodifiableMap(colors);
+    }
+
+    public void set(Map<String, TextColor> data) {
+        this.colors.clear();
+        this.colors.putAll(data);
     }
 
     @Override
@@ -58,5 +69,24 @@ public class ColorManager extends SimpleJsonResourceReloadListener {
 
     public TextColor getColor(String modifier){
         return colors.getOrDefault(modifier, TextColor.fromRgb(0x3d372e));
+    }
+
+    public static class Serializer {
+        public static void encode(Map<String, TextColor> data, FriendlyByteBuf buf) {
+            buf.writeVarInt(data.size());
+            for (var entry : data.entrySet()) {
+                buf.writeUtf(entry.getKey());
+                buf.writeInt(entry.getValue().getValue());
+            }
+        }
+
+        public static Map<String, TextColor> decode(FriendlyByteBuf buf) {
+            int size = buf.readVarInt();
+            Map<String, TextColor> data = new HashMap<>(size);
+            for (int i = 0; i < size; i++) {
+                data.put(buf.readUtf(), TextColor.fromRgb(buf.readInt()));
+            }
+            return data;
+        }
     }
 }

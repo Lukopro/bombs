@@ -9,9 +9,7 @@
 - Beheading modifier
 - Hover modifier
 - Eraser (or another way to take off modifiers)
-- Resource pack driven modifier colors?
 - Better Theme data
-- Mobs that have dynamite will throw them
 - Redstone modifier (powers redstone upon explosion)
 - Super high tiers/nukes
 - Shrapnel

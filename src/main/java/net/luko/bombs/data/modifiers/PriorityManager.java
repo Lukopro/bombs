@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.luko.bombs.Bombs;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -23,6 +24,15 @@ public class PriorityManager extends SimpleJsonResourceReloadListener {
 
     public PriorityManager(){
         super(GSON, DIRECTORY);
+    }
+
+    public Map<String, Integer> getPriorities(){
+        return Collections.unmodifiableMap(priorities);
+    }
+
+    public void set(Map<String, Integer> data) {
+        this.priorities.clear();
+        this.priorities.putAll(data);
     }
 
     @Override
@@ -54,7 +64,22 @@ public class PriorityManager extends SimpleJsonResourceReloadListener {
         return priorities.getOrDefault(modifier, Integer.MAX_VALUE);
     }
 
-    public Map<String, Integer> getPriorities(){
-        return Collections.unmodifiableMap(priorities);
+    public static class Serializer {
+        public static void encode(Map<String, Integer> data, FriendlyByteBuf buf) {
+            buf.writeVarInt(data.size());
+            for (var entry : data.entrySet()) {
+                buf.writeUtf(entry.getKey());
+                buf.writeVarInt(entry.getValue());
+            }
+        }
+
+        public static Map<String, Integer> decode(FriendlyByteBuf buf) {
+            int size = buf.readVarInt();
+            Map<String, Integer> data = new HashMap<>(size);
+            for (int i = 0; i < size; i++) {
+                data.put(buf.readUtf(), buf.readVarInt());
+            }
+            return data;
+        }
     }
 }
